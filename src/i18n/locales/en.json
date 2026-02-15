@@ -78,6 +78,11 @@
     "totalCheckins": "Total Check-Ins",
     "noHistory": "No history yet"
   },
+  "a11y": {
+    "changeLanguage": "Change language",
+    "toggleTheme": "Toggle theme",
+    "qrCode": "QR code for Warpcast sign in"
+  },
   "footer": {
     "builtOn": "Built on Base",
     "poweredBy": "Powered by Sekigahara"

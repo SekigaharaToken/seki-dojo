@@ -27,15 +27,15 @@ export function CheckInHistory() {
             <p className="text-sm text-muted-foreground">
               {t("history.totalCheckins")}: <span className="font-medium">{totalCheckIns}</span>
             </p>
-            <div className="flex flex-wrap gap-1">
+            <ul className="flex flex-wrap gap-1" aria-label={t("history.title")}>
               {checkIns.map((entry, i) => (
-                <div
+                <li
                   key={i}
                   className="h-3 w-3 rounded-sm bg-primary"
-                  title={new Date(entry.timestamp * 1000).toLocaleDateString()}
+                  aria-label={new Date(entry.timestamp * 1000).toLocaleDateString()}
                 />
               ))}
-            </div>
+            </ul>
           </div>
         )}
       </CardContent>

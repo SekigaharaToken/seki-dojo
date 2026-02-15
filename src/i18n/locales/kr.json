@@ -78,6 +78,11 @@
     "totalCheckins": "총 체크인 수",
     "noHistory": "기록이 없습니다"
   },
+  "a11y": {
+    "changeLanguage": "언어 변경",
+    "toggleTheme": "테마 전환",
+    "qrCode": "Warpcast 로그인용 QR 코드"
+  },
   "footer": {
     "builtOn": "Base에서 구축",
     "poweredBy": "Sekigahara 제공"

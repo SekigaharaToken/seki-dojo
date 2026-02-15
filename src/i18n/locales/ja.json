@@ -78,6 +78,11 @@
     "totalCheckins": "合計チェックイン数",
     "noHistory": "履歴がありません"
   },
+  "a11y": {
+    "changeLanguage": "言語を変更",
+    "toggleTheme": "テーマを切替",
+    "qrCode": "Warpcastサインイン用QRコード"
+  },
   "footer": {
     "builtOn": "Base上に構築",
     "poweredBy": "Sekigahara提供"

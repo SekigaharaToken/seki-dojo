@@ -17,11 +17,13 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog.jsx";
 import { Button } from "@/components/ui/button.jsx";
+import { useTranslation } from "react-i18next";
 import { useLoginModal } from "@/hooks/useLoginModal.js";
 import { useFarcasterSignIn } from "@/hooks/useFarcasterSignIn.js";
 import { useFarcaster } from "@/hooks/useFarcaster.js";
 
 export const LoginModal = ({ onSuccess }) => {
+  const { t } = useTranslation();
   const { isLoginModalOpen, closeLoginModal } = useLoginModal();
   const { isAuthenticated } = useFarcaster();
 
@@ -60,41 +62,41 @@ export const LoginModal = ({ onSuccess }) => {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="font-serif">
-            Sign In With Farcaster
+            {t("auth.signInWithFarcaster")}
           </DialogTitle>
           <DialogDescription>
-            Scan the QR code with Warpcast to sign in.
+            {t("auth.scanQrCode")}
           </DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col items-center gap-4 py-4">
           {!showQrView && !isLoading && (
             <Button onClick={handleSignInClick} className="w-full">
-              Connect with Farcaster
+              {t("auth.connectWithFarcaster")}
             </Button>
           )}
 
           {isLoading && (
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Loader2 className="size-4 animate-spin" />
-              <span>Creating connection...</span>
+            <div className="flex items-center gap-2 text-muted-foreground" role="status">
+              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+              <span>{t("auth.creatingConnection")}</span>
             </div>
           )}
 
           {showQrView && url && (
             <div className="flex flex-col items-center gap-4">
-              <div className="rounded-lg border bg-white p-4">
-                <QRCodeSVG value={url} size={200} />
+              <div className="rounded-lg border bg-white p-4" aria-label={t("a11y.qrCode")}>
+                <QRCodeSVG value={url} size={200} role="img" aria-label={t("a11y.qrCode")} />
               </div>
               <p className="text-sm text-muted-foreground text-center">
-                Scan with Warpcast or{" "}
+                {t("auth.scanQrCode")}{" "}
                 <a
                   href={url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary underline"
                 >
-                  open directly
+                  {t("auth.openDirectly")}
                 </a>
               </p>
               <Button
@@ -104,7 +106,7 @@ export const LoginModal = ({ onSuccess }) => {
                   closeLoginModal();
                 }}
               >
-                Cancel
+                {t("auth.cancel")}
               </Button>
             </div>
           )}

@@ -72,6 +72,7 @@ export function SwapPanel() {
           type="number"
           min="0"
           placeholder={t("swap.amount")}
+          aria-label={t("swap.amount")}
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
         />

@@ -77,7 +77,7 @@ export const Header = () => {
           {/* Language Switcher */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Change language">
+              <Button variant="ghost" size="icon" aria-label={t("a11y.changeLanguage")}>
                 <Globe className="size-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -101,7 +101,7 @@ export const Header = () => {
             variant="ghost"
             size="icon"
             onClick={toggleTheme}
-            aria-label="Toggle theme"
+            aria-label={t("a11y.toggleTheme")}
           >
             {resolvedTheme === "dark" ? (
               <Sun className="size-4" />

@@ -40,7 +40,7 @@ export function CountdownTimer() {
   if (!hasCheckedInToday) return null;
 
   return (
-    <p className="text-sm text-muted-foreground">
+    <p className="text-sm text-muted-foreground" aria-live="polite" aria-atomic="true">
       {t("streak.nextCheckin", { time: formatTime(remaining) })}
     </p>
   );

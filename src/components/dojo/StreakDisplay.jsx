@@ -41,7 +41,7 @@ export function StreakDisplay() {
             </div>
 
             {isStreakAtRisk && (
-              <p className="text-sm font-medium text-destructive">
+              <p className="text-sm font-medium text-destructive" role="alert">
                 {t("streak.atRisk")}
               </p>
             )}

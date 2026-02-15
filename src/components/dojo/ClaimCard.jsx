@@ -28,7 +28,7 @@ export function ClaimCard({ distributionId, proof, amount, tierName }) {
         {!claim ? (
           <p className="text-muted-foreground">{t("rewards.noClaim")}</p>
         ) : isClaimed ? (
-          <p className="font-semibold text-green-600">{t("rewards.claimed")}</p>
+          <p className="font-semibold text-green-600" role="status">{t("rewards.claimed")}</p>
         ) : (
           <>
             <p className="text-lg font-bold">
