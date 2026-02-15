@@ -1,0 +1,118 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Light mode — Wabi-sabi parchment */
+  --radius: 0.5rem;
+  --background: oklch(0.94 0.01 80); /* #F5F0E8 */
+  --foreground: oklch(0.25 0 0); /* #2C2C2C */
+  --card: oklch(0.98 0.005 85); /* #FEFCF6 */
+  --card-foreground: oklch(0.25 0 0);
+  --popover: oklch(0.98 0.005 85);
+  --popover-foreground: oklch(0.25 0 0);
+  --primary: oklch(0.45 0.15 25); /* #B33030 vermilion */
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.82 0.03 80); /* #D4C5A9 tatami */
+  --secondary-foreground: oklch(0.25 0 0);
+  --muted: oklch(0.9 0.015 75); /* #E8E0D0 aged paper */
+  --muted-foreground: oklch(0.55 0.01 50); /* #78716C stone */
+  --accent: oklch(0.7 0.1 60); /* #C4956A gold/amber */
+  --accent-foreground: oklch(0.25 0 0);
+  --destructive: oklch(0.55 0.2 27);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.86 0.015 75); /* #D6CFC0 */
+  --input: oklch(0.86 0.015 75);
+  --ring: oklch(0.45 0.15 25);
+
+  /* Tier belt colors */
+  --tier-white: oklch(1 0 0);
+  --tier-blue: oklch(0.55 0.2 260); /* #2563EB */
+  --tier-purple: oklch(0.5 0.25 300); /* #7C3AED */
+  --tier-black: oklch(0.2 0.01 50); /* #1C1917 */
+}
+
+.dark {
+  /* Dark mode — Charcoal dojo */
+  --background: oklch(0.2 0.01 50); /* #1C1917 */
+  --foreground: oklch(0.94 0.01 80); /* #F5F0E8 */
+  --card: oklch(0.25 0.01 45); /* #292524 */
+  --card-foreground: oklch(0.94 0.01 80);
+  --popover: oklch(0.25 0.01 45);
+  --popover-foreground: oklch(0.94 0.01 80);
+  --primary: oklch(0.55 0.18 25); /* #D94040 */
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.35 0.01 50); /* #44403C */
+  --secondary-foreground: oklch(0.9 0.005 50);
+  --muted: oklch(0.3 0.01 50); /* #3A3633 */
+  --muted-foreground: oklch(0.7 0.01 50); /* #A8A29E */
+  --accent: oklch(0.7 0.1 60); /* #C4956A */
+  --accent-foreground: oklch(0.94 0.01 80);
+  --destructive: oklch(0.6 0.2 27);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.32 0.01 50); /* #3D3835 */
+  --input: oklch(0.32 0.01 50);
+  --ring: oklch(0.55 0.18 25);
+
+  /* Tier belt colors (dark mode) */
+  --tier-white: oklch(0.9 0 0);
+  --tier-blue: oklch(0.55 0.2 260);
+  --tier-purple: oklch(0.5 0.25 300);
+  --tier-black: oklch(1 0 0);
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-tier-white: var(--tier-white);
+  --color-tier-blue: var(--tier-blue);
+  --color-tier-purple: var(--tier-purple);
+  --color-tier-black: var(--tier-black);
+  --font-heading: "Noto Serif JP", "Playfair Display", Georgia, serif;
+  --font-body: "DM Sans", Inter, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-body;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
