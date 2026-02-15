@@ -35,6 +35,15 @@ vi.mock("@/hooks/useCheckInHistory.js", () => ({
   }),
 }));
 
+vi.mock("@/hooks/useClaim.js", () => ({
+  useClaim: () => ({
+    claim: null,
+    isClaimed: false,
+    isClaimedLoading: false,
+    isPending: false,
+  }),
+}));
+
 // Dynamic import after mocks
 const HomePage = (await import("@/pages/HomePage.jsx")).default;
 

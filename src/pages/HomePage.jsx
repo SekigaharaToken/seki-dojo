@@ -3,6 +3,7 @@ import { StreakDisplay } from "@/components/dojo/StreakDisplay.jsx";
 import { CheckInButton } from "@/components/dojo/CheckInButton.jsx";
 import { CountdownTimer } from "@/components/dojo/CountdownTimer.jsx";
 import { CheckInHistory } from "@/components/dojo/CheckInHistory.jsx";
+import { ClaimCard } from "@/components/dojo/ClaimCard.jsx";
 
 export default function HomePage() {
   const { t } = useTranslation();
@@ -17,6 +18,13 @@ export default function HomePage() {
       <CheckInButton />
 
       <CountdownTimer />
+
+      <ClaimCard
+        distributionId={null}
+        proof={[]}
+        amount="0"
+        tierName=""
+      />
 
       <div className="w-full">
         <CheckInHistory />
