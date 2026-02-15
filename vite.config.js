@@ -16,5 +16,6 @@ export default defineConfig({
     setupFiles: ["./src/test/setup.js"],
     css: false,
     pool: "vmThreads",
+    include: ["src/**/*.{test,spec}.{js,jsx}"],
   },
 });
