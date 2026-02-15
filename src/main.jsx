@@ -11,6 +11,7 @@ import { FarcasterProvider } from "@/context/FarcasterProvider.jsx";
 import { LoginModalProvider } from "@/context/LoginModalContext.jsx";
 import { wagmiConfig } from "@/config/wagmi.js";
 import App from "./App.jsx";
+import "./i18n";
 import "./index.css";
 import "@rainbow-me/rainbowkit/styles.css";
 

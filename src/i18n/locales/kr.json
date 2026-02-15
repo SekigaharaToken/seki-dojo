@@ -1,0 +1,80 @@
+{
+  "app": {
+    "name": "도장",
+    "tagline": "매일 수련. 온체인으로."
+  },
+  "nav": {
+    "home": "홈",
+    "swap": "스왑",
+    "about": "소개"
+  },
+  "wallet": {
+    "connect": "지갑 연결",
+    "disconnect": "연결 해제",
+    "wrongNetwork": "Base로 전환"
+  },
+  "auth": {
+    "signInWithFarcaster": "Farcaster로 로그인",
+    "orConnectWallet": "또는 지갑으로 연결",
+    "scanQrCode": "Warpcast로 스캔",
+    "openDirectly": "직접 열기",
+    "connectWithFarcaster": "Farcaster로 연결",
+    "creatingConnection": "연결 중...",
+    "cancel": "취소"
+  },
+  "checkin": {
+    "button": "체크인",
+    "buttonDone": "체크인 완료",
+    "buttonPending": "체크인 중..."
+  },
+  "streak": {
+    "title": "스트릭",
+    "current": "연속 기록",
+    "longest": "개인 최고",
+    "days": "{{count}}일",
+    "days_plural": "{{count}}일",
+    "atRisk": "오늘 체크인하여 스트릭을 유지하세요!",
+    "nextCheckin": "다음 체크인까지 {{time}}"
+  },
+  "tier": {
+    "beginner": "백띠",
+    "apprentice": "청띠",
+    "journeyman": "자띠",
+    "master": "흑띠",
+    "belt": "{{tier}}"
+  },
+  "rewards": {
+    "title": "주간 보상",
+    "claimable": "{{amount}} $DOJO 수령 가능",
+    "claim": "보상 수령",
+    "claimed": "수령 완료",
+    "noClaim": "이번 주 보상 없음",
+    "tierEarned": "{{tier}}로 획득"
+  },
+  "swap": {
+    "title": "스왑",
+    "buy": "$DOJO 구매",
+    "sell": "$DOJO 판매",
+    "price": "현재 가격",
+    "amount": "수량"
+  },
+  "toast": {
+    "checkinPending": "체크인 중...",
+    "checkinSuccess": "체크인 완료!",
+    "checkinFailed": "체크인 실패",
+    "checkinDuplicate": "오늘은 이미 체크인했습니다",
+    "streakUpdated": "스트릭: {{count}}일",
+    "claimPending": "보상 수령 중...",
+    "claimSuccess": "보상을 수령했습니다!",
+    "claimFailed": "수령 실패"
+  },
+  "errors": {
+    "walletNotConnected": "지갑을 연결해주세요",
+    "transactionFailed": "트랜잭션 실패",
+    "networkError": "네트워크 오류. 다시 시도해주세요."
+  },
+  "footer": {
+    "builtOn": "Base에서 구축",
+    "poweredBy": "Sekigahara 제공"
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "app": {
+    "name": "DOJO",
+    "tagline": "Daily Practice. Onchain."
+  },
+  "nav": {
+    "home": "Home",
+    "swap": "Swap",
+    "about": "About"
+  },
+  "wallet": {
+    "connect": "Connect Wallet",
+    "disconnect": "Disconnect",
+    "wrongNetwork": "Switch to Base"
+  },
+  "auth": {
+    "signInWithFarcaster": "Sign In With Farcaster",
+    "orConnectWallet": "Or connect a wallet",
+    "scanQrCode": "Scan with Warpcast",
+    "openDirectly": "open directly",
+    "connectWithFarcaster": "Connect with Farcaster",
+    "creatingConnection": "Creating connection...",
+    "cancel": "Cancel"
+  },
+  "checkin": {
+    "button": "Check In",
+    "buttonDone": "Checked In",
+    "buttonPending": "Checking In..."
+  },
+  "streak": {
+    "title": "Your Streak",
+    "current": "Current Streak",
+    "longest": "Personal Best",
+    "days": "{{count}} day",
+    "days_plural": "{{count}} days",
+    "atRisk": "Check in today to keep your streak!",
+    "nextCheckin": "Next check-in in {{time}}"
+  },
+  "tier": {
+    "beginner": "Beginner",
+    "apprentice": "Apprentice",
+    "journeyman": "Journeyman",
+    "master": "Master",
+    "belt": "{{tier}} Belt"
+  },
+  "rewards": {
+    "title": "Weekly Rewards",
+    "claimable": "{{amount}} $DOJO available",
+    "claim": "Claim Rewards",
+    "claimed": "Claimed",
+    "noClaim": "No rewards this week",
+    "tierEarned": "Earned as {{tier}}"
+  },
+  "swap": {
+    "title": "Swap",
+    "buy": "Buy $DOJO",
+    "sell": "Sell $DOJO",
+    "price": "Current Price",
+    "amount": "Amount"
+  },
+  "toast": {
+    "checkinPending": "Checking in...",
+    "checkinSuccess": "Checked in!",
+    "checkinFailed": "Check-in failed",
+    "checkinDuplicate": "Already checked in today",
+    "streakUpdated": "Streak: {{count}} days",
+    "claimPending": "Claiming rewards...",
+    "claimSuccess": "Rewards claimed!",
+    "claimFailed": "Claim failed"
+  },
+  "errors": {
+    "walletNotConnected": "Please connect your wallet",
+    "transactionFailed": "Transaction failed",
+    "networkError": "Network error. Please try again."
+  },
+  "footer": {
+    "builtOn": "Built on Base",
+    "poweredBy": "Powered by Sekigahara"
+  }
+}

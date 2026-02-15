@@ -1,0 +1,80 @@
+{
+  "app": {
+    "name": "道場",
+    "tagline": "日々の修行。オンチェーンで。"
+  },
+  "nav": {
+    "home": "ホーム",
+    "swap": "スワップ",
+    "about": "概要"
+  },
+  "wallet": {
+    "connect": "ウォレット接続",
+    "disconnect": "切断",
+    "wrongNetwork": "Baseに切替"
+  },
+  "auth": {
+    "signInWithFarcaster": "Farcasterでサインイン",
+    "orConnectWallet": "またはウォレットで接続",
+    "scanQrCode": "Warpcastでスキャン",
+    "openDirectly": "直接開く",
+    "connectWithFarcaster": "Farcasterで接続",
+    "creatingConnection": "接続中...",
+    "cancel": "キャンセル"
+  },
+  "checkin": {
+    "button": "チェックイン",
+    "buttonDone": "チェックイン済み",
+    "buttonPending": "チェックイン中..."
+  },
+  "streak": {
+    "title": "ストリーク",
+    "current": "連続記録",
+    "longest": "自己ベスト",
+    "days": "{{count}}日",
+    "days_plural": "{{count}}日",
+    "atRisk": "今日チェックインしてストリークを守ろう！",
+    "nextCheckin": "次のチェックインまで{{time}}"
+  },
+  "tier": {
+    "beginner": "白帯",
+    "apprentice": "青帯",
+    "journeyman": "紫帯",
+    "master": "黒帯",
+    "belt": "{{tier}}"
+  },
+  "rewards": {
+    "title": "週間報酬",
+    "claimable": "{{amount}} $DOJO 獲得可能",
+    "claim": "報酬を受取",
+    "claimed": "受取済み",
+    "noClaim": "今週の報酬はありません",
+    "tierEarned": "{{tier}}として獲得"
+  },
+  "swap": {
+    "title": "スワップ",
+    "buy": "$DOJO を購入",
+    "sell": "$DOJO を売却",
+    "price": "現在価格",
+    "amount": "数量"
+  },
+  "toast": {
+    "checkinPending": "チェックイン中...",
+    "checkinSuccess": "チェックイン完了！",
+    "checkinFailed": "チェックイン失敗",
+    "checkinDuplicate": "本日はチェックイン済みです",
+    "streakUpdated": "ストリーク: {{count}}日",
+    "claimPending": "報酬を受取中...",
+    "claimSuccess": "報酬を受取りました！",
+    "claimFailed": "受取に失敗しました"
+  },
+  "errors": {
+    "walletNotConnected": "ウォレットを接続してください",
+    "transactionFailed": "トランザクション失敗",
+    "networkError": "ネットワークエラー。再試行してください。"
+  },
+  "footer": {
+    "builtOn": "Base上に構築",
+    "poweredBy": "Sekigahara提供"
+  }
+}
