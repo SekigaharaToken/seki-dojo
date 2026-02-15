@@ -73,6 +73,11 @@
     "transactionFailed": "Transaction failed",
     "networkError": "Network error. Please try again."
   },
+  "history": {
+    "title": "Check-In History",
+    "totalCheckins": "Total Check-Ins",
+    "noHistory": "No history yet"
+  },
   "footer": {
     "builtOn": "Built on Base",
     "poweredBy": "Powered by Sekigahara"

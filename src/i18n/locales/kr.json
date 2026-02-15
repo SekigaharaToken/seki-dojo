@@ -73,6 +73,11 @@
     "transactionFailed": "트랜잭션 실패",
     "networkError": "네트워크 오류. 다시 시도해주세요."
   },
+  "history": {
+    "title": "체크인 기록",
+    "totalCheckins": "총 체크인 수",
+    "noHistory": "기록이 없습니다"
+  },
   "footer": {
     "builtOn": "Base에서 구축",
     "poweredBy": "Sekigahara 제공"

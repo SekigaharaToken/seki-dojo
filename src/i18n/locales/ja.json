@@ -73,6 +73,11 @@
     "transactionFailed": "トランザクション失敗",
     "networkError": "ネットワークエラー。再試行してください。"
   },
+  "history": {
+    "title": "チェックイン履歴",
+    "totalCheckins": "合計チェックイン数",
+    "noHistory": "履歴がありません"
+  },
   "footer": {
     "builtOn": "Base上に構築",
     "poweredBy": "Sekigahara提供"
