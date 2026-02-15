@@ -29,12 +29,14 @@ export function CheckInButton() {
     return t("checkin.button");
   }
 
+  const showPulse = !!address && !hasCheckedInToday && !isPending && !streakLoading;
+
   return (
     <Button
       size="lg"
       onClick={handleClick}
       disabled={isDisabled}
-      className="min-w-48 text-lg"
+      className={`min-w-48 text-lg ${showPulse ? "animate-gentle-pulse" : ""}`}
     >
       {getLabel()}
     </Button>

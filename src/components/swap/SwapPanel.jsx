@@ -43,7 +43,7 @@ export function SwapPanel() {
 
   if (!address) {
     return (
-      <Card className="w-full max-w-sm">
+      <Card className="w-full max-w-sm animate-fade-in-up">
         <CardContent className="py-6 text-center">
           <p className="text-muted-foreground">{t("errors.walletNotConnected")}</p>
         </CardContent>
@@ -52,7 +52,7 @@ export function SwapPanel() {
   }
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full max-w-sm animate-fade-in-up">
       <CardHeader>
         <CardTitle className="text-center">{t("swap.title")}</CardTitle>
       </CardHeader>

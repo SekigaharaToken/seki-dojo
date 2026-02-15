@@ -13,7 +13,7 @@ export function StreakDisplay() {
     useStreak(address);
 
   return (
-    <Card>
+    <Card className="animate-fade-in-up">
       <CardHeader>
         <CardTitle>{t("streak.title")}</CardTitle>
       </CardHeader>

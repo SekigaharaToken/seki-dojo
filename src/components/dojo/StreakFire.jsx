@@ -1,6 +1,6 @@
 /**
  * Decorative flame icon that scales with streak length.
- * Pure CSS animation — no JS state.
+ * CSS flicker animation — no JS state.
  */
 export function StreakFire({ streak = 0 }) {
   if (streak <= 0) return null;
@@ -11,7 +11,7 @@ export function StreakFire({ streak = 0 }) {
   return (
     <span
       aria-hidden="true"
-      className="inline-block animate-pulse"
+      className="inline-block animate-flame-flicker"
       style={{ fontSize: `${scale}em` }}
     >
       🔥

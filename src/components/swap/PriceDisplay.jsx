@@ -12,7 +12,7 @@ export function PriceDisplay() {
   const { buyPrice, sellPrice, isLoading, isError } = useTokenPrice();
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full max-w-sm animate-fade-in-up">
       <CardHeader>
         <CardTitle className="text-center">{t("swap.price")}</CardTitle>
       </CardHeader>
