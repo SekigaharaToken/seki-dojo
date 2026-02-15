@@ -1,7 +1,28 @@
+import { lazy, Suspense } from "react";
+import { Routes, Route } from "react-router-dom";
+import { Header } from "@/components/layout/Header.jsx";
+import { Footer } from "@/components/layout/Footer.jsx";
+import { PageWrapper } from "@/components/layout/PageWrapper.jsx";
+import { LoginModal } from "@/components/auth/LoginModal.jsx";
+import { Skeleton } from "@/components/ui/skeleton.jsx";
+import HomePage from "@/pages/HomePage.jsx";
+
+const SwapPage = lazy(() => import("@/pages/SwapPage.jsx"));
+
 function App() {
   return (
-    <div>
-      <h1>DOJO</h1>
+    <div className="flex min-h-svh flex-col">
+      <Header />
+      <PageWrapper>
+        <Suspense fallback={<Skeleton className="h-64 w-full" />}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/swap" element={<SwapPage />} />
+          </Routes>
+        </Suspense>
+      </PageWrapper>
+      <Footer />
+      <LoginModal />
     </div>
   );
 }
