@@ -10,12 +10,14 @@ Part of the [Sekigahara](https://github.com/SekigaharaToken) ecosystem.
 2. **Build streaks** -- the DojoResolver contract tracks consecutive days automatically
 3. **Earn rewards** -- weekly Merkle distributions of $DOJO tokens, tiered by streak length
 
-| Tier | Streak | Belt | Reward |
-|------|--------|------|--------|
-| 1 | 1-6 days | White | 100 $DOJO |
-| 2 | 7-13 days | Blue | 150 $DOJO |
-| 3 | 14-29 days | Purple | 180 $DOJO |
-| 4 | 30+ days | Black | 200 $DOJO |
+| Tier | Streak | Belt | Weekly Reward |
+|------|--------|------|---------------|
+| 1 | 7-13 days | White | 100 $DOJO |
+| 2 | 14-29 days | Blue | 150 $DOJO |
+| 3 | 30-59 days | Purple | 180 $DOJO |
+| 4 | 60+ days | Black | 200 $DOJO |
+
+**Daily bonus:** On each check-in, claim 0.1-0.2% of your $DOJO holdings as a bonus. The rate scales linearly from 0.1% (day 1) to 0.2% (day 30+) based on streak length.
 
 No backend server. No admin keys. If the team disappears, the contracts and IPFS frontend keep working.
 
@@ -59,6 +61,7 @@ VITE_DOJO_RESOLVER_ADDRESS=            # DojoResolver contract
 VITE_DOJO_SCHEMA_UID=                  # EAS schema UID
 VITE_SEKI_TOKEN_ADDRESS=               # $SEKI token
 VITE_DOJO_TOKEN_ADDRESS=               # $DOJO token
+VITE_DAILY_BONUS_ADDRESS=              # DailyBonus contract
 VITE_PINATA_JWT=                       # Pinata JWT (for weekly distribution script)
 ```
 
@@ -74,7 +77,7 @@ src/
   i18n/            Translation config and locale files
   assets/          Static images and fonts
 contracts/
-  src/             Solidity sources (DojoResolver, DemoToken)
+  src/             Solidity sources (DojoResolver, DailyBonus, DemoToken)
 scripts/
   weekly-distribution/   Weekly reward pipeline
   e2e-test.sh            End-to-end test on Anvil fork
@@ -84,9 +87,12 @@ scripts/
 
 **DojoResolver** -- custom EAS SchemaResolver that enforces one check-in per UTC day and tracks streaks onchain. All state is publicly readable (`currentStreak`, `longestStreak`, `lastCheckIn`).
 
+**DailyBonus** -- trustless contract that pays a percentage of the caller's $DOJO holdings as a daily bonus. Rate scales from 0.1% to 0.2% over 30 days of streak. No admin keys; the operator just keeps it funded.
+
 **Deployed on Base Sepolia:**
 - DojoResolver: `0xA046B36f99a434CE30b14BB783310aF16D00009d`
-- EAS schema: `0xc3d5fa6...c6c0e`
+- DailyBonus: `0xdf1E7CE38d433E1Ef8429936D9014ecDB89eE4D1`
+- EAS schema: `0xc3d5fa683150402070fa90f53e23d4921826640823deed57d32cd53db62c6c0e`
 
 ## Weekly distribution
 
