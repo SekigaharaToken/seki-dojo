@@ -36,10 +36,9 @@ contracts/broadcast/
 # Playwright MCP
 .playwright-mcp/
 
-# Ignore stray .md files in root (keep README, CLAUDE, LICENSE explicitly tracked)
+# Ignore all .md in root except README
 /*.md
 !README.md
-!CLAUDE.md
 
 # Plan scratch files
 docs/plans/
