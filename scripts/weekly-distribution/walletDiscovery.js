@@ -24,11 +24,12 @@ const client = createPublicClient({
 /**
  * Discover all active DOJO wallets from EAS attestation logs.
  * Reads currentStreak + lastCheckIn from DojoResolver.
- * Filters to wallets active within the last 7 days.
+ * Filters to wallets active within the last 7 days (unless skipCutoff is true).
  *
+ * @param {{ skipCutoff?: boolean }} options
  * @returns {Promise<Array<{ address: string, currentStreak: number, lastCheckIn: number }>>}
  */
-export async function discoverWallets() {
+export async function discoverWallets({ skipCutoff = false } = {}) {
   const logs = await client.getLogs({
     address: EAS_ADDRESS,
     event: parseAbiItem(
@@ -72,6 +73,7 @@ export async function discoverWallets() {
   );
 
   // Filter to active wallets (checked in within last 7 days)
+  if (skipCutoff) return wallets.filter((w) => w.currentStreak > 0);
   return wallets.filter((w) => w.lastCheckIn >= cutoff);
 }
 

@@ -40,6 +40,8 @@ jobs:
           VITE_DOJO_TOKEN_ADDRESS: ${{ secrets.DOJO_TOKEN_ADDRESS }}
           VITE_DOJO_RESOLVER_ADDRESS: ${{ secrets.DOJO_RESOLVER_ADDRESS }}
           VITE_DOJO_SCHEMA_UID: ${{ secrets.DOJO_SCHEMA_UID }}
+          VITE_CHAIN_ID: "8453"
+          RPC_URL: ${{ secrets.RPC_URL }}
           WEEK_NUMBER: ${{ github.event.inputs.week_number || '' }}
         run: node scripts/weekly-distribution/index.js
 
