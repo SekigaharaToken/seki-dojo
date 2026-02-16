@@ -6,7 +6,7 @@ import {
   walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { farcasterMiniApp } from "@farcaster/miniapp-wagmi-connector";
-import { base } from "./chains.js";
+import { activeChain } from "./chains.js";
 
 /**
  * Detect if running inside an iframe (Farcaster MiniApp context).
@@ -40,10 +40,10 @@ const connectors = isInIframe()
   : rainbowConnectors;
 
 export const wagmiConfig = createConfig({
-  chains: [base],
+  chains: [activeChain],
   connectors,
   transports: {
-    [base.id]: http(),
+    [activeChain.id]: http(),
   },
   ssr: false,
 });

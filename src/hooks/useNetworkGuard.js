@@ -1,5 +1,5 @@
 import { useAccount, useSwitchChain } from "wagmi";
-import { base } from "@/config/chains.js";
+import { activeChain } from "@/config/chains.js";
 
 /**
  * Guards against wrong network. Returns isWrongNetwork flag
@@ -9,10 +9,10 @@ export function useNetworkGuard() {
   const { chainId, isConnected } = useAccount();
   const { switchChain } = useSwitchChain();
 
-  const isWrongNetwork = isConnected && chainId !== base.id;
+  const isWrongNetwork = isConnected && chainId !== activeChain.id;
 
   function switchToBase() {
-    switchChain({ chainId: base.id });
+    switchChain({ chainId: activeChain.id });
   }
 
   return { isWrongNetwork, switchToBase };

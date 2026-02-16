@@ -9,3 +9,6 @@ remappings = [
   "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
   "forge-std/=lib/forge-std/src/",
 ]
+
+[rpc_endpoints]
+base_sepolia = "https://sepolia.base.org"

@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { createPublicClient, http, parseAbiItem } from "viem";
-import { base } from "@/config/chains.js";
+import { activeChain } from "@/config/chains.js";
 import { EAS_ADDRESS, DOJO_SCHEMA_UID } from "@/config/contracts.js";
 import { SECONDS_PER_DAY } from "@/config/constants.js";
 
 const client = createPublicClient({
-  chain: base,
+  chain: activeChain,
   transport: http(),
 });
 
