@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button.jsx";
 import { useWalletAddress } from "@/hooks/useWalletAddress.js";
 import { useStreak } from "@/hooks/useStreak.js";
@@ -17,10 +18,11 @@ export function CheckInButton() {
 
   function handleClick() {
     if (!canTransact) {
+      toast.info(t("errors.walletNotConnected"));
       openLoginModal();
       return;
     }
-    checkIn();
+    checkIn().catch(() => {});
   }
 
   function getLabel() {

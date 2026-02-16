@@ -13,7 +13,7 @@ vi.mock("@/hooks/useStreak.js", () => ({
 }));
 
 // Mock useCheckIn
-const mockCheckIn = vi.fn();
+const mockCheckIn = vi.fn(() => Promise.resolve());
 const mockUseCheckIn = vi.fn(() => ({
   checkIn: mockCheckIn,
   isPending: false,
@@ -33,6 +33,12 @@ vi.mock("@/hooks/useWalletAddress.js", () => ({
 const mockOpenLoginModal = vi.fn();
 vi.mock("@/hooks/useLoginModal.js", () => ({
   useLoginModal: () => ({ openLoginModal: mockOpenLoginModal }),
+}));
+
+// Mock sonner
+const mockToastInfo = vi.fn();
+vi.mock("sonner", () => ({
+  toast: { info: (...args) => mockToastInfo(...args) },
 }));
 
 const { CheckInButton } = await import("@/components/dojo/CheckInButton.jsx");
@@ -68,10 +74,11 @@ describe("CheckInButton", () => {
     expect(screen.getByRole("button")).toHaveTextContent(/connect wallet/i);
   });
 
-  it("opens login modal when clicked with no wallet", () => {
+  it("opens login modal and shows toast when clicked with no wallet", () => {
     renderButton();
     fireEvent.click(screen.getByRole("button"));
     expect(mockOpenLoginModal).toHaveBeenCalledTimes(1);
+    expect(mockToastInfo).toHaveBeenCalledTimes(1);
     expect(mockCheckIn).not.toHaveBeenCalled();
   });
 
@@ -83,11 +90,12 @@ describe("CheckInButton", () => {
     expect(screen.getByRole("button")).toHaveTextContent(/check in/i);
   });
 
-  it("opens login modal when farcaster-only user clicks", () => {
+  it("opens login modal and shows toast when farcaster-only user clicks", () => {
     mockUseWalletAddress.mockReturnValue({ address: "0xFarcaster", isConnected: true, canTransact: false });
     renderButton();
     fireEvent.click(screen.getByRole("button"));
     expect(mockOpenLoginModal).toHaveBeenCalledTimes(1);
+    expect(mockToastInfo).toHaveBeenCalledTimes(1);
     expect(mockCheckIn).not.toHaveBeenCalled();
   });
 

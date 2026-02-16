@@ -19,6 +19,13 @@ export function useCheckIn() {
   const { writeContractAsync, isPending, isError, error } = useWriteContract();
 
   async function checkIn() {
+    if (!DOJO_SCHEMA_UID) {
+      toast.error(t("toast.checkinFailed"), {
+        description: t("errors.notConfigured"),
+      });
+      return;
+    }
+
     const day = Math.floor(Date.now() / 1000 / SECONDS_PER_DAY);
 
     const encodedData = encodeAbiParameters(

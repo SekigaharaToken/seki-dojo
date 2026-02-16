@@ -75,6 +75,7 @@
     "userRejected": "트랜잭션이 거부되었습니다",
     "contractRevert": "컨트랙트가 체크인을 거부: {{reason}}",
     "insufficientFunds": "가스비가 부족합니다",
+    "notConfigured": "DOJO 컨트랙트가 아직 배포되지 않았습니다",
     "unknown": "오류가 발생했습니다: {{message}}"
   },
   "history": {

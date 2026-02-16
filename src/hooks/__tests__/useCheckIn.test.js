@@ -42,6 +42,12 @@ vi.mock("viem", () => ({
   parseAbiParameters: vi.fn(() => []),
 }));
 
+// Mock contracts — provide non-empty schema UID so checkIn doesn't bail early
+vi.mock("@/config/contracts.js", () => ({
+  EAS_ADDRESS: "0x4200000000000000000000000000000000000021",
+  DOJO_SCHEMA_UID: "0xmockschemauid",
+}));
+
 // Mock @tanstack/react-query
 const mockInvalidateQueries = vi.fn();
 vi.mock("@tanstack/react-query", () => ({

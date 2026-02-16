@@ -75,6 +75,7 @@
     "userRejected": "トランザクションが拒否されました",
     "contractRevert": "コントラクトがチェックインを拒否: {{reason}}",
     "insufficientFunds": "ガス代が不足しています",
+    "notConfigured": "DOJOコントラクトはまだデプロイされていません",
     "unknown": "エラーが発生しました: {{message}}"
   },
   "history": {

@@ -75,6 +75,7 @@
     "userRejected": "Transaction was rejected",
     "contractRevert": "Contract rejected the check-in: {{reason}}",
     "insufficientFunds": "Insufficient funds for gas",
+    "notConfigured": "DOJO contracts are not deployed yet",
     "unknown": "Something went wrong: {{message}}"
   },
   "history": {
