@@ -1,9 +1,49 @@
-import { getDefaultConfig } from "@rainbow-me/rainbowkit";
+import { createConfig, http } from "wagmi";
+import { connectorsForWallets } from "@rainbow-me/rainbowkit";
+import {
+  metaMaskWallet,
+  coinbaseWallet,
+  walletConnectWallet,
+} from "@rainbow-me/rainbowkit/wallets";
+import { farcasterMiniApp } from "@farcaster/miniapp-wagmi-connector";
 import { base } from "./chains.js";
 
-export const wagmiConfig = getDefaultConfig({
-  appName: "DOJO",
-  projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || "placeholder",
+/**
+ * Detect if running inside an iframe (Farcaster MiniApp context).
+ */
+function isInIframe() {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.self !== window.top;
+  } catch {
+    return true;
+  }
+}
+
+const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || "placeholder";
+
+const rainbowConnectors = connectorsForWallets(
+  [
+    {
+      groupName: "Popular",
+      wallets: [metaMaskWallet, coinbaseWallet, walletConnectWallet],
+    },
+  ],
+  {
+    appName: "DOJO",
+    projectId,
+  },
+);
+
+const connectors = isInIframe()
+  ? [farcasterMiniApp(), ...rainbowConnectors]
+  : rainbowConnectors;
+
+export const wagmiConfig = createConfig({
   chains: [base],
+  connectors,
+  transports: {
+    [base.id]: http(),
+  },
   ssr: false,
 });

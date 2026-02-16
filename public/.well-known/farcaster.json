@@ -1,0 +1,15 @@
+{
+  "accountAssociation": {
+    "header": "",
+    "payload": "",
+    "signature": ""
+  },
+  "frame": {
+    "name": "DOJO",
+    "version": "0.0.1",
+    "iconUrl": "https://sekigahara.eth.limo/icon.png",
+    "homeUrl": "https://sekigahara.eth.limo",
+    "splashImageUrl": "https://sekigahara.eth.limo/icon.png",
+    "splashBackgroundColor": "#1C1917"
+  }
+}

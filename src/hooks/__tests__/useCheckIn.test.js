@@ -1,6 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 
+// Mock react-i18next
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({ t: (key, params) => params ? `${key}:${JSON.stringify(params)}` : key }),
+}));
+
+// Mock sonner
+const mockToastSuccess = vi.fn();
+const mockToastError = vi.fn();
+vi.mock("sonner", () => ({
+  toast: {
+    success: (...args) => mockToastSuccess(...args),
+    error: (...args) => mockToastError(...args),
+  },
+}));
+
 // Mock wagmi
 const mockWriteContractAsync = vi.fn();
 const mockUseWriteContract = vi.fn(() => ({
@@ -9,13 +24,16 @@ const mockUseWriteContract = vi.fn(() => ({
   isError: false,
   error: null,
 }));
-const mockUseAccount = vi.fn(() => ({
-  address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-}));
-
 vi.mock("wagmi", () => ({
   useWriteContract: (...args) => mockUseWriteContract(...args),
-  useAccount: (...args) => mockUseAccount(...args),
+}));
+
+const mockUseWalletAddress = vi.fn(() => ({
+  address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  isConnected: true,
+}));
+vi.mock("@/hooks/useWalletAddress.js", () => ({
+  useWalletAddress: (...args) => mockUseWalletAddress(...args),
 }));
 
 // Mock viem
@@ -97,7 +115,7 @@ describe("useCheckIn", () => {
     expect(request.data.recipient).toBe("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
   });
 
-  it("returns the transaction hash on success", async () => {
+  it("returns the transaction hash and fires success toast on success", async () => {
     const { result } = renderHook(() => useCheckIn());
 
     let txHash;
@@ -106,17 +124,25 @@ describe("useCheckIn", () => {
     });
 
     expect(txHash).toBe("0xmocktxhash");
+    expect(mockToastSuccess).toHaveBeenCalledTimes(1);
+    expect(mockToastSuccess).toHaveBeenCalledWith("toast.checkinSuccess");
   });
 
-  it("throws when writeContractAsync rejects", async () => {
-    mockWriteContractAsync.mockRejectedValueOnce(new Error("tx failed"));
+  it("throws and fires error toast when writeContractAsync rejects", async () => {
+    mockWriteContractAsync.mockRejectedValueOnce(new Error("User rejected the request."));
     const { result } = renderHook(() => useCheckIn());
 
     await expect(
       act(async () => {
         await result.current.checkIn();
       }),
-    ).rejects.toThrow("tx failed");
+    ).rejects.toThrow("User rejected the request.");
+
+    expect(mockToastError).toHaveBeenCalledTimes(1);
+    expect(mockToastError).toHaveBeenCalledWith(
+      "toast.checkinFailed",
+      expect.objectContaining({ description: expect.any(String) }),
+    );
   });
 
   it("returns isError state", () => {

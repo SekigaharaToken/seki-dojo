@@ -71,7 +71,11 @@
   "errors": {
     "walletNotConnected": "Please connect your wallet",
     "transactionFailed": "Transaction failed",
-    "networkError": "Network error. Please try again."
+    "networkError": "Network error. Please try again.",
+    "userRejected": "Transaction was rejected",
+    "contractRevert": "Contract rejected the check-in: {{reason}}",
+    "insufficientFunds": "Insufficient funds for gas",
+    "unknown": "Something went wrong: {{message}}"
   },
   "history": {
     "title": "Check-In History",

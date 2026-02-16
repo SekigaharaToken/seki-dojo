@@ -23,10 +23,10 @@ vi.mock("@/hooks/useCheckIn.js", () => ({
   useCheckIn: (...args) => mockUseCheckIn(...args),
 }));
 
-// Mock wagmi useAccount
-const mockUseAccount = vi.fn(() => ({ address: undefined }));
-vi.mock("wagmi", () => ({
-  useAccount: (...args) => mockUseAccount(...args),
+// Mock useWalletAddress
+const mockUseWalletAddress = vi.fn(() => ({ address: undefined, isConnected: false }));
+vi.mock("@/hooks/useWalletAddress.js", () => ({
+  useWalletAddress: (...args) => mockUseWalletAddress(...args),
 }));
 
 // Mock useLoginModal
@@ -58,7 +58,7 @@ describe("CheckInButton", () => {
       isPending: false,
       isError: false,
     });
-    mockUseAccount.mockReturnValue({ address: undefined });
+    mockUseWalletAddress.mockReturnValue({ address: undefined, isConnected: false, canTransact: false });
   });
 
   // ── Wallet not connected ──────────────────────────────────────────────
@@ -75,16 +75,32 @@ describe("CheckInButton", () => {
     expect(mockCheckIn).not.toHaveBeenCalled();
   });
 
+  // ── Farcaster-only (can't transact) ─────────────────────────────────
+
+  it("shows Check In when farcaster-only (has address but cannot transact yet)", () => {
+    mockUseWalletAddress.mockReturnValue({ address: "0xFarcaster", isConnected: true, canTransact: false });
+    renderButton();
+    expect(screen.getByRole("button")).toHaveTextContent(/check in/i);
+  });
+
+  it("opens login modal when farcaster-only user clicks", () => {
+    mockUseWalletAddress.mockReturnValue({ address: "0xFarcaster", isConnected: true, canTransact: false });
+    renderButton();
+    fireEvent.click(screen.getByRole("button"));
+    expect(mockOpenLoginModal).toHaveBeenCalledTimes(1);
+    expect(mockCheckIn).not.toHaveBeenCalled();
+  });
+
   // ── Ready state ───────────────────────────────────────────────────────
 
   it("shows Check In text when wallet is connected and not checked in today", () => {
-    mockUseAccount.mockReturnValue({ address: "0x1234" });
+    mockUseWalletAddress.mockReturnValue({ address: "0x1234", isConnected: true, canTransact: true });
     renderButton();
     expect(screen.getByRole("button")).toHaveTextContent(/check in/i);
   });
 
   it("calls checkIn when clicked in ready state", () => {
-    mockUseAccount.mockReturnValue({ address: "0x1234" });
+    mockUseWalletAddress.mockReturnValue({ address: "0x1234", isConnected: true, canTransact: true });
     renderButton();
     fireEvent.click(screen.getByRole("button"));
     expect(mockCheckIn).toHaveBeenCalledTimes(1);
@@ -92,8 +108,8 @@ describe("CheckInButton", () => {
 
   // ── Pending state ─────────────────────────────────────────────────────
 
-  it("shows pending text and is disabled while tx is pending", () => {
-    mockUseAccount.mockReturnValue({ address: "0x1234" });
+  it("shows pending text with spinner and is disabled while tx is pending", () => {
+    mockUseWalletAddress.mockReturnValue({ address: "0x1234", isConnected: true, canTransact: true });
     mockUseCheckIn.mockReturnValue({
       checkIn: mockCheckIn,
       isPending: true,
@@ -103,12 +119,14 @@ describe("CheckInButton", () => {
     const button = screen.getByRole("button");
     expect(button).toHaveTextContent(/checking in/i);
     expect(button).toBeDisabled();
+    // Spinner icon should be present
+    expect(button.querySelector("svg")).toBeTruthy();
   });
 
   // ── Done state ────────────────────────────────────────────────────────
 
   it("shows Checked In text and is disabled when already checked in", () => {
-    mockUseAccount.mockReturnValue({ address: "0x1234" });
+    mockUseWalletAddress.mockReturnValue({ address: "0x1234", isConnected: true, canTransact: true });
     mockUseStreak.mockReturnValue({
       hasCheckedInToday: true,
       currentStreak: 5,
@@ -123,7 +141,7 @@ describe("CheckInButton", () => {
   // ── Loading state ─────────────────────────────────────────────────────
 
   it("is disabled when streak data is loading", () => {
-    mockUseAccount.mockReturnValue({ address: "0x1234" });
+    mockUseWalletAddress.mockReturnValue({ address: "0x1234", isConnected: true, canTransact: true });
     mockUseStreak.mockReturnValue({
       hasCheckedInToday: false,
       currentStreak: 0,

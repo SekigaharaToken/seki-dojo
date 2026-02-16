@@ -7,6 +7,7 @@ import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { AuthKitProvider } from "@farcaster/auth-kit";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner.jsx";
+import { MiniAppAutoConnect } from "@/components/auth/MiniAppAutoConnect.jsx";
 import { FarcasterProvider } from "@/context/FarcasterProvider.jsx";
 import { LoginModalProvider } from "@/context/LoginModalContext.jsx";
 import { wagmiConfig } from "@/config/wagmi.js";
@@ -35,6 +36,7 @@ createRoot(document.getElementById("root")).render(
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       <WagmiProvider config={wagmiConfig}>
         <QueryClientProvider client={queryClient}>
+          <MiniAppAutoConnect />
           <AuthKitProvider config={authKitConfig}>
             <RainbowKitProvider
               theme={darkTheme({

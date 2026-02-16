@@ -71,7 +71,11 @@
   "errors": {
     "walletNotConnected": "지갑을 연결해주세요",
     "transactionFailed": "트랜잭션 실패",
-    "networkError": "네트워크 오류. 다시 시도해주세요."
+    "networkError": "네트워크 오류. 다시 시도해주세요.",
+    "userRejected": "트랜잭션이 거부되었습니다",
+    "contractRevert": "컨트랙트가 체크인을 거부: {{reason}}",
+    "insufficientFunds": "가스비가 부족합니다",
+    "unknown": "오류가 발생했습니다: {{message}}"
   },
   "history": {
     "title": "체크인 기록",

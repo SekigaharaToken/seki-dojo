@@ -1,21 +1,22 @@
 import { useTranslation } from "react-i18next";
-import { useAccount } from "wagmi";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button.jsx";
+import { useWalletAddress } from "@/hooks/useWalletAddress.js";
 import { useStreak } from "@/hooks/useStreak.js";
 import { useCheckIn } from "@/hooks/useCheckIn.js";
 import { useLoginModal } from "@/hooks/useLoginModal.js";
 
 export function CheckInButton() {
   const { t } = useTranslation();
-  const { address } = useAccount();
+  const { address, canTransact } = useWalletAddress();
   const { hasCheckedInToday, isLoading: streakLoading } = useStreak(address);
   const { checkIn, isPending } = useCheckIn();
   const { openLoginModal } = useLoginModal();
 
-  const isDisabled = isPending || hasCheckedInToday || (!!address && streakLoading);
+  const isDisabled = isPending || hasCheckedInToday || (canTransact && streakLoading);
 
   function handleClick() {
-    if (!address) {
+    if (!canTransact) {
       openLoginModal();
       return;
     }
@@ -29,7 +30,7 @@ export function CheckInButton() {
     return t("checkin.button");
   }
 
-  const showPulse = !!address && !hasCheckedInToday && !isPending && !streakLoading;
+  const showPulse = canTransact && !hasCheckedInToday && !isPending && !streakLoading;
 
   return (
     <Button
@@ -38,6 +39,9 @@ export function CheckInButton() {
       disabled={isDisabled}
       className={`min-w-48 text-lg ${showPulse ? "animate-gentle-pulse" : ""}`}
     >
+      {isPending && (
+        <Loader2 className="mr-2 size-5 animate-spin" aria-hidden="true" />
+      )}
       {getLabel()}
     </Button>
   );

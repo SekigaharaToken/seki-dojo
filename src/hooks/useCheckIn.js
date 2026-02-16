@@ -1,15 +1,21 @@
-import { useWriteContract, useAccount } from "wagmi";
+import { useWriteContract } from "wagmi";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
+import { useWalletAddress } from "@/hooks/useWalletAddress.js";
 import { encodeAbiParameters, parseAbiParameters } from "viem";
 import { EAS_ADDRESS, DOJO_SCHEMA_UID } from "@/config/contracts.js";
 import { easAbi } from "@/config/abis/eas.js";
 import { APP_IDENTIFIER, SECONDS_PER_DAY } from "@/config/constants.js";
+import { parseContractError } from "@/lib/parseContractError.js";
 
 /**
  * Hook for performing a daily check-in attestation via EAS.
  * Calls EAS.attest() with the DOJO schema.
+ * Fires toast notifications on success and failure.
  */
 export function useCheckIn() {
-  const { address } = useAccount();
+  const { t } = useTranslation();
+  const { address } = useWalletAddress();
   const { writeContractAsync, isPending, isError, error } = useWriteContract();
 
   async function checkIn() {
@@ -20,26 +26,35 @@ export function useCheckIn() {
       [APP_IDENTIFIER, day],
     );
 
-    const hash = await writeContractAsync({
-      address: EAS_ADDRESS,
-      abi: easAbi,
-      functionName: "attest",
-      args: [
-        {
-          schema: DOJO_SCHEMA_UID,
-          data: {
-            recipient: address,
-            expirationTime: 0n,
-            revocable: false,
-            refUID: "0x0000000000000000000000000000000000000000000000000000000000000000",
-            data: encodedData,
-            value: 0n,
+    try {
+      const hash = await writeContractAsync({
+        address: EAS_ADDRESS,
+        abi: easAbi,
+        functionName: "attest",
+        args: [
+          {
+            schema: DOJO_SCHEMA_UID,
+            data: {
+              recipient: address,
+              expirationTime: 0n,
+              revocable: false,
+              refUID: "0x0000000000000000000000000000000000000000000000000000000000000000",
+              data: encodedData,
+              value: 0n,
+            },
           },
-        },
-      ],
-    });
+        ],
+      });
 
-    return hash;
+      toast.success(t("toast.checkinSuccess"));
+      return hash;
+    } catch (err) {
+      const { key, params } = parseContractError(err);
+      toast.error(t("toast.checkinFailed"), {
+        description: t(key, params),
+      });
+      throw err;
+    }
   }
 
   return {

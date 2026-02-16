@@ -2,17 +2,62 @@
  * FarcasterProvider — React context for Farcaster SIWF state.
  *
  * Adapted from SecondOrder (commit 87e0d786).
- * Simplified: No backend JWT — DOJO is fully static/onchain.
- * Provides Farcaster profile state from auth-kit's useProfile().
+ * No backend JWT — DOJO is fully static/onchain.
+ * Persists profile to sessionStorage so identity survives page reload.
  */
 
-import { useMemo, useContext, useCallback, useState } from "react";
-import { useProfile } from "@farcaster/auth-kit";
+import { useEffect, useMemo, useCallback, useState } from "react";
+import { useProfile, useSignIn } from "@farcaster/auth-kit";
 import FarcasterContext from "./farcasterContext.js";
 
+const PROFILE_STORAGE_KEY = "dojo:farcaster_profile";
+
 export const FarcasterProvider = ({ children }) => {
-  const { isAuthenticated, profile } = useProfile();
+  const { isAuthenticated: isAuthKitAuthenticated, profile: authKitProfile } =
+    useProfile();
+  const { signOut } = useSignIn({});
   const [error, setError] = useState(null);
+
+  // Restore profile from sessionStorage on mount
+  const [storedProfile, setStoredProfile] = useState(() => {
+    try {
+      const stored = sessionStorage.getItem(PROFILE_STORAGE_KEY);
+      if (stored) return JSON.parse(stored);
+    } catch {
+      // noop
+    }
+    return null;
+  });
+
+  // When auth-kit provides a fresh profile, persist it
+  useEffect(() => {
+    if (isAuthKitAuthenticated && authKitProfile) {
+      setStoredProfile(authKitProfile);
+      try {
+        sessionStorage.setItem(
+          PROFILE_STORAGE_KEY,
+          JSON.stringify(authKitProfile),
+        );
+      } catch {
+        // noop
+      }
+    }
+  }, [isAuthKitAuthenticated, authKitProfile]);
+
+  // Clear stored profile on explicit sign-out
+  const handleSignOut = useCallback(() => {
+    setStoredProfile(null);
+    try {
+      sessionStorage.removeItem(PROFILE_STORAGE_KEY);
+    } catch {
+      // noop
+    }
+    signOut();
+  }, [signOut]);
+
+  // Use auth-kit profile when live, fall back to stored profile
+  const isAuthenticated = isAuthKitAuthenticated || storedProfile !== null;
+  const profile = (isAuthKitAuthenticated && authKitProfile) || storedProfile;
 
   /**
    * Generate an alphanumeric nonce for SIWF.
@@ -34,8 +79,9 @@ export const FarcasterProvider = ({ children }) => {
       error,
       generateNonce,
       clearError,
+      signOut: handleSignOut,
     }),
-    [isAuthenticated, profile, error, generateNonce, clearError],
+    [isAuthenticated, profile, error, generateNonce, clearError, handleSignOut],
   );
 
   return (

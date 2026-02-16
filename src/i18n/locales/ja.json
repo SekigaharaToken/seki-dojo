@@ -71,7 +71,11 @@
   "errors": {
     "walletNotConnected": "ウォレットを接続してください",
     "transactionFailed": "トランザクション失敗",
-    "networkError": "ネットワークエラー。再試行してください。"
+    "networkError": "ネットワークエラー。再試行してください。",
+    "userRejected": "トランザクションが拒否されました",
+    "contractRevert": "コントラクトがチェックインを拒否: {{reason}}",
+    "insufficientFunds": "ガス代が不足しています",
+    "unknown": "エラーが発生しました: {{message}}"
   },
   "history": {
     "title": "チェックイン履歴",
