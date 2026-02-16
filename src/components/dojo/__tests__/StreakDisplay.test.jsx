@@ -39,7 +39,7 @@ describe("StreakDisplay", () => {
       currentStreak: 14,
       longestStreak: 20,
       hasCheckedInToday: true,
-      currentTier: { id: 3, nameKey: "tier.journeyman", color: "tier-purple" },
+      currentTier: { id: 2, nameKey: "tier.blueBelt", color: "tier-blue" },
       isLoading: false,
       isStreakAtRisk: false,
     });
@@ -52,7 +52,7 @@ describe("StreakDisplay", () => {
       currentStreak: 5,
       longestStreak: 20,
       hasCheckedInToday: false,
-      currentTier: { id: 1, nameKey: "tier.beginner", color: "tier-white" },
+      currentTier: { id: 1, nameKey: "tier.whiteBelt", color: "tier-white" },
       isLoading: false,
       isStreakAtRisk: false,
     });
@@ -65,7 +65,7 @@ describe("StreakDisplay", () => {
       currentStreak: 5,
       longestStreak: 5,
       hasCheckedInToday: false,
-      currentTier: { id: 1, nameKey: "tier.beginner", color: "tier-white" },
+      currentTier: { id: 1, nameKey: "tier.whiteBelt", color: "tier-white" },
       isLoading: false,
       isStreakAtRisk: true,
     });

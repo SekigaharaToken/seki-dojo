@@ -41,6 +41,22 @@ vi.mock("@/hooks/useLoginModal.js", () => ({
   useLoginModal: () => ({ openLoginModal: mockOpenLoginModal }),
 }));
 
+// Mock useDailyBonus
+const mockClaimBonus = vi.fn(() => Promise.resolve());
+const mockUseDailyBonus = vi.fn(() => ({
+  canClaim: false,
+  estimatedBonus: 0n,
+  formattedBonus: "0",
+  bonusRatePercent: 0.1,
+  claim: mockClaimBonus,
+  isPending: false,
+  isConfigured: false,
+  dojoBalance: 0n,
+}));
+vi.mock("@/hooks/useDailyBonus.js", () => ({
+  useDailyBonus: (...args) => mockUseDailyBonus(...args),
+}));
+
 // Mock RainbowKit connect modal
 const mockOpenConnectModal = vi.fn();
 vi.mock("@rainbow-me/rainbowkit", () => ({

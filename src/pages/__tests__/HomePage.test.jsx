@@ -53,6 +53,21 @@ vi.mock("@/hooks/useClaim.js", () => ({
   }),
 }));
 
+vi.mock("@/hooks/useDailyBonus.js", () => ({
+  useDailyBonus: () => ({
+    canClaim: false,
+    canClaimLoading: false,
+    estimatedBonus: 0n,
+    formattedBonus: "0",
+    dojoBalance: 0n,
+    bonusRate: 10,
+    bonusRatePercent: 0.1,
+    claim: vi.fn(),
+    isPending: false,
+    isConfigured: false,
+  }),
+}));
+
 // Dynamic import after mocks
 const HomePage = (await import("@/pages/HomePage.jsx")).default;
 

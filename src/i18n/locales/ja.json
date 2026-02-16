@@ -37,11 +37,20 @@
     "nextCheckin": "次のチェックインまで{{time}}"
   },
   "tier": {
-    "beginner": "白帯",
-    "apprentice": "青帯",
-    "journeyman": "紫帯",
-    "master": "黒帯",
-    "belt": "{{tier}}"
+    "whiteBelt": "白帯",
+    "blueBelt": "青帯",
+    "purpleBelt": "紫帯",
+    "blackBelt": "黒帯"
+  },
+  "dailyBonus": {
+    "title": "デイリーボーナス",
+    "rate": "保有量の{{rate}}%",
+    "estimated": "約{{amount}} $DOJO",
+    "claim": "ボーナス受取",
+    "claimed": "本日受取済み",
+    "notCheckedIn": "先にチェックインしてください",
+    "noBalance": "$DOJOを保有してデイリーボーナスを獲得",
+    "empty": "コントラクトへの入金が必要です"
   },
   "rewards": {
     "title": "週間報酬",
@@ -66,7 +75,10 @@
     "streakUpdated": "ストリーク: {{count}}日",
     "claimPending": "報酬を受取中...",
     "claimSuccess": "報酬を受取りました！",
-    "claimFailed": "受取に失敗しました"
+    "claimFailed": "受取に失敗しました",
+    "bonusPending": "デイリーボーナスを受取中...",
+    "bonusSuccess": "デイリーボーナスを受取りました！",
+    "bonusFailed": "ボーナスの受取に失敗しました"
   },
   "errors": {
     "walletNotConnected": "ウォレットを接続してください",

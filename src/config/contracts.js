@@ -46,3 +46,7 @@ export const SEKI_TOKEN_ADDRESS =
   getEnv("VITE_SEKI_TOKEN_ADDRESS", "");
 export const DOJO_TOKEN_ADDRESS =
   getEnv("VITE_DOJO_TOKEN_ADDRESS", "");
+
+// DailyBonus contract (loaded from env — set after deployment)
+export const DAILY_BONUS_ADDRESS =
+  getEnv("VITE_DAILY_BONUS_ADDRESS", "");

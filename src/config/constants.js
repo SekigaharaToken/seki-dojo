@@ -2,42 +2,48 @@
  * App-wide constants.
  */
 
-// Canonical tier rewards (from PRD section 5.2)
+// Weekly reward tiers — minimum 7-day streak to qualify
 // Tier 1: 100, Tier 2: 150, Tier 3: 180, Tier 4: 200
 export const STREAK_TIERS = [
   {
     id: 1,
-    min: 1,
-    max: 6,
+    min: 7,
+    max: 13,
     reward: 100,
-    nameKey: "tier.beginner",
+    nameKey: "tier.whiteBelt",
     color: "tier-white",
   },
   {
     id: 2,
-    min: 7,
-    max: 13,
+    min: 14,
+    max: 29,
     reward: 150,
-    nameKey: "tier.apprentice",
+    nameKey: "tier.blueBelt",
     color: "tier-blue",
   },
   {
     id: 3,
-    min: 14,
-    max: 29,
+    min: 30,
+    max: 59,
     reward: 180,
-    nameKey: "tier.journeyman",
+    nameKey: "tier.purpleBelt",
     color: "tier-purple",
   },
   {
     id: 4,
-    min: 30,
+    min: 60,
     max: Infinity,
     reward: 200,
-    nameKey: "tier.master",
+    nameKey: "tier.blackBelt",
     color: "tier-black",
   },
 ];
+
+// Daily bonus constants (holdings-based)
+export const DAILY_BONUS_BASE_RATE = 10; // 0.1% in basis points
+export const DAILY_BONUS_MAX_RATE = 20; // 0.2% in basis points
+export const DAILY_BONUS_RAMP_DAYS = 30; // days to reach max rate
+export const BASIS_POINTS = 10_000;
 
 /**
  * Get the tier for a given streak count.

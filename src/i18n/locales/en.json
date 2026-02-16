@@ -37,11 +37,20 @@
     "nextCheckin": "Next check-in in {{time}}"
   },
   "tier": {
-    "beginner": "Beginner",
-    "apprentice": "Apprentice",
-    "journeyman": "Journeyman",
-    "master": "Master",
-    "belt": "{{tier}} Belt"
+    "whiteBelt": "White Belt",
+    "blueBelt": "Blue Belt",
+    "purpleBelt": "Purple Belt",
+    "blackBelt": "Black Belt"
+  },
+  "dailyBonus": {
+    "title": "Daily Bonus",
+    "rate": "{{rate}}% of holdings",
+    "estimated": "~{{amount}} $DOJO",
+    "claim": "Claim Bonus",
+    "claimed": "Claimed Today",
+    "notCheckedIn": "Check in first",
+    "noBalance": "Hold $DOJO to earn daily bonus",
+    "empty": "Contract needs funding"
   },
   "rewards": {
     "title": "Weekly Rewards",
@@ -66,7 +75,10 @@
     "streakUpdated": "Streak: {{count}} days",
     "claimPending": "Claiming rewards...",
     "claimSuccess": "Rewards claimed!",
-    "claimFailed": "Claim failed"
+    "claimFailed": "Claim failed",
+    "bonusPending": "Claiming daily bonus...",
+    "bonusSuccess": "Daily bonus claimed!",
+    "bonusFailed": "Bonus claim failed"
   },
   "errors": {
     "walletNotConnected": "Please connect your wallet",

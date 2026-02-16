@@ -14,8 +14,8 @@ function renderBadge(props) {
 
 describe("TierBadge", () => {
   it("renders the tier name from i18n key", () => {
-    renderBadge({ tier: { id: 1, nameKey: "tier.beginner", color: "tier-white" } });
-    expect(screen.getByText(/beginner/i)).toBeInTheDocument();
+    renderBadge({ tier: { id: 1, nameKey: "tier.whiteBelt", color: "tier-white" } });
+    expect(screen.getByText(/white belt/i)).toBeInTheDocument();
   });
 
   it("renders nothing when tier is null", () => {
@@ -23,8 +23,8 @@ describe("TierBadge", () => {
     expect(container.textContent).toBe("");
   });
 
-  it("renders master tier", () => {
-    renderBadge({ tier: { id: 4, nameKey: "tier.master", color: "tier-black" } });
-    expect(screen.getByText(/master/i)).toBeInTheDocument();
+  it("renders black belt tier", () => {
+    renderBadge({ tier: { id: 4, nameKey: "tier.blackBelt", color: "tier-black" } });
+    expect(screen.getByText(/black belt/i)).toBeInTheDocument();
   });
 });

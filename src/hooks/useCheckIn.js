@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useWalletAddress } from "@/hooks/useWalletAddress.js";
+import { useDailyBonus } from "@/hooks/useDailyBonus.js";
 import {
   encodeAbiParameters,
   parseAbiParameters,
@@ -22,16 +23,24 @@ const client = createPublicClient({
 });
 
 /**
- * Hook for performing a daily check-in attestation via EAS.
- * Calls EAS.attest() with the DOJO schema.
- * After tx confirms, queries the attestation log from that block
- * and appends it to the checkInHistory cache.
+ * Hook for performing a daily check-in attestation via EAS,
+ * then auto-claiming the daily holdings bonus if available.
+ *
+ * Two-step flow:
+ * 1. EAS attestation (existing behavior)
+ * 2. If attestation succeeds AND user has DOJO holdings → claimDailyBonus()
  */
 export function useCheckIn() {
   const { t } = useTranslation();
   const { address } = useWalletAddress();
   const queryClient = useQueryClient();
   const { writeContractAsync, isPending, isError, error } = useWriteContract();
+  const {
+    estimatedBonus,
+    formattedBonus,
+    claim: claimBonus,
+    isConfigured: bonusConfigured,
+  } = useDailyBonus();
 
   async function checkIn() {
     if (!DOJO_SCHEMA_UID) {
@@ -100,9 +109,19 @@ export function useCheckIn() {
           );
         })
         .catch(() => {
-          // Fall back to full invalidation if targeted query fails
           queryClient.invalidateQueries({ queryKey: ["checkInHistory"] });
         });
+
+      // Step 2: Auto-claim daily bonus if configured and user has holdings
+      if (bonusConfigured && estimatedBonus > 0n) {
+        try {
+          await claimBonus();
+          toast.success(t("toast.bonusSuccess", { amount: formattedBonus }));
+        } catch {
+          // Attestation already succeeded — don't fail the whole check-in
+          toast.error(t("toast.bonusFailed"));
+        }
+      }
 
       return hash;
     } catch (err) {

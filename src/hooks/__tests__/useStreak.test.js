@@ -85,20 +85,27 @@ describe("useStreak", () => {
     expect(result.current.currentTier).toBeNull();
   });
 
-  it("returns beginner tier for streak 1-6", () => {
+  it("returns null tier for streak below minimum (1-6)", () => {
     mockResolverState({ currentStreak: 3n });
     const { result } = renderHook(() => useStreak("0x1234567890abcdef1234567890abcdef12345678"));
 
-    expect(result.current.currentTier.id).toBe(1);
-    expect(result.current.currentTier.nameKey).toBe("tier.beginner");
+    expect(result.current.currentTier).toBeNull();
   });
 
-  it("returns master tier for streak 30+", () => {
-    mockResolverState({ currentStreak: 45n });
+  it("returns White Belt tier for streak 7-13", () => {
+    mockResolverState({ currentStreak: 10n });
+    const { result } = renderHook(() => useStreak("0x1234567890abcdef1234567890abcdef12345678"));
+
+    expect(result.current.currentTier.id).toBe(1);
+    expect(result.current.currentTier.nameKey).toBe("tier.whiteBelt");
+  });
+
+  it("returns Black Belt tier for streak 60+", () => {
+    mockResolverState({ currentStreak: 65n });
     const { result } = renderHook(() => useStreak("0x1234567890abcdef1234567890abcdef12345678"));
 
     expect(result.current.currentTier.id).toBe(4);
-    expect(result.current.currentTier.nameKey).toBe("tier.master");
+    expect(result.current.currentTier.nameKey).toBe("tier.blackBelt");
   });
 
   // ── Derived: isStreakAtRisk ────────────────────────────────────────────

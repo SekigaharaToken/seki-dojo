@@ -95,10 +95,10 @@ describe("walletDiscovery", () => {
 
   it("buckets wallets into correct tiers", () => {
     const wallets = [
-      { address: "0xA", currentStreak: 3 },  // Tier 1 (1-6)
-      { address: "0xB", currentStreak: 10 }, // Tier 2 (7-13)
-      { address: "0xC", currentStreak: 20 }, // Tier 3 (14-29)
-      { address: "0xD", currentStreak: 45 }, // Tier 4 (30+)
+      { address: "0xA", currentStreak: 10 }, // Tier 1 (7-13)
+      { address: "0xB", currentStreak: 20 }, // Tier 2 (14-29)
+      { address: "0xC", currentStreak: 45 }, // Tier 3 (30-59)
+      { address: "0xD", currentStreak: 90 }, // Tier 4 (60+)
     ];
 
     const buckets = bucketByTier(wallets);
@@ -109,7 +109,7 @@ describe("walletDiscovery", () => {
   });
 
   it("returns empty arrays for tiers with no wallets", () => {
-    const wallets = [{ address: "0xA", currentStreak: 3 }];
+    const wallets = [{ address: "0xA", currentStreak: 10 }];
     const buckets = bucketByTier(wallets);
     expect(buckets[1]).toHaveLength(1);
     expect(buckets[2]).toHaveLength(0);
@@ -117,13 +117,14 @@ describe("walletDiscovery", () => {
     expect(buckets[4]).toHaveLength(0);
   });
 
-  it("excludes wallets with streak 0", () => {
+  it("excludes wallets with streak below minimum tier", () => {
     const wallets = [
       { address: "0xA", currentStreak: 0 },
-      { address: "0xB", currentStreak: 1 },
+      { address: "0xB", currentStreak: 3 },
+      { address: "0xC", currentStreak: 7 },
     ];
     const buckets = bucketByTier(wallets);
     expect(buckets[1]).toHaveLength(1);
-    expect(buckets[1][0].address).toBe("0xB");
+    expect(buckets[1][0].address).toBe("0xC");
   });
 });
