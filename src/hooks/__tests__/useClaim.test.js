@@ -12,14 +12,17 @@ const mockUseReadContract = vi.fn(() => ({
   data: false, // isClaimed = false
   isLoading: false,
 }));
-const mockUseAccount = vi.fn(() => ({
-  address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-}));
-
 vi.mock("wagmi", () => ({
   useWriteContract: (...args) => mockUseWriteContract(...args),
   useReadContract: (...args) => mockUseReadContract(...args),
-  useAccount: (...args) => mockUseAccount(...args),
+}));
+
+const mockUseWalletAddress = vi.fn(() => ({
+  address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  isConnected: true,
+}));
+vi.mock("@/hooks/useWalletAddress.js", () => ({
+  useWalletAddress: (...args) => mockUseWalletAddress(...args),
 }));
 
 const { useClaim } = await import("@/hooks/useClaim.js");

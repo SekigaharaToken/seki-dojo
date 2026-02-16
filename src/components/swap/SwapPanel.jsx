@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useAccount } from "wagmi";
+import { useWalletAddress } from "@/hooks/useWalletAddress.js";
 import { mintclub, wei } from "mint.club-v2-sdk";
 import { DOJO_TOKEN_ADDRESS } from "@/config/contracts.js";
 import {
@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
  */
 export function SwapPanel() {
   const { t } = useTranslation();
-  const { address } = useAccount();
+  const { address, canTransact } = useWalletAddress();
   const [mode, setMode] = useState("buy");
   const [amount, setAmount] = useState("");
   const [isPending, setIsPending] = useState(false);
@@ -41,7 +41,7 @@ export function SwapPanel() {
     }
   }
 
-  if (!address) {
+  if (!canTransact) {
     return (
       <Card className="w-full max-w-sm animate-fade-in-up">
         <CardContent className="py-6 text-center">

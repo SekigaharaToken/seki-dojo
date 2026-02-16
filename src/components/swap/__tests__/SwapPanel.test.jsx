@@ -22,12 +22,14 @@ vi.mock("mint.club-v2-sdk", () => ({
   wei: (num) => BigInt(num) * 10n ** 18n,
 }));
 
-const mockUseAccount = vi.fn(() => ({
+const mockUseWalletAddress = vi.fn(() => ({
   address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  isConnected: true,
+  canTransact: true,
 }));
 
-vi.mock("wagmi", () => ({
-  useAccount: (...args) => mockUseAccount(...args),
+vi.mock("@/hooks/useWalletAddress.js", () => ({
+  useWalletAddress: (...args) => mockUseWalletAddress(...args),
 }));
 
 const { SwapPanel } = await import("@/components/swap/SwapPanel.jsx");
@@ -39,8 +41,10 @@ describe("SwapPanel", () => {
     mockSell.mockResolvedValue("0xselltxhash");
     mockGetBuyEstimation.mockResolvedValue([50000000000000000n]);
     mockGetSellEstimation.mockResolvedValue([45000000000000000n]);
-    mockUseAccount.mockReturnValue({
+    mockUseWalletAddress.mockReturnValue({
       address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      isConnected: true,
+      canTransact: true,
     });
   });
 
@@ -86,7 +90,7 @@ describe("SwapPanel", () => {
   });
 
   it("shows connect wallet message when not connected", () => {
-    mockUseAccount.mockReturnValue({ address: undefined });
+    mockUseWalletAddress.mockReturnValue({ address: undefined, isConnected: false });
     render(<SwapPanel />, { wrapper: TestWrapper });
     expect(screen.getByText(/connect/i)).toBeInTheDocument();
   });

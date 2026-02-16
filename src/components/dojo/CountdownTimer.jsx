@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useAccount } from "wagmi";
+import { useWalletAddress } from "@/hooks/useWalletAddress.js";
 import { useStreak } from "@/hooks/useStreak.js";
 import { SECONDS_PER_DAY } from "@/config/constants.js";
 
@@ -13,7 +13,7 @@ function formatTime(seconds) {
 
 export function CountdownTimer() {
   const { t } = useTranslation();
-  const { address } = useAccount();
+  const { address } = useWalletAddress();
   const { hasCheckedInToday, timeUntilNextCheckIn } = useStreak(address);
   const [remaining, setRemaining] = useState(timeUntilNextCheckIn);
 

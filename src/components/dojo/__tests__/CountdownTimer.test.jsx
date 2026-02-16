@@ -7,8 +7,8 @@ vi.mock("@/hooks/useStreak.js", () => ({
   useStreak: (...args) => mockUseStreak(...args),
 }));
 
-vi.mock("wagmi", () => ({
-  useAccount: () => ({ address: "0x1234" }),
+vi.mock("@/hooks/useWalletAddress.js", () => ({
+  useWalletAddress: () => ({ address: "0x1234", isConnected: true }),
 }));
 
 const { CountdownTimer } = await import("@/components/dojo/CountdownTimer.jsx");

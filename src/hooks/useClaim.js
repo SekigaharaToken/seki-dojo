@@ -1,4 +1,5 @@
-import { useWriteContract, useReadContract, useAccount } from "wagmi";
+import { useWriteContract, useReadContract } from "wagmi";
+import { useWalletAddress } from "@/hooks/useWalletAddress.js";
 import { MINT_CLUB } from "@/config/contracts.js";
 import { merkleDistributorAbi } from "@/config/abis/merkleDistributor.js";
 
@@ -9,7 +10,7 @@ import { merkleDistributorAbi } from "@/config/abis/merkleDistributor.js";
  * @returns {{ claim: Function|null, isClaimed: boolean, isClaimedLoading: boolean, isPending: boolean }}
  */
 export function useClaim({ distributionId, proof }) {
-  const { address } = useAccount();
+  const { address } = useWalletAddress();
   const { writeContractAsync, isPending } = useWriteContract();
 
   const { data: isClaimed, isLoading: isClaimedLoading } = useReadContract({

@@ -15,13 +15,14 @@ vi.mock("@/hooks/useClaim.js", () => ({
   useClaim: (...args) => mockUseClaim(...args),
 }));
 
-// Mock useAccount
-const mockUseAccount = vi.fn(() => ({
+// Mock useWalletAddress
+const mockUseWalletAddress = vi.fn(() => ({
   address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  isConnected: true,
 }));
 
-vi.mock("wagmi", () => ({
-  useAccount: (...args) => mockUseAccount(...args),
+vi.mock("@/hooks/useWalletAddress.js", () => ({
+  useWalletAddress: (...args) => mockUseWalletAddress(...args),
 }));
 
 const { ClaimCard } = await import("@/components/dojo/ClaimCard.jsx");
@@ -43,8 +44,9 @@ describe("ClaimCard", () => {
       isClaimedLoading: false,
       isPending: false,
     });
-    mockUseAccount.mockReturnValue({
+    mockUseWalletAddress.mockReturnValue({
       address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      isConnected: true,
     });
   });
 

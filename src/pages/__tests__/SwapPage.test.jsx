@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { TestWrapper } from "@/test/wrapper.jsx";
 
-vi.mock("wagmi", () => ({
-  useAccount: () => ({ address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" }),
+vi.mock("@/hooks/useWalletAddress.js", () => ({
+  useWalletAddress: () => ({ address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", isConnected: true, canTransact: true }),
 }));
 
 vi.mock("@/hooks/useTokenPrice.js", () => ({

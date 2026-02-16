@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useAccount } from "wagmi";
+import { useWalletAddress } from "@/hooks/useWalletAddress.js";
 import { useClaim } from "@/hooks/useClaim.js";
 import {
   Card,
@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
  */
 export function ClaimCard({ distributionId, proof, amount, tierName }) {
   const { t } = useTranslation();
-  const { address } = useAccount();
+  const { address } = useWalletAddress();
   const { claim, isClaimed, isPending } = useClaim({ distributionId, proof });
 
   return (

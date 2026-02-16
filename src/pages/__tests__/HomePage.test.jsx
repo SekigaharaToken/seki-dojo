@@ -3,8 +3,8 @@ import { render, screen } from "@testing-library/react";
 import { TestWrapper } from "@/test/wrapper.jsx";
 
 // Mock all hooks used by child components
-vi.mock("wagmi", () => ({
-  useAccount: () => ({ address: undefined }),
+vi.mock("@/hooks/useWalletAddress.js", () => ({
+  useWalletAddress: () => ({ address: undefined, isConnected: false }),
 }));
 
 vi.mock("@/hooks/useStreak.js", () => ({

@@ -7,8 +7,8 @@ vi.mock("@/hooks/useCheckInHistory.js", () => ({
   useCheckInHistory: (...args) => mockUseCheckInHistory(...args),
 }));
 
-vi.mock("wagmi", () => ({
-  useAccount: () => ({ address: "0x1234" }),
+vi.mock("@/hooks/useWalletAddress.js", () => ({
+  useWalletAddress: () => ({ address: "0x1234", isConnected: true }),
 }));
 
 const { CheckInHistory } = await import("@/components/dojo/CheckInHistory.jsx");

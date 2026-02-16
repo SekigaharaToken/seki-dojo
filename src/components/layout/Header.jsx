@@ -24,7 +24,7 @@ export const Header = () => {
   const { t, i18n } = useTranslation();
   const { resolvedTheme, setTheme } = useTheme();
   const { openLoginModal } = useLoginModal();
-  const { isAuthenticated, profile } = useFarcaster();
+  const { isAuthenticated, profile, signOut } = useFarcaster();
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const location = useLocation();
@@ -119,7 +119,7 @@ export const Header = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => disconnect()}>
+                <DropdownMenuItem onClick={() => { disconnect(); signOut?.(); }}>
                   <LogOut className="mr-2 size-4" />
                   {t("wallet.disconnect")}
                 </DropdownMenuItem>

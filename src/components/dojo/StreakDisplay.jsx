@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useAccount } from "wagmi";
+import { useWalletAddress } from "@/hooks/useWalletAddress.js";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.jsx";
 import { Skeleton } from "@/components/ui/skeleton.jsx";
 import { useStreak } from "@/hooks/useStreak.js";
@@ -8,7 +8,7 @@ import { StreakFire } from "./StreakFire.jsx";
 
 export function StreakDisplay() {
   const { t } = useTranslation();
-  const { address } = useAccount();
+  const { address } = useWalletAddress();
   const { currentStreak, longestStreak, currentTier, isLoading, isStreakAtRisk } =
     useStreak(address);
 

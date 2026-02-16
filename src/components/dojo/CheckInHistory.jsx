@@ -1,12 +1,12 @@
 import { useTranslation } from "react-i18next";
-import { useAccount } from "wagmi";
+import { useWalletAddress } from "@/hooks/useWalletAddress.js";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.jsx";
 import { Skeleton } from "@/components/ui/skeleton.jsx";
 import { useCheckInHistory } from "@/hooks/useCheckInHistory.js";
 
 export function CheckInHistory() {
   const { t } = useTranslation();
-  const { address } = useAccount();
+  const { address } = useWalletAddress();
   const { checkIns, totalCheckIns, isLoading } = useCheckInHistory(address);
 
   return (
