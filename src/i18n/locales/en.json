@@ -70,6 +70,7 @@
   },
   "errors": {
     "walletNotConnected": "Please connect your wallet",
+    "connectWalletToTransact": "Connect a wallet to sign transactions",
     "transactionFailed": "Transaction failed",
     "networkError": "Network error. Please try again.",
     "userRejected": "Transaction was rejected",

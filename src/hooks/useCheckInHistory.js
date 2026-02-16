@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createPublicClient, http, parseAbiItem } from "viem";
 import { activeChain } from "@/config/chains.js";
 import { EAS_ADDRESS, DOJO_SCHEMA_UID } from "@/config/contracts.js";
-import { SECONDS_PER_DAY } from "@/config/constants.js";
+import { SECONDS_PER_DAY, DEPLOY_BLOCK } from "@/config/constants.js";
 
 const client = createPublicClient({
   chain: activeChain,
@@ -28,7 +28,7 @@ export function useCheckInHistory(address) {
           attester: address,
           schemaUID: DOJO_SCHEMA_UID,
         },
-        fromBlock: 0n,
+        fromBlock: DEPLOY_BLOCK,
         toBlock: "latest",
       });
 

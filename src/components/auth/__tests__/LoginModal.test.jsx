@@ -14,6 +14,11 @@ vi.mock("@/hooks/useFarcaster.js", () => ({
   useFarcaster: () => ({ isAuthenticated: false, profile: null }),
 }));
 
+// Mock RainbowKit
+vi.mock("@rainbow-me/rainbowkit", () => ({
+  useConnectModal: () => ({ openConnectModal: vi.fn() }),
+}));
+
 // Mock useFarcasterSignIn
 vi.mock("@/hooks/useFarcasterSignIn.js", () => ({
   useFarcasterSignIn: () => ({

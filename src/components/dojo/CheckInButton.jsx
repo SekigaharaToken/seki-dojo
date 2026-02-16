@@ -1,8 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { Button } from "@/components/ui/button.jsx";
 import { useWalletAddress } from "@/hooks/useWalletAddress.js";
+import { useFarcaster } from "@/hooks/useFarcaster.js";
 import { useStreak } from "@/hooks/useStreak.js";
 import { useCheckIn } from "@/hooks/useCheckIn.js";
 import { useLoginModal } from "@/hooks/useLoginModal.js";
@@ -10,16 +12,23 @@ import { useLoginModal } from "@/hooks/useLoginModal.js";
 export function CheckInButton() {
   const { t } = useTranslation();
   const { address, canTransact } = useWalletAddress();
+  const { isAuthenticated } = useFarcaster();
   const { hasCheckedInToday, isLoading: streakLoading } = useStreak(address);
   const { checkIn, isPending } = useCheckIn();
   const { openLoginModal } = useLoginModal();
+  const { openConnectModal } = useConnectModal();
 
   const isDisabled = isPending || hasCheckedInToday || (canTransact && streakLoading);
 
   function handleClick() {
     if (!canTransact) {
-      toast.info(t("errors.walletNotConnected"));
-      openLoginModal();
+      if (isAuthenticated) {
+        toast.info(t("errors.connectWalletToTransact"));
+        openConnectModal?.();
+      } else {
+        toast.info(t("errors.walletNotConnected"));
+        openLoginModal();
+      }
       return;
     }
     checkIn().catch(() => {});

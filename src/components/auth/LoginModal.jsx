@@ -9,6 +9,7 @@
 import { useCallback } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Loader2 } from "lucide-react";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import {
   Dialog,
   DialogContent,
@@ -26,13 +27,15 @@ export const LoginModal = ({ onSuccess }) => {
   const { t } = useTranslation();
   const { isLoginModalOpen, closeLoginModal } = useLoginModal();
   const { isAuthenticated } = useFarcaster();
+  const { openConnectModal } = useConnectModal();
 
   const handleSuccess = useCallback(
     (res) => {
       closeLoginModal();
+      openConnectModal?.();
       onSuccess?.(res);
     },
-    [closeLoginModal, onSuccess],
+    [closeLoginModal, openConnectModal, onSuccess],
   );
 
   const {

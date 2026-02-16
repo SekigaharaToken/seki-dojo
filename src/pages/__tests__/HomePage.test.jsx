@@ -2,9 +2,18 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { TestWrapper } from "@/test/wrapper.jsx";
 
+// Mock RainbowKit
+vi.mock("@rainbow-me/rainbowkit", () => ({
+  useConnectModal: () => ({ openConnectModal: vi.fn() }),
+}));
+
 // Mock all hooks used by child components
 vi.mock("@/hooks/useWalletAddress.js", () => ({
   useWalletAddress: () => ({ address: undefined, isConnected: false }),
+}));
+
+vi.mock("@/hooks/useFarcaster.js", () => ({
+  useFarcaster: () => ({ isAuthenticated: false }),
 }));
 
 vi.mock("@/hooks/useStreak.js", () => ({

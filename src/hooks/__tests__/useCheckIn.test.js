@@ -37,9 +37,17 @@ vi.mock("@/hooks/useWalletAddress.js", () => ({
 }));
 
 // Mock viem
+const mockWaitForTransactionReceipt = vi.fn(() => Promise.resolve({ blockNumber: 100n }));
+const mockGetLogs = vi.fn(() => Promise.resolve([]));
 vi.mock("viem", () => ({
   encodeAbiParameters: vi.fn(() => "0xmockencoded"),
   parseAbiParameters: vi.fn(() => []),
+  parseAbiItem: vi.fn(() => ({})),
+  createPublicClient: () => ({
+    waitForTransactionReceipt: (...args) => mockWaitForTransactionReceipt(...args),
+    getLogs: (...args) => mockGetLogs(...args),
+  }),
+  http: () => ({}),
 }));
 
 // Mock contracts — provide non-empty schema UID so checkIn doesn't bail early
@@ -50,14 +58,14 @@ vi.mock("@/config/contracts.js", () => ({
 
 // Mock @tanstack/react-query
 const mockInvalidateQueries = vi.fn();
+const mockSetQueryData = vi.fn();
 vi.mock("@tanstack/react-query", () => ({
-  useQueryClient: () => ({ invalidateQueries: mockInvalidateQueries }),
+  useQueryClient: () => ({
+    invalidateQueries: mockInvalidateQueries,
+    setQueryData: mockSetQueryData,
+  }),
 }));
 
-// Mock wagmi/actions
-vi.mock("wagmi/actions", () => ({
-  waitForTransactionReceipt: vi.fn(() => Promise.resolve({ status: "success" })),
-}));
 
 const { useCheckIn } = await import("@/hooks/useCheckIn.js");
 

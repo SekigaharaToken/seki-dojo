@@ -52,3 +52,7 @@ export const SECONDS_PER_DAY = 86400;
 
 // App identifier used in EAS attestation data
 export const APP_IDENTIFIER = "dojo";
+
+// Block number from which to query EAS logs (DojoResolver deployment block).
+// Avoids querying from block 0 which exceeds public RPC log range limits.
+export const DEPLOY_BLOCK = 37_728_678n;

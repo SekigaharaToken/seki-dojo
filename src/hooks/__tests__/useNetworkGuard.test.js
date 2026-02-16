@@ -5,7 +5,7 @@ const mockUseSwitchChain = vi.fn(() => ({
   switchChain: vi.fn(),
 }));
 const mockUseAccount = vi.fn(() => ({
-  chainId: 8453,
+  chainId: 84532,
   isConnected: true,
 }));
 
@@ -14,13 +14,14 @@ vi.mock("wagmi", () => ({
   useAccount: (...args) => mockUseAccount(...args),
 }));
 
+const { activeChain } = await import("@/config/chains.js");
 const { useNetworkGuard } = await import("@/hooks/useNetworkGuard.js");
 
 describe("useNetworkGuard", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseSwitchChain.mockReturnValue({ switchChain: vi.fn() });
-    mockUseAccount.mockReturnValue({ chainId: 8453, isConnected: true });
+    mockUseAccount.mockReturnValue({ chainId: activeChain.id, isConnected: true });
   });
 
   it("returns isWrongNetwork false when on Base", () => {

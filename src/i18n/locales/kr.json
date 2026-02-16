@@ -70,6 +70,7 @@
   },
   "errors": {
     "walletNotConnected": "지갑을 연결해주세요",
+    "connectWalletToTransact": "트랜잭션 서명을 위해 지갑을 연결해주세요",
     "transactionFailed": "트랜잭션 실패",
     "networkError": "네트워크 오류. 다시 시도해주세요.",
     "userRejected": "트랜잭션이 거부되었습니다",

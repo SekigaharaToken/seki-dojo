@@ -29,10 +29,22 @@ vi.mock("@/hooks/useWalletAddress.js", () => ({
   useWalletAddress: (...args) => mockUseWalletAddress(...args),
 }));
 
+// Mock useFarcaster
+const mockUseFarcaster = vi.fn(() => ({ isAuthenticated: false }));
+vi.mock("@/hooks/useFarcaster.js", () => ({
+  useFarcaster: (...args) => mockUseFarcaster(...args),
+}));
+
 // Mock useLoginModal
 const mockOpenLoginModal = vi.fn();
 vi.mock("@/hooks/useLoginModal.js", () => ({
   useLoginModal: () => ({ openLoginModal: mockOpenLoginModal }),
+}));
+
+// Mock RainbowKit connect modal
+const mockOpenConnectModal = vi.fn();
+vi.mock("@rainbow-me/rainbowkit", () => ({
+  useConnectModal: () => ({ openConnectModal: mockOpenConnectModal }),
 }));
 
 // Mock sonner
@@ -65,6 +77,7 @@ describe("CheckInButton", () => {
       isError: false,
     });
     mockUseWalletAddress.mockReturnValue({ address: undefined, isConnected: false, canTransact: false });
+    mockUseFarcaster.mockReturnValue({ isAuthenticated: false });
   });
 
   // ── Wallet not connected ──────────────────────────────────────────────
@@ -86,15 +99,18 @@ describe("CheckInButton", () => {
 
   it("shows Check In when farcaster-only (has address but cannot transact yet)", () => {
     mockUseWalletAddress.mockReturnValue({ address: "0xFarcaster", isConnected: true, canTransact: false });
+    mockUseFarcaster.mockReturnValue({ isAuthenticated: true });
     renderButton();
     expect(screen.getByRole("button")).toHaveTextContent(/check in/i);
   });
 
-  it("opens login modal and shows toast when farcaster-only user clicks", () => {
+  it("opens RainbowKit connect modal when farcaster-authenticated user clicks", () => {
     mockUseWalletAddress.mockReturnValue({ address: "0xFarcaster", isConnected: true, canTransact: false });
+    mockUseFarcaster.mockReturnValue({ isAuthenticated: true });
     renderButton();
     fireEvent.click(screen.getByRole("button"));
-    expect(mockOpenLoginModal).toHaveBeenCalledTimes(1);
+    expect(mockOpenConnectModal).toHaveBeenCalledTimes(1);
+    expect(mockOpenLoginModal).not.toHaveBeenCalled();
     expect(mockToastInfo).toHaveBeenCalledTimes(1);
     expect(mockCheckIn).not.toHaveBeenCalled();
   });

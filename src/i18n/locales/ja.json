@@ -70,6 +70,7 @@
   },
   "errors": {
     "walletNotConnected": "ウォレットを接続してください",
+    "connectWalletToTransact": "トランザクションに署名するためウォレットを接続してください",
     "transactionFailed": "トランザクション失敗",
     "networkError": "ネットワークエラー。再試行してください。",
     "userRejected": "トランザクションが拒否されました",
