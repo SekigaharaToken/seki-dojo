@@ -1,15 +1,15 @@
 {
   "accountAssociation": {
-    "header": "",
-    "payload": "",
-    "signature": ""
+    "header": "eyJmaWQiOjEzODM3LCJ0eXBlIjoiY3VzdG9keSIsImtleSI6IjB4RTA3ZDcxMDBkYzIwOGY0NWJCN0UzMmQ0MWFmNTc3MGQxNzRlNkYwYiJ9",
+    "payload": "eyJkb21haW4iOiJzZWtpLWRvam8udmVyY2VsLmFwcCJ9",
+    "signature": "/1wr/pA3pToIECrbVqy5DT3BWjX5X9r9YDle4enfkHx5DZkL924BdVOyYseHuVHyDvO1Ikc3875HOZd2Y0zGaRw="
   },
-  "frame": {
+  "miniapp": {
+    "version": "1",
     "name": "DOJO",
-    "version": "0.0.1",
-    "iconUrl": "https://sekigahara.eth.limo/icon.png",
-    "homeUrl": "https://sekigahara.eth.limo",
-    "splashImageUrl": "https://sekigahara.eth.limo/icon.png",
+    "iconUrl": "https://seki-dojo.vercel.app/icon.png",
+    "homeUrl": "https://seki-dojo.vercel.app",
+    "splashImageUrl": "https://seki-dojo.vercel.app/icon.png",
     "splashBackgroundColor": "#1C1917"
   }
 }

@@ -42,6 +42,4 @@ contracts/broadcast/
 
 # Plan scratch files
 docs/plans/
-
-# Git worktrees
-.worktrees/
+.vercel
