@@ -8,6 +8,7 @@ vi.mock("viem", () => ({
   createPublicClient: vi.fn(() => ({
     readContract: mockReadContract,
     waitForTransactionReceipt: mockWaitForTransactionReceipt,
+    getBlock: vi.fn().mockResolvedValue({ timestamp: 1700000000n }),
   })),
   createWalletClient: vi.fn(() => ({
     writeContract: mockWriteContract,

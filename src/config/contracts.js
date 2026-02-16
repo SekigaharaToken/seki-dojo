@@ -3,7 +3,9 @@
  * EAS predeploys are identical on all OP Stack chains.
  */
 
-const chainId = Number(import.meta.env.VITE_CHAIN_ID || 8453);
+import { getEnv } from "./env.js";
+
+const chainId = Number(getEnv("VITE_CHAIN_ID", "8453"));
 
 // EAS (OP Stack Predeploys — same on Base Mainnet and Base Sepolia)
 export const EAS_ADDRESS = "0x4200000000000000000000000000000000000021";
@@ -36,11 +38,11 @@ export const MINT_CLUB =
 
 // Custom contracts (loaded from env — set after deployment)
 export const DOJO_RESOLVER_ADDRESS =
-  import.meta.env.VITE_DOJO_RESOLVER_ADDRESS || "";
-export const DOJO_SCHEMA_UID = import.meta.env.VITE_DOJO_SCHEMA_UID || "";
+  getEnv("VITE_DOJO_RESOLVER_ADDRESS", "");
+export const DOJO_SCHEMA_UID = getEnv("VITE_DOJO_SCHEMA_UID", "");
 
 // Project tokens (loaded from env — set after Mint Club creation)
 export const SEKI_TOKEN_ADDRESS =
-  import.meta.env.VITE_SEKI_TOKEN_ADDRESS || "";
+  getEnv("VITE_SEKI_TOKEN_ADDRESS", "");
 export const DOJO_TOKEN_ADDRESS =
-  import.meta.env.VITE_DOJO_TOKEN_ADDRESS || "";
+  getEnv("VITE_DOJO_TOKEN_ADDRESS", "");

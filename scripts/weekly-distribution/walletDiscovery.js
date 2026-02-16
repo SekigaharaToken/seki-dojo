@@ -1,12 +1,12 @@
 import { createPublicClient, http, parseAbiItem } from "viem";
-import { base } from "../../src/config/chains.js";
+import { activeChain } from "../../src/config/chains.js";
 import {
   EAS_ADDRESS,
   DOJO_SCHEMA_UID,
   DOJO_RESOLVER_ADDRESS,
 } from "../../src/config/contracts.js";
 import { dojoResolverAbi } from "../../src/config/abis/dojoResolver.js";
-import { STREAK_TIERS, SECONDS_PER_DAY } from "../../src/config/constants.js";
+import { STREAK_TIERS, SECONDS_PER_DAY, DEPLOY_BLOCK } from "../../src/config/constants.js";
 
 const SEVEN_DAYS = 7 * SECONDS_PER_DAY;
 
@@ -14,9 +14,11 @@ const SEVEN_DAYS = 7 * SECONDS_PER_DAY;
  * Create a viem public client for Base.
  * Exported for testability (tests mock viem module).
  */
+const RPC_URL = process.env.RPC_URL;
+
 const client = createPublicClient({
-  chain: base,
-  transport: http(),
+  chain: activeChain,
+  transport: http(RPC_URL),
 });
 
 /**
@@ -33,7 +35,7 @@ export async function discoverWallets() {
       "event Attested(address indexed recipient, address indexed attester, bytes32 uid, bytes32 indexed schemaUID)",
     ),
     args: { schemaUID: DOJO_SCHEMA_UID },
-    fromBlock: 0n,
+    fromBlock: DEPLOY_BLOCK,
     toBlock: "latest",
   });
 

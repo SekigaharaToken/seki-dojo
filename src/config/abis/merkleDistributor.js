@@ -6,8 +6,8 @@ export const merkleDistributorAbi = [
     inputs: [
       { name: "token", type: "address" },
       { name: "isERC20", type: "bool" },
-      { name: "amountPerClaim", type: "uint256" },
-      { name: "walletCount", type: "uint256" },
+      { name: "amountPerClaim", type: "uint176" },
+      { name: "walletCount", type: "uint40" },
       { name: "startTime", type: "uint40" },
       { name: "endTime", type: "uint40" },
       { name: "merkleRoot", type: "bytes32" },

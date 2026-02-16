@@ -1,20 +1,21 @@
 import { createPublicClient, createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { base } from "../../src/config/chains.js";
+import { activeChain } from "../../src/config/chains.js";
 import { MINT_CLUB } from "../../src/config/contracts.js";
 import { merkleDistributorAbi } from "../../src/config/abis/merkleDistributor.js";
 import { SECONDS_PER_DAY } from "../../src/config/constants.js";
 
+const RPC_URL = process.env.RPC_URL;
 const account = privateKeyToAccount(process.env.OPERATOR_PRIVATE_KEY || "0x0");
 
 const publicClient = createPublicClient({
-  chain: base,
-  transport: http(),
+  chain: activeChain,
+  transport: http(RPC_URL),
 });
 
 const walletClient = createWalletClient({
-  chain: base,
-  transport: http(),
+  chain: activeChain,
+  transport: http(RPC_URL),
   account,
 });
 
@@ -58,7 +59,9 @@ export async function createDistribution({
   title,
   ipfsCID,
 }) {
-  const now = Math.floor(Date.now() / 1000);
+  // Use chain timestamp (not wall-clock) so times are valid on forks with evm_increaseTime
+  const block = await publicClient.getBlock();
+  const now = Number(block.timestamp);
   const startTime = now;
   const endTime = now + 7 * SECONDS_PER_DAY;
 
