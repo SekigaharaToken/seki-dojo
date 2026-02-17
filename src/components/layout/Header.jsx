@@ -1,20 +1,38 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import { Sun, Moon, Globe, LogOut } from "lucide-react";
 import { useAccount, useDisconnect } from "wagmi";
+import { createPublicClient, http, formatUnits } from "viem";
 import { Button } from "@/components/ui/button.jsx";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar.jsx";
+import { Skeleton } from "@/components/ui/skeleton.jsx";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.jsx";
 import { useTheme } from "@/hooks/useTheme.js";
 import { useLoginModal } from "@/hooks/useLoginModal.js";
 import { useFarcaster } from "@/hooks/useFarcaster.js";
 import { useMiniAppContext } from "@/hooks/useMiniAppContext.js";
+import { activeChain } from "@/config/chains.js";
+import { SEKI_TOKEN_ADDRESS, DOJO_TOKEN_ADDRESS } from "@/config/contracts.js";
 import { cn } from "@/lib/utils";
+
+const client = createPublicClient({ chain: activeChain, transport: http() });
+
+const erc20BalanceAbi = [{ name: "balanceOf", type: "function", stateMutability: "view", inputs: [{ name: "", type: "address" }], outputs: [{ name: "", type: "uint256" }] }];
+
+function formatBalance(raw) {
+  const num = Number(formatUnits(raw, 18));
+  if (num === 0) return "0";
+  if (num < 0.01) return "<0.01";
+  return num.toLocaleString(undefined, { maximumFractionDigits: 2 });
+}
 
 const LANGUAGES = [
   { code: "en", label: "EN" },
@@ -35,11 +53,37 @@ export const Header = () => {
   const isLoggedIn = isAuthenticated || isConnected;
   const displayName =
     profile?.displayName ||
+    profile?.username ||
     (address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "");
   const pfpUrl = profile?.pfpUrl || context?.user?.pfpUrl || null;
   const initials = (profile?.displayName || profile?.username || "")
     .slice(0, 2)
     .toUpperCase();
+
+  const [balances, setBalances] = useState({ seki: null, dojo: null, loading: false });
+
+  function fetchBalances() {
+    if (!address) return;
+    setBalances({ seki: null, dojo: null, loading: true });
+    const reads = [];
+    if (SEKI_TOKEN_ADDRESS) {
+      reads.push(
+        client.readContract({ address: SEKI_TOKEN_ADDRESS, abi: erc20BalanceAbi, functionName: "balanceOf", args: [address] })
+      );
+    } else {
+      reads.push(Promise.resolve(0n));
+    }
+    if (DOJO_TOKEN_ADDRESS) {
+      reads.push(
+        client.readContract({ address: DOJO_TOKEN_ADDRESS, abi: erc20BalanceAbi, functionName: "balanceOf", args: [address] })
+      );
+    } else {
+      reads.push(Promise.resolve(0n));
+    }
+    Promise.all(reads)
+      .then(([seki, dojo]) => setBalances({ seki, dojo, loading: false }))
+      .catch(() => setBalances({ seki: 0n, dojo: 0n, loading: false }));
+  }
 
   const toggleTheme = () => {
     setTheme(resolvedTheme === "dark" ? "light" : "dark");
@@ -119,7 +163,7 @@ export const Header = () => {
 
           {/* Auth / Wallet */}
           {isLoggedIn ? (
-            <DropdownMenu>
+            <DropdownMenu onOpenChange={(open) => { if (open) fetchBalances(); }}>
               <DropdownMenuTrigger asChild>
                 <button type="button" className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                   <Avatar>
@@ -128,7 +172,15 @@ export const Header = () => {
                   </Avatar>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="min-w-44">
+                <DropdownMenuLabel>{displayName}</DropdownMenuLabel>
+                <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+                  $SEKI: {balances.loading ? <Skeleton className="ml-1 inline-block h-3 w-12" /> : formatBalance(balances.seki ?? 0n)}
+                </DropdownMenuItem>
+                <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+                  $DOJO: {balances.loading ? <Skeleton className="ml-1 inline-block h-3 w-12" /> : formatBalance(balances.dojo ?? 0n)}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => { disconnect(); signOut?.(); }}>
                   <LogOut className="mr-2 size-4" />
                   {t("wallet.disconnect")}
