@@ -117,6 +117,9 @@
     "modalTitle": "잘했습니다!",
     "castText": "🥋 DOJO {{streak}}일 연속 스트릭! {{tier}}\n\n매일 수련, 온체인으로."
   },
+  "hunt": {
+    "backSeki": "Hunt.town에서 $SEKI 후원하기"
+  },
   "footer": {
     "builtOn": "Base에서 구축",
     "poweredBy": "Sekigahara 제공"

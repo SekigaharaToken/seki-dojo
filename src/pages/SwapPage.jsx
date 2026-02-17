@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { PriceDisplay } from "@/components/swap/PriceDisplay.jsx";
 import { SwapPanel } from "@/components/swap/SwapPanel.jsx";
+import { BackSekiLink } from "@/components/layout/BackSekiLink.jsx";
 
 export default function SwapPage() {
   const { t } = useTranslation();
@@ -12,6 +13,8 @@ export default function SwapPage() {
       <PriceDisplay />
 
       <SwapPanel />
+
+      <BackSekiLink />
     </div>
   );
 }

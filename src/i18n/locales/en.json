@@ -117,6 +117,9 @@
     "modalTitle": "Nice work!",
     "castText": "🥋 Day {{streak}} streak on DOJO! {{tier}}\n\nDaily training, onchain."
   },
+  "hunt": {
+    "backSeki": "Back $SEKI on Hunt.town"
+  },
   "footer": {
     "builtOn": "Built on Base",
     "poweredBy": "Powered by Sekigahara"

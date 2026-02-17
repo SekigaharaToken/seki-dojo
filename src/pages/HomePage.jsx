@@ -11,6 +11,7 @@ import { useOnboarding } from "@/hooks/useOnboarding.js";
 import { useWalletAddress } from "@/hooks/useWalletAddress.js";
 import { useStreak } from "@/hooks/useStreak.js";
 import { useShareStreak } from "@/hooks/useShareStreak.js";
+import { BackSekiLink } from "@/components/layout/BackSekiLink.jsx";
 
 export default function HomePage() {
   const { t } = useTranslation();
@@ -64,6 +65,8 @@ export default function HomePage() {
         amount="0"
         tierName=""
       />
+
+      <BackSekiLink />
 
       <div className="w-full">
         <CheckInHistory />

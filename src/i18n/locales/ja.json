@@ -117,6 +117,9 @@
     "modalTitle": "お疲れ様！",
     "castText": "🥋 DOJOで{{streak}}日連続！{{tier}}\n\n毎日の修行、オンチェーンで。"
   },
+  "hunt": {
+    "backSeki": "Hunt.townで$SEKIを支援"
+  },
   "footer": {
     "builtOn": "Base上に構築",
     "poweredBy": "Sekigahara提供"
