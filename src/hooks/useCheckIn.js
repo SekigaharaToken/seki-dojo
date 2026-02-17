@@ -73,26 +73,35 @@ export function useCheckIn() {
 
       toast.success(t("toast.checkinSuccess"));
 
-      const receipt = await client.waitForTransactionReceipt({ hash });
-      const logs = await client.getLogs({
-        address: EAS_ADDRESS,
-        event: attestedEvent,
-        args: { attester: address, schemaUID: DOJO_SCHEMA_UID },
-        fromBlock: receipt.blockNumber,
-        toBlock: receipt.blockNumber,
-      });
+      // Best-effort: update history cache from logs.
+      // Failures here must not surface as check-in errors.
+      try {
+        const receipt = await client.waitForTransactionReceipt({ hash });
+        const logs = await client.getLogs({
+          address: EAS_ADDRESS,
+          event: attestedEvent,
+          args: { attester: address, schemaUID: DOJO_SCHEMA_UID },
+          fromBlock: receipt.blockNumber,
+          toBlock: receipt.blockNumber,
+        });
 
-      if (logs.length > 0) {
-        const newEntries = logs.map((log) => ({
-          uid: log.data,
-          blockNumber: Number(log.blockNumber),
-          timestamp: Math.floor(Date.now() / 1000),
-        }));
-        queryClient.setQueryData(
-          ["checkInHistory", address],
-          (prev) => [...(prev ?? []), ...newEntries],
-        );
+        if (logs.length > 0) {
+          const newEntries = logs.map((log) => ({
+            uid: log.data,
+            blockNumber: Number(log.blockNumber),
+            timestamp: Math.floor(Date.now() / 1000),
+          }));
+          queryClient.setQueryData(
+            ["checkInHistory", address],
+            (prev) => [...(prev ?? []), ...newEntries],
+          );
+        }
+      } catch {
+        // Log parsing failed — history will refresh on next query
       }
+
+      // Invalidate streak data so it refetches from the resolver
+      queryClient.invalidateQueries({ queryKey: ["readContract"] });
 
       return hash;
     } catch (err) {
