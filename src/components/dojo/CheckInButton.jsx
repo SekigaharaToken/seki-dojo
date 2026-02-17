@@ -8,12 +8,14 @@ import { useFarcaster } from "@/hooks/useFarcaster.js";
 import { useStreak } from "@/hooks/useStreak.js";
 import { useCheckIn } from "@/hooks/useCheckIn.js";
 import { useLoginModal } from "@/hooks/useLoginModal.js";
+import { useShareStreak } from "@/hooks/useShareStreak.js";
 
 export function CheckInButton() {
   const { t } = useTranslation();
   const { address, canTransact } = useWalletAddress();
   const { isAuthenticated } = useFarcaster();
-  const { hasCheckedInToday, isLoading: streakLoading } = useStreak(address);
+  const { hasCheckedInToday, isLoading: streakLoading, currentStreak, currentTier } = useStreak(address);
+  const { shareStreak } = useShareStreak({ currentStreak, currentTier });
   const { checkIn, isPending } = useCheckIn();
   const { openLoginModal } = useLoginModal();
   const { openConnectModal } = useConnectModal();
@@ -45,7 +47,7 @@ export function CheckInButton() {
   const showPulse = canTransact && !hasCheckedInToday && !isPending && !streakLoading;
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex items-center gap-2">
       <Button
         size="lg"
         onClick={handleClick}
@@ -57,6 +59,18 @@ export function CheckInButton() {
         )}
         {getLabel()}
       </Button>
+
+      {hasCheckedInToday && (
+        <Button
+          size="lg"
+          className="text-white"
+          style={{ backgroundColor: "#855DCD" }}
+          onClick={shareStreak}
+          aria-label={t("share.toFarcaster")}
+        >
+          <img src="/farcaster-icon-white.svg" alt="" className="size-5" aria-hidden="true" />
+        </Button>
+      )}
     </div>
   );
 }

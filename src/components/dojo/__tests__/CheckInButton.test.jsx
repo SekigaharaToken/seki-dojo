@@ -157,7 +157,7 @@ describe("CheckInButton", () => {
       isLoading: false,
     });
     renderButton();
-    const button = screen.getByRole("button");
+    const button = screen.getByRole("button", { name: /checked in/i });
     expect(button).toHaveTextContent(/checked in/i);
     expect(button).toBeDisabled();
   });
