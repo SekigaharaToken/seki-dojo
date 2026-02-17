@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import NumberFlow from "@number-flow/react";
 import { formatUnits, parseUnits } from "viem";
 import { useQuery } from "@tanstack/react-query";
 import { mintclub } from "@/lib/mintclub.js";
@@ -6,9 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const ONE_TOKEN = parseUnits("1", 18);
+const priceFormat = { minimumFractionDigits: 8, maximumFractionDigits: 8 };
 
-function formatPrice(wei) {
-  return parseFloat(formatUnits(wei, 18)).toFixed(8);
+function toPrice(wei) {
+  return parseFloat(formatUnits(wei, 18));
 }
 
 /**
@@ -43,7 +45,7 @@ export function PriceDisplay({ tokenConfig }) {
           </p>
         ) : (
           <p className="text-2xl font-bold">
-            {formatPrice(data?.buyPrice ?? 0n)} {tokenConfig.reserveLabel}
+            <span className="font-mono tabular-nums"><NumberFlow value={toPrice(data?.buyPrice ?? 0n)} format={priceFormat} /></span> {tokenConfig.reserveLabel}
           </p>
         )}
       </CardContent>

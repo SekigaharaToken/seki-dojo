@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "motion/react";
+import NumberFlow from "@number-flow/react";
 import { useQuery } from "@tanstack/react-query";
 import { formatUnits, parseUnits, erc20Abi } from "viem";
 import { useReadContract } from "wagmi";
@@ -24,9 +25,11 @@ import { getCached, setCached } from "@/lib/immutableCache.js";
 
 const ONE_TOKEN = parseUnits("1", 18);
 
-function formatPrice(value) {
-  return parseFloat(formatUnits(value, 18)).toFixed(8);
+function toPrice(value) {
+  return parseFloat(formatUnits(value, 18));
 }
+
+const priceFormat = { minimumFractionDigits: 8, maximumFractionDigits: 8 };
 
 function getAlertMessage({ mode, supplyIsZero, supplyIsMax, buyExceedsSupply, exceedsBalance, userBalance, sellAtLoss, t }) {
   const title = t("swap.swapWarningTitle");
@@ -101,13 +104,13 @@ function EstimationRows({ estimation, mode, tokenConfig, animate, t }) {
       <Row className="flex justify-between" {...stagger(0)}>
         <span className="text-muted-foreground">{t("swap.cost")}</span>
         <span className="font-medium">
-          {formatPrice(estimation.cost)} {tokenConfig.reserveLabel}
+          <span className="font-mono tabular-nums"><NumberFlow value={toPrice(estimation.cost)} format={priceFormat} /></span> {tokenConfig.reserveLabel}
         </span>
       </Row>
       <Row className="flex justify-between" {...stagger(1)}>
         <span className="text-muted-foreground">{t("swap.fee")}</span>
         <span className="font-medium">
-          {formatPrice(estimation.royalty)} {tokenConfig.reserveLabel}
+          <span className="font-mono tabular-nums"><NumberFlow value={toPrice(estimation.royalty)} format={priceFormat} /></span> {tokenConfig.reserveLabel}
         </span>
       </Row>
       <Row className="flex justify-between border-t pt-1" {...stagger(2)}>
@@ -115,7 +118,7 @@ function EstimationRows({ estimation, mode, tokenConfig, animate, t }) {
           {mode === "buy" ? t("swap.totalCost") : t("swap.receive")}
         </span>
         <span className="font-bold">
-          {formatPrice(estimation.cost + estimation.royalty)} {tokenConfig.reserveLabel}
+          <span className="font-mono tabular-nums"><NumberFlow value={toPrice(estimation.cost + estimation.royalty)} format={priceFormat} /></span> {tokenConfig.reserveLabel}
         </span>
       </Row>
     </div>
