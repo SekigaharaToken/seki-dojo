@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Loader2, CheckCircle2, Gift, Bell } from "lucide-react";
+import { Loader2, CheckCircle2, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button.jsx";
 import { Card, CardContent } from "@/components/ui/card.jsx";
 
@@ -41,10 +41,7 @@ export function OnboardingOverlay({
           {/* Step 1: Welcome + Add App */}
           {(step === "idle" || step === "prompting") && (
             <>
-              <div className="flex items-center gap-2">
-                <Gift className="h-10 w-10 text-primary" />
-                <Bell className="h-8 w-8 text-muted-foreground" />
-              </div>
+              <Gift className="h-12 w-12 text-primary" />
               <h2 className="font-serif text-2xl font-bold">
                 {t("onboarding.welcomeTitle")}
               </h2>
@@ -58,6 +55,13 @@ export function OnboardingOverlay({
               >
                 {t("onboarding.addApp")}
               </Button>
+              <button
+                type="button"
+                className="text-sm text-muted-foreground underline-offset-4 hover:underline"
+                onClick={dismiss}
+              >
+                {t("onboarding.noThanks")}
+              </button>
               {error && (
                 <p className="text-sm text-destructive">
                   {t("onboarding.addFailed")}

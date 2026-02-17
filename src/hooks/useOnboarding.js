@@ -57,14 +57,11 @@ export function useOnboarding() {
     setStep(STEPS.ADDING);
     setError(null);
     try {
-      const result = await sdk.actions.addFrame();
-      if (result.added) {
-        setStep(STEPS.CLAIMING);
-      } else {
-        setError(result.reason || "rejected");
-        setStep(STEPS.PROMPTING);
-      }
+      // addFrame() resolves on success, throws on rejection
+      await sdk.actions.addFrame();
+      setStep(STEPS.CLAIMING);
     } catch (err) {
+      // User rejected or invalid manifest — go back to prompting
       setError(err.message || "Failed to add app");
       setStep(STEPS.PROMPTING);
     }
