@@ -29,7 +29,7 @@ export function useOnboarding() {
     abi: [{ name: "balanceOf", type: "function", stateMutability: "view", inputs: [{ name: "", type: "address" }], outputs: [{ name: "", type: "uint256" }] }],
     functionName: "balanceOf",
     args: address ? [address] : undefined,
-    query: { enabled: Boolean(address && DOJO_TOKEN_ADDRESS) },
+    query: { enabled: Boolean(address && DOJO_TOKEN_ADDRESS), staleTime: 60_000 },
   });
 
   const { data: alreadyClaimed } = useReadContract({
@@ -37,7 +37,7 @@ export function useOnboarding() {
     abi: dojoFaucetAbi,
     functionName: "hasClaimed",
     args: address ? [address] : undefined,
-    query: { enabled: Boolean(address && DOJO_FAUCET_ADDRESS) },
+    query: { enabled: Boolean(address && DOJO_FAUCET_ADDRESS), staleTime: 60_000 },
   });
 
   const { writeContract, data: txHash, isPending: isWritePending } = useWriteContract();

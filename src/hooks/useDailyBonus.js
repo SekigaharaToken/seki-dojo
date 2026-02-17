@@ -36,7 +36,7 @@ export function useDailyBonus() {
     abi: dailyBonusAbi,
     functionName: "canClaimToday",
     args: [address],
-    enabled,
+    query: { enabled, staleTime: 60_000 },
   });
 
   const { data: estimatedBonus } = useReadContract({
@@ -44,7 +44,7 @@ export function useDailyBonus() {
     abi: dailyBonusAbi,
     functionName: "calculateBonus",
     args: [address],
-    enabled,
+    query: { enabled, staleTime: 60_000 },
   });
 
   const { data: dojoBalance } = useReadContract({
@@ -52,7 +52,7 @@ export function useDailyBonus() {
     abi: erc20BalanceOf,
     functionName: "balanceOf",
     args: [address],
-    enabled: !!address && !!DOJO_TOKEN_ADDRESS,
+    query: { enabled: !!address && !!DOJO_TOKEN_ADDRESS, staleTime: 60_000 },
   });
 
   // Mirror contract's getBonusRate logic for display

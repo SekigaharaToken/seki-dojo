@@ -18,7 +18,7 @@ export function useClaim({ distributionId, proof }) {
     abi: merkleDistributorAbi,
     functionName: "isClaimed",
     args: [distributionId, address],
-    enabled: distributionId != null && !!address,
+    query: { enabled: distributionId != null && !!address, staleTime: 60_000 },
   });
 
   const claim =

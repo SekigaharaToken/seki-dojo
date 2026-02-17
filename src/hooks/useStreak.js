@@ -15,7 +15,7 @@ export function useStreak(address) {
     abi: dojoResolverAbi,
     functionName: "lastCheckIn",
     args: [address],
-    enabled,
+    query: { enabled, staleTime: 60_000 },
   });
 
   const currentStreakResult = useReadContract({
@@ -23,7 +23,7 @@ export function useStreak(address) {
     abi: dojoResolverAbi,
     functionName: "currentStreak",
     args: [address],
-    enabled,
+    query: { enabled, staleTime: 60_000 },
   });
 
   const longestStreakResult = useReadContract({
@@ -31,7 +31,7 @@ export function useStreak(address) {
     abi: dojoResolverAbi,
     functionName: "longestStreak",
     args: [address],
-    enabled,
+    query: { enabled, staleTime: 60_000 },
   });
 
   const lastCheckIn = Number(lastCheckInResult.data ?? 0n);
