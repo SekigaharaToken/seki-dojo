@@ -42,6 +42,7 @@ describe("useShareStreak", () => {
     const url = window.open.mock.calls[0][0];
     expect(url).toContain("https://warpcast.com/~/compose");
     expect(url).toMatch(/Day[+%20]+7[+%20]+streak/);
+    expect(url).toContain("channelKey=hunt");
   });
 
   it("calls composeCast in MiniApp mode", async () => {
@@ -54,6 +55,7 @@ describe("useShareStreak", () => {
     const opts = sdk.actions.composeCast.mock.calls[0][0];
     expect(opts.text).toContain("Day 14 streak");
     expect(opts.embeds).toHaveLength(1);
+    expect(opts.channelKey).toBe("hunt");
   });
 
   it("handles null tier gracefully", async () => {

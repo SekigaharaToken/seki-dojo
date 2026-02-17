@@ -16,11 +16,13 @@ export function useShareStreak({ currentStreak, currentTier }) {
       await sdk.actions.composeCast({
         text,
         embeds: [APP_URL],
+        channelKey: "hunt",
       });
     } else {
       const params = new URLSearchParams();
       params.set("text", text);
       params.append("embeds[]", APP_URL);
+      params.set("channelKey", "hunt");
       window.open(`https://warpcast.com/~/compose?${params.toString()}`, "_blank");
     }
   }, [currentStreak, currentTier, isInMiniApp, t]);
