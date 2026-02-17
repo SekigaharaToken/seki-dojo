@@ -10,6 +10,11 @@
     "iconUrl": "https://seki-dojo.vercel.app/icon.png",
     "homeUrl": "https://seki-dojo.vercel.app",
     "splashImageUrl": "https://seki-dojo.vercel.app/icon.png",
-    "splashBackgroundColor": "#1C1917"
+    "splashBackgroundColor": "#1C1917",
+    "ogTitle": "DOJO",
+    "ogDescription": "Daily training. Onchain.",
+    "ogImageUrl": "https://seki-dojo.vercel.app/og-image.png",
+    "primaryCategory": "social",
+    "subtitle": "Daily onchain streaks"
   }
 }
