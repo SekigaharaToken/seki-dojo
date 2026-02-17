@@ -148,6 +148,40 @@
   animation: badge-shimmer 2s linear;
 }
 
+/* Share modal: black bar zoom + content reveal */
+.share-modal[data-state="open"] {
+  animation: bar-expand 200ms ease-out forwards;
+  transform-origin: center;
+}
+
+@keyframes bar-expand {
+  0% {
+    transform: scaleX(0) scaleY(0.05);
+    opacity: 1;
+  }
+  60% {
+    transform: scaleX(1) scaleY(0.05);
+  }
+  100% {
+    transform: scaleX(1) scaleY(1);
+  }
+}
+
+.share-modal-content {
+  animation: content-reveal 300ms ease-out 200ms both;
+}
+
+@keyframes content-reveal {
+  0% {
+    max-height: 0;
+    opacity: 0;
+  }
+  100% {
+    max-height: 500px;
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
