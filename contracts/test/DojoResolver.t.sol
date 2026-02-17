@@ -22,16 +22,23 @@ contract DojoResolverTest is Test {
     address public alice = makeAddr("alice");
     address public bob = makeAddr("bob");
 
+    uint256 constant RESOLVER_FUNDING = 1_000_000e18;
+    uint256 constant ALICE_BALANCE = 10_000e18;
+
     function setUp() public {
         // Deploy EAS infrastructure
         registry = new SchemaRegistry();
         eas = new EAS(ISchemaRegistry(address(registry)));
 
         // Deploy mock DOJO token
-        token = new DemoToken("DOJO", "DOJO", 1_000_000 ether);
+        token = new DemoToken("DOJO", "DOJO", RESOLVER_FUNDING + ALICE_BALANCE);
 
         // Deploy DojoResolver
         resolver = new DojoResolver(IEAS(address(eas)), IERC20(address(token)));
+
+        // Fund resolver and alice for bonus tests
+        token.transfer(address(resolver), RESOLVER_FUNDING);
+        token.transfer(alice, ALICE_BALANCE);
 
         // Register schema with resolver
         schemaUID = registry.register(
@@ -229,5 +236,81 @@ contract DojoResolverTest is Test {
         vm.warp(startTime + 1 days);
         _checkIn(alice);
         assertEq(resolver.lastCheckIn(alice), startTime + 1 days);
+    }
+
+    // =========================================================================
+    // Bonus payout tests
+    // =========================================================================
+
+    function test_bonus_paidOnFirstCheckIn() public {
+        uint256 balBefore = token.balanceOf(alice);
+        _checkIn(alice);
+        uint256 balAfter = token.balanceOf(alice);
+        // Streak 1 → rate = 10 bps → bonus = 10_000e18 * 10 / 10_000 = 10e18
+        uint256 expectedBonus = (ALICE_BALANCE * 10) / 10_000;
+        assertEq(balAfter - balBefore, expectedBonus);
+    }
+
+    function test_bonus_rateIncreasesWithStreak() public {
+        _checkIn(alice);
+        uint256 balAfterDay1 = token.balanceOf(alice);
+
+        vm.warp(block.timestamp + 1 days);
+        _checkIn(alice);
+        uint256 balAfterDay2 = token.balanceOf(alice);
+
+        // Day 2 bonus calculated on day2 balance (includes day1 bonus)
+        // Streak 2 → rate = 10 + (10 * 2) / 30 = 10 (integer math)
+        uint256 day2Rate = resolver.getBonusRate(2);
+        uint256 expectedDay2Bonus = (balAfterDay1 * day2Rate) / 10_000;
+        assertEq(balAfterDay2 - balAfterDay1, expectedDay2Bonus);
+    }
+
+    function test_bonus_maxRateAt30Days() public {
+        assertEq(resolver.getBonusRate(30), 20);
+        assertEq(resolver.getBonusRate(60), 20);
+    }
+
+    function test_bonus_skippedWhenUnderfunded() public {
+        // Deploy a fresh resolver with no funds
+        DemoToken emptyDojo = new DemoToken("DOJO", "DOJO", ALICE_BALANCE);
+        emptyDojo.transfer(alice, ALICE_BALANCE);
+        DojoResolver emptyResolver = new DojoResolver(IEAS(address(eas)), IERC20(address(emptyDojo)));
+        bytes32 emptySchema = registry.register("string app, uint32 day", emptyResolver, false);
+
+        uint32 day = uint32(block.timestamp / 86400);
+        bytes memory data = abi.encode("dojo", day);
+        vm.prank(alice);
+        bytes32 uid = eas.attest(
+            AttestationRequest({
+                schema: emptySchema,
+                data: AttestationRequestData({
+                    recipient: alice,
+                    expirationTime: 0,
+                    revocable: false,
+                    refUID: bytes32(0),
+                    data: data,
+                    value: 0
+                })
+            })
+        );
+
+        assertTrue(uid != bytes32(0));
+        assertEq(emptyResolver.currentStreak(alice), 1);
+        assertEq(emptyDojo.balanceOf(alice), ALICE_BALANCE); // unchanged
+    }
+
+    function test_bonus_skippedWhenZeroHoldings() public {
+        uint256 resolverBalBefore = token.balanceOf(address(resolver));
+        _checkIn(bob); // bob has 0 $DOJO
+        assertEq(token.balanceOf(address(resolver)), resolverBalBefore);
+        assertEq(resolver.currentStreak(bob), 1);
+    }
+
+    function test_bonus_emitsBonusPaidEvent() public {
+        uint256 expectedBonus = (ALICE_BALANCE * 10) / 10_000;
+        vm.expectEmit(true, false, false, true);
+        emit DojoResolver.BonusPaid(alice, expectedBonus, 10, 1);
+        _checkIn(alice);
     }
 }
