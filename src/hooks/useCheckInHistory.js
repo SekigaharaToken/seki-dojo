@@ -13,8 +13,8 @@ const attestedEvent = parseAbiItem(
   "event Attested(address indexed recipient, address indexed attester, bytes32 uid, bytes32 indexed schemaUID)",
 );
 
-// Public RPCs limit eth_getLogs to 10k blocks per request
-const MAX_BLOCK_RANGE = 10_000n;
+// Base mainnet public RPC limits eth_getLogs to ~3k blocks per request
+const MAX_BLOCK_RANGE = 2_000n;
 
 /**
  * Fetches logs in chunks to stay within RPC block range limits.
