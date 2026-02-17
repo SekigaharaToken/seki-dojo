@@ -66,7 +66,10 @@
     "buy": "$DOJO を購入",
     "sell": "$DOJO を売却",
     "price": "現在価格",
-    "amount": "数量"
+    "amount": "数量",
+    "cost": "コスト",
+    "receive": "受取額",
+    "fee": "手数料"
   },
   "toast": {
     "checkinPending": "チェックイン中...",

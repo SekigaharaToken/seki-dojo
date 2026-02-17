@@ -16,7 +16,7 @@ function formatPrice(wei) {
  */
 export function PriceDisplay() {
   const { t } = useTranslation();
-  const { buyPrice, sellPrice, isLoading, isError } = useTokenPrice();
+  const { buyPrice, isLoading, isError } = useTokenPrice();
 
   return (
     <Card className="w-full max-w-sm animate-fade-in-up">
@@ -31,14 +31,9 @@ export function PriceDisplay() {
             {t("errors.networkError")}
           </p>
         ) : (
-          <>
-            <p className="text-2xl font-bold">
-              {formatPrice(buyPrice)} {RESERVE_LABEL}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {t("swap.sell")}: {formatPrice(sellPrice)} {RESERVE_LABEL}
-            </p>
-          </>
+          <p className="text-2xl font-bold">
+            {formatPrice(buyPrice)} {RESERVE_LABEL}
+          </p>
         )}
       </CardContent>
     </Card>

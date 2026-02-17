@@ -19,14 +19,8 @@ export function useTokenPrice() {
     queryKey: ["tokenPrice", SWAP_TOKEN_ADDRESS],
     queryFn: async () => {
       const token = mintclub.network(SWAP_NETWORK).token(SWAP_TOKEN_ADDRESS);
-      const [buyResult, sellResult] = await Promise.all([
-        token.getBuyEstimation(ONE_TOKEN),
-        token.getSellEstimation(ONE_TOKEN),
-      ]);
-      return {
-        buyPrice: buyResult[0],
-        sellPrice: sellResult[0],
-      };
+      const [reserveAmount, royalty] = await token.getBuyEstimation(ONE_TOKEN);
+      return { buyPrice: reserveAmount, royalty };
     },
     enabled: !!SWAP_TOKEN_ADDRESS,
     staleTime: 10_000,
@@ -35,7 +29,7 @@ export function useTokenPrice() {
 
   return {
     buyPrice: data?.buyPrice ?? null,
-    sellPrice: data?.sellPrice ?? null,
+    royalty: data?.royalty ?? null,
     isLoading,
     isError,
   };
