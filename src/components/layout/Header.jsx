@@ -27,11 +27,21 @@ const client = createPublicClient({ chain: activeChain, transport: http() });
 
 const erc20BalanceAbi = [{ name: "balanceOf", type: "function", stateMutability: "view", inputs: [{ name: "", type: "address" }], outputs: [{ name: "", type: "uint256" }] }];
 
+/**
+ * Format token balance with adaptive decimals.
+ * Up to 8 decimals for small values, fewer as integer part grows.
+ * Max supply 100M so integer never exceeds 9 digits.
+ */
 function formatBalance(raw) {
   const num = Number(formatUnits(raw, 18));
   if (num === 0) return "0";
-  if (num < 0.01) return "<0.01";
-  return num.toLocaleString(undefined, { maximumFractionDigits: 2 });
+  const intDigits = Math.max(1, Math.floor(Math.log10(Math.abs(num))) + 1);
+  // 8 decimals when < 10, shrink as integer grows, min 0
+  const decimals = Math.max(0, 8 - Math.max(0, intDigits - 1));
+  return num.toLocaleString(undefined, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: decimals,
+  });
 }
 
 const LANGUAGES = [
@@ -51,12 +61,13 @@ export const Header = () => {
   const location = useLocation();
 
   const isLoggedIn = isAuthenticated || isConnected;
+  const fcUser = profile || context?.user;
   const displayName =
-    profile?.displayName ||
-    profile?.username ||
+    fcUser?.displayName ||
+    fcUser?.username ||
     (address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "");
-  const pfpUrl = profile?.pfpUrl || context?.user?.pfpUrl || null;
-  const initials = (profile?.displayName || profile?.username || "")
+  const pfpUrl = fcUser?.pfpUrl || null;
+  const initials = (fcUser?.displayName || fcUser?.username || "")
     .slice(0, 2)
     .toUpperCase();
 
@@ -175,10 +186,10 @@ export const Header = () => {
               <DropdownMenuContent align="end" className="min-w-44">
                 <DropdownMenuLabel>{displayName}</DropdownMenuLabel>
                 <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-                  $SEKI: {balances.loading ? <Skeleton className="ml-1 inline-block h-3 w-12" /> : formatBalance(balances.seki ?? 0n)}
+                  <span className="font-mono">$SEKI</span>: {balances.loading ? <Skeleton className="ml-1 inline-block h-3 w-16" /> : formatBalance(balances.seki ?? 0n)}
                 </DropdownMenuItem>
                 <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-                  $DOJO: {balances.loading ? <Skeleton className="ml-1 inline-block h-3 w-12" /> : formatBalance(balances.dojo ?? 0n)}
+                  <span className="font-mono">$DOJO</span>: {balances.loading ? <Skeleton className="ml-1 inline-block h-3 w-16" /> : formatBalance(balances.dojo ?? 0n)}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => { disconnect(); signOut?.(); }}>
