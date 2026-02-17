@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
 import { formatUnits, parseUnits } from "viem";
 import { useWalletAddress } from "@/hooks/useWalletAddress.js";
@@ -19,6 +20,38 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 function formatPrice(value) {
   return parseFloat(formatUnits(value, 18)).toFixed(8);
+}
+
+function EstimationRows({ estimation, mode, tokenConfig, animate, t }) {
+  const Row = animate ? motion.div : "div";
+  const stagger = (i) => animate
+    ? { initial: { opacity: 0, y: 4 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.2, delay: 0.2 + i * 0.1 } }
+    : {};
+
+  return (
+    <div className="flex flex-col gap-1">
+      <Row className="flex justify-between" {...stagger(0)}>
+        <span className="text-muted-foreground">{t("swap.cost")}</span>
+        <span className="font-medium">
+          {formatPrice(estimation.cost)} {tokenConfig.reserveLabel}
+        </span>
+      </Row>
+      <Row className="flex justify-between" {...stagger(1)}>
+        <span className="text-muted-foreground">{t("swap.fee")}</span>
+        <span className="font-medium">
+          {formatPrice(estimation.royalty)} {tokenConfig.reserveLabel}
+        </span>
+      </Row>
+      <Row className="flex justify-between border-t pt-1" {...stagger(2)}>
+        <span className="text-muted-foreground font-medium">
+          {mode === "buy" ? t("swap.totalCost") : t("swap.receive")}
+        </span>
+        <span className="font-bold">
+          {formatPrice(estimation.cost + estimation.royalty)} {tokenConfig.reserveLabel}
+        </span>
+      </Row>
+    </div>
+  );
 }
 
 /**
@@ -47,9 +80,14 @@ export function SwapPanel({ tokenConfig }) {
       return { cost, royalty };
     },
     enabled: !!parsedAmount,
+    placeholderData: (prev) => prev,
     staleTime: 5_000,
     retry: false,
   });
+
+  // Track whether the estimation rows have already stagger-animated
+  const hasStaggered = useRef(false);
+  if (!parsedAmount) hasStaggered.current = false;
 
   async function handleSubmit() {
     if (!amount || !address) return;
@@ -103,36 +141,33 @@ export function SwapPanel({ tokenConfig }) {
           onChange={(e) => setAmount(e.target.value)}
         />
 
-        {parsedAmount && (
-          <div className="rounded-md border px-3 py-2 text-sm">
-            {estimationLoading ? (
-              <Skeleton className="h-4 w-full" />
-            ) : estimation ? (
-              <div className="flex flex-col gap-1">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t("swap.cost")}</span>
-                  <span className="font-medium">
-                    {formatPrice(estimation.cost)} {tokenConfig.reserveLabel}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t("swap.fee")}</span>
-                  <span className="font-medium">
-                    {formatPrice(estimation.royalty)} {tokenConfig.reserveLabel}
-                  </span>
-                </div>
-                <div className="flex justify-between border-t pt-1">
-                  <span className="text-muted-foreground font-medium">
-                    {mode === "buy" ? t("swap.totalCost") : t("swap.receive")}
-                  </span>
-                  <span className="font-bold">
-                    {formatPrice(estimation.cost + estimation.royalty)} {tokenConfig.reserveLabel}
-                  </span>
-                </div>
+        <AnimatePresence initial={false}>
+          {parsedAmount && (
+            <motion.div
+              key="estimation"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="overflow-hidden"
+              onAnimationComplete={() => { hasStaggered.current = true; }}
+            >
+              <div className="rounded-md border px-3 py-2 text-sm">
+                {!estimation && estimationLoading ? (
+                  <Skeleton className="h-4 w-full" />
+                ) : estimation ? (
+                  <EstimationRows
+                    estimation={estimation}
+                    mode={mode}
+                    tokenConfig={tokenConfig}
+                    animate={!hasStaggered.current}
+                    t={t}
+                  />
+                ) : null}
               </div>
-            ) : null}
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <Button
           onClick={handleSubmit}
