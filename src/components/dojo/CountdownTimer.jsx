@@ -37,7 +37,7 @@ export function CountdownTimer() {
   const s = remaining % 60;
 
   return (
-    <p className="text-sm text-muted-foreground tabular-nums" aria-live="polite" aria-atomic="true">
+    <p className="font-mono text-sm text-muted-foreground tabular-nums" aria-live="polite" aria-atomic="true">
       {t("streak.nextCheckin")}
       <NumberFlow value={h} />h{" "}
       <NumberFlow value={m} format={{ minimumIntegerDigits: 2 }} />m{" "}
