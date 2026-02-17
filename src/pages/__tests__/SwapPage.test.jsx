@@ -6,13 +6,14 @@ vi.mock("@/hooks/useWalletAddress.js", () => ({
   useWalletAddress: () => ({ address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", isConnected: true, canTransact: true }),
 }));
 
-vi.mock("@/hooks/useTokenPrice.js", () => ({
-  useTokenPrice: () => ({
-    buyPrice: 50000000000000000n,
-    sellPrice: 45000000000000000n,
-    isLoading: false,
-    isError: false,
-  }),
+vi.mock("@/lib/mintclub.js", () => ({
+  mintclub: {
+    network: () => ({
+      token: () => ({
+        getBuyEstimation: vi.fn().mockResolvedValue([50000000000000000n, 1000000000000000n]),
+      }),
+    }),
+  },
 }));
 
 vi.mock("mint.club-v2-sdk", () => ({
@@ -22,8 +23,8 @@ vi.mock("mint.club-v2-sdk", () => ({
       token: () => ({
         buy: vi.fn(),
         sell: vi.fn(),
-        getBuyEstimation: vi.fn(),
-        getSellEstimation: vi.fn(),
+        getBuyEstimation: vi.fn().mockResolvedValue([50000000000000000n, 1000000000000000n]),
+        getSellEstimation: vi.fn().mockResolvedValue([45000000000000000n, 500000000000000n]),
       }),
     }),
   },
@@ -40,7 +41,7 @@ describe("SwapPage", () => {
 
   it("renders the price display", () => {
     render(<SwapPage />, { wrapper: TestWrapper });
-    expect(screen.getByText("Current Price")).toBeInTheDocument();
+    expect(screen.getByText(/Current \$DOJO Price/)).toBeInTheDocument();
   });
 
   it("renders the swap panel", () => {

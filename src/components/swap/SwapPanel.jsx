@@ -11,7 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs } from "@/components/ui/tabs";
+import { AnimatedTabsList, AnimatedTabsTrigger } from "@/components/ui/animated-tabs.jsx";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -68,7 +69,7 @@ export function SwapPanel({ tokenConfig }) {
 
   if (!canTransact) {
     return (
-      <Card className="w-full max-w-sm animate-fade-in-up">
+      <Card className="w-full max-w-sm ">
         <CardContent className="py-6 text-center">
           <p className="text-muted-foreground">{t("errors.walletNotConnected")}</p>
         </CardContent>
@@ -77,20 +78,20 @@ export function SwapPanel({ tokenConfig }) {
   }
 
   return (
-    <Card className="w-full max-w-sm animate-fade-in-up">
+    <Card className="w-full max-w-sm ">
       <CardHeader>
         <CardTitle className="text-center">{t("swap.title")}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <Tabs value={mode} onValueChange={setMode}>
-          <TabsList className="w-full">
-            <TabsTrigger value="buy" className="flex-1">
+          <AnimatedTabsList className="w-full" activeValue={mode}>
+            <AnimatedTabsTrigger value="buy" className="flex-1" layoutId={`swap-mode-${tokenConfig.key}`}>
               {t(tokenConfig.buyKey)}
-            </TabsTrigger>
-            <TabsTrigger value="sell" className="flex-1">
+            </AnimatedTabsTrigger>
+            <AnimatedTabsTrigger value="sell" className="flex-1" layoutId={`swap-mode-${tokenConfig.key}`}>
               {t(tokenConfig.sellKey)}
-            </TabsTrigger>
-          </TabsList>
+            </AnimatedTabsTrigger>
+          </AnimatedTabsList>
         </Tabs>
 
         <Input

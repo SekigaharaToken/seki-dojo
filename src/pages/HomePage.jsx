@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { motion } from "motion/react";
 import { StreakDisplay } from "@/components/dojo/StreakDisplay.jsx";
 import { CheckInButton } from "@/components/dojo/CheckInButton.jsx";
 import { CountdownTimer } from "@/components/dojo/CountdownTimer.jsx";
@@ -12,6 +13,7 @@ import { useWalletAddress } from "@/hooks/useWalletAddress.js";
 import { useStreak } from "@/hooks/useStreak.js";
 import { useShareStreak } from "@/hooks/useShareStreak.js";
 import { BackSekiLink } from "@/components/layout/BackSekiLink.jsx";
+import { fadeInUp, staggerDelay } from "@/lib/motion.js";
 
 export default function HomePage() {
   const { t } = useTranslation();
@@ -50,27 +52,52 @@ export default function HomePage() {
         />
       )}
 
-      <h1 className="font-serif text-3xl font-bold">{t("app.name")}</h1>
-      <p className="text-muted-foreground">{t("app.tagline")}</p>
+      <motion.h1
+        className="font-serif text-3xl font-bold"
+        {...fadeInUp}
+      >
+        {t("app.name")}
+      </motion.h1>
+      <motion.p
+        className="text-muted-foreground"
+        {...fadeInUp}
+        transition={{ ...fadeInUp.transition, ...staggerDelay(1) }}
+      >
+        {t("app.tagline")}
+      </motion.p>
 
-      <StreakDisplay />
+      <motion.div {...fadeInUp} transition={{ ...fadeInUp.transition, ...staggerDelay(2) }}>
+        <StreakDisplay />
+      </motion.div>
 
-      <CheckInButton />
+      <motion.div {...fadeInUp} transition={{ ...fadeInUp.transition, ...staggerDelay(3) }}>
+        <CheckInButton />
+      </motion.div>
 
-      <CountdownTimer />
+      <motion.div {...fadeInUp} transition={{ ...fadeInUp.transition, ...staggerDelay(4) }}>
+        <CountdownTimer />
+      </motion.div>
 
-      <ClaimCard
-        distributionId={null}
-        proof={[]}
-        amount="0"
-        tierName=""
-      />
+      <motion.div {...fadeInUp} transition={{ ...fadeInUp.transition, ...staggerDelay(5) }}>
+        <ClaimCard
+          distributionId={null}
+          proof={[]}
+          amount="0"
+          tierName=""
+        />
+      </motion.div>
 
-      <BackSekiLink />
+      <motion.div {...fadeInUp} transition={{ ...fadeInUp.transition, ...staggerDelay(6) }}>
+        <BackSekiLink />
+      </motion.div>
 
-      <div className="w-full">
+      <motion.div
+        className="w-full"
+        {...fadeInUp}
+        transition={{ ...fadeInUp.transition, ...staggerDelay(7) }}
+      >
         <CheckInHistory />
-      </div>
+      </motion.div>
 
       <ShareModal
         open={shareOpen}

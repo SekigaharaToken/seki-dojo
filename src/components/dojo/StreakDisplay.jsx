@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { motion } from "motion/react";
 import { useWalletAddress } from "@/hooks/useWalletAddress.js";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.jsx";
 import { Skeleton } from "@/components/ui/skeleton.jsx";
@@ -13,7 +14,7 @@ export function StreakDisplay() {
     useStreak(address);
 
   return (
-    <Card className="animate-fade-in-up">
+    <Card>
       <CardHeader>
         <CardTitle>{t("streak.title")}</CardTitle>
       </CardHeader>
@@ -41,9 +42,15 @@ export function StreakDisplay() {
             </div>
 
             {isStreakAtRisk && (
-              <p className="text-sm font-medium text-destructive" role="alert">
+              <motion.p
+                className="text-sm font-medium text-destructive"
+                role="alert"
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 12, delay: 0.3 }}
+              >
                 {t("streak.atRisk")}
-              </p>
+              </motion.p>
             )}
           </div>
         )}

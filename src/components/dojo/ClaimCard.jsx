@@ -20,7 +20,7 @@ export function ClaimCard({ distributionId, proof, amount, tierName }) {
   const { claim, isClaimed, isPending } = useClaim({ distributionId, proof });
 
   return (
-    <Card className="w-full max-w-sm animate-fade-in-up">
+    <Card className="w-full max-w-sm">
       <CardHeader>
         <CardTitle className="text-center">{t("rewards.title")}</CardTitle>
       </CardHeader>

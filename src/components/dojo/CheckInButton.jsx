@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { motion } from "motion/react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
@@ -9,6 +10,7 @@ import { useStreak } from "@/hooks/useStreak.js";
 import { useCheckIn } from "@/hooks/useCheckIn.js";
 import { useLoginModal } from "@/hooks/useLoginModal.js";
 import { useShareStreak } from "@/hooks/useShareStreak.js";
+import { tapSpring } from "@/lib/motion.js";
 
 export function CheckInButton() {
   const { t } = useTranslation();
@@ -48,28 +50,36 @@ export function CheckInButton() {
 
   return (
     <div className="flex items-center gap-2">
-      <Button
-        size="lg"
-        onClick={handleClick}
-        disabled={isDisabled}
-        className={`min-w-48 text-lg ${showPulse ? "animate-gentle-pulse" : ""}`}
-      >
-        {isPending && (
-          <Loader2 className="mr-2 size-5 animate-spin" aria-hidden="true" />
-        )}
-        {getLabel()}
-      </Button>
-
-      {hasCheckedInToday && (
+      <motion.div {...tapSpring}>
         <Button
           size="lg"
-          className="text-white"
-          style={{ backgroundColor: "#855DCD" }}
-          onClick={shareStreak}
-          aria-label={t("share.toFarcaster")}
+          onClick={handleClick}
+          disabled={isDisabled}
+          className={`min-w-48 text-lg ${showPulse ? "animate-gentle-pulse" : ""}`}
         >
-          <img src="/farcaster-icon-white.svg" alt="" className="size-5" aria-hidden="true" />
+          {isPending && (
+            <Loader2 className="mr-2 size-5 animate-spin" aria-hidden="true" />
+          )}
+          {getLabel()}
         </Button>
+      </motion.div>
+
+      {hasCheckedInToday && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: "spring", stiffness: 400, damping: 15 }}
+        >
+          <Button
+            size="lg"
+            className="text-white"
+            style={{ backgroundColor: "#855DCD" }}
+            onClick={shareStreak}
+            aria-label={t("share.toFarcaster")}
+          >
+            <img src="/farcaster-icon-white.svg" alt="" className="size-5" aria-hidden="true" />
+          </Button>
+        </motion.div>
       )}
     </div>
   );

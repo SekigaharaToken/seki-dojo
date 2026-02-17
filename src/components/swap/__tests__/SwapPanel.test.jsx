@@ -35,6 +35,17 @@ vi.mock("@/hooks/useWalletAddress.js", () => ({
 
 const { SwapPanel } = await import("@/components/swap/SwapPanel.jsx");
 
+const defaultTokenConfig = {
+  key: "dojo",
+  label: "$DOJO",
+  address: "0xC5aAEFD024Aa95C59712A931b3295e237fFD3f81",
+  network: "base",
+  reserveLabel: "ETH",
+  priceKey: "swap.priceDojo",
+  buyKey: "swap.buyDojo",
+  sellKey: "swap.sellDojo",
+};
+
 describe("SwapPanel", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -50,18 +61,18 @@ describe("SwapPanel", () => {
   });
 
   it("renders buy and sell tabs", () => {
-    render(<SwapPanel />, { wrapper: TestWrapper });
+    render(<SwapPanel tokenConfig={defaultTokenConfig} />, { wrapper: TestWrapper });
     expect(screen.getByRole("tab", { name: /buy/i })).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: /sell/i })).toBeInTheDocument();
   });
 
   it("renders amount input", () => {
-    render(<SwapPanel />, { wrapper: TestWrapper });
+    render(<SwapPanel tokenConfig={defaultTokenConfig} />, { wrapper: TestWrapper });
     expect(screen.getByRole("spinbutton")).toBeInTheDocument();
   });
 
   it("has a submit button", () => {
-    render(<SwapPanel />, { wrapper: TestWrapper });
+    render(<SwapPanel tokenConfig={defaultTokenConfig} />, { wrapper: TestWrapper });
     expect(
       screen.getByRole("button", { name: /buy \$dojo/i }),
     ).toBeInTheDocument();
@@ -69,7 +80,7 @@ describe("SwapPanel", () => {
 
   it("switches to sell mode when sell tab clicked", async () => {
     const user = userEvent.setup();
-    render(<SwapPanel />, { wrapper: TestWrapper });
+    render(<SwapPanel tokenConfig={defaultTokenConfig} />, { wrapper: TestWrapper });
     await user.click(screen.getByRole("tab", { name: /sell/i }));
     expect(
       screen.getByRole("button", { name: /sell \$dojo/i }),
@@ -77,13 +88,13 @@ describe("SwapPanel", () => {
   });
 
   it("disables submit when amount is empty", () => {
-    render(<SwapPanel />, { wrapper: TestWrapper });
+    render(<SwapPanel tokenConfig={defaultTokenConfig} />, { wrapper: TestWrapper });
     const btn = screen.getByRole("button", { name: /buy \$dojo/i });
     expect(btn).toBeDisabled();
   });
 
   it("enables submit when amount is entered", () => {
-    render(<SwapPanel />, { wrapper: TestWrapper });
+    render(<SwapPanel tokenConfig={defaultTokenConfig} />, { wrapper: TestWrapper });
     const input = screen.getByRole("spinbutton");
     fireEvent.change(input, { target: { value: "10" } });
     const btn = screen.getByRole("button", { name: /buy \$dojo/i });
@@ -92,7 +103,7 @@ describe("SwapPanel", () => {
 
   it("shows connect wallet message when not connected", () => {
     mockUseWalletAddress.mockReturnValue({ address: undefined, isConnected: false });
-    render(<SwapPanel />, { wrapper: TestWrapper });
+    render(<SwapPanel tokenConfig={defaultTokenConfig} />, { wrapper: TestWrapper });
     expect(screen.getByText(/connect/i)).toBeInTheDocument();
   });
 });

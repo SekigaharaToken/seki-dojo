@@ -30,7 +30,7 @@ export function PriceDisplay({ tokenConfig }) {
   });
 
   return (
-    <Card className="w-full max-w-sm animate-fade-in-up">
+    <Card className="w-full max-w-sm">
       <CardHeader>
         <CardTitle className="text-center">{t(tokenConfig.priceKey)}</CardTitle>
       </CardHeader>
