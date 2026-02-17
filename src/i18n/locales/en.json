@@ -111,6 +111,12 @@
     "successDescription": "Your daily training journey begins now.",
     "startTraining": "Start Training"
   },
+  "share": {
+    "toFarcaster": "Share to Farcaster",
+    "close": "Close",
+    "modalTitle": "Nice work!",
+    "castText": "🥋 Day {{streak}} streak on DOJO! {{tier}}\n\nDaily training, onchain."
+  },
   "footer": {
     "builtOn": "Built on Base",
     "poweredBy": "Powered by Sekigahara"

@@ -111,6 +111,12 @@
     "successDescription": "일일 수련이 지금 시작됩니다.",
     "startTraining": "수련 시작"
   },
+  "share": {
+    "toFarcaster": "Farcaster에 공유",
+    "close": "닫기",
+    "modalTitle": "잘했습니다!",
+    "castText": "🥋 DOJO {{streak}}일 연속 스트릭! {{tier}}\n\n매일 수련, 온체인으로."
+  },
   "footer": {
     "builtOn": "Base에서 구축",
     "poweredBy": "Sekigahara 제공"

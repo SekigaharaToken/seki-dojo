@@ -111,6 +111,12 @@
     "successDescription": "日々の修行が今始まります。",
     "startTraining": "修行を開始"
   },
+  "share": {
+    "toFarcaster": "Farcasterで共有",
+    "close": "閉じる",
+    "modalTitle": "お疲れ様！",
+    "castText": "🥋 DOJOで{{streak}}日連続！{{tier}}\n\n毎日の修行、オンチェーンで。"
+  },
   "footer": {
     "builtOn": "Base上に構築",
     "poweredBy": "Sekigahara提供"
