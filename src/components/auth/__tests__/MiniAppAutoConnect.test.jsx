@@ -35,6 +35,14 @@ describe("MiniAppAutoConnect", () => {
     mockConnectors = [mockFarcasterConnector];
   });
 
+  it("calls ready() immediately on mount", async () => {
+    mockContextPromise.mockReturnValue(
+      Promise.resolve({ user: { fid: 123 } }),
+    );
+    render(<MiniAppAutoConnect />);
+    expect(mockReady).toHaveBeenCalledTimes(1);
+  });
+
   it("calls connect with farcaster connector when sdk.context resolves", async () => {
     mockContextPromise.mockReturnValue(
       Promise.resolve({ user: { fid: 123 } }),
@@ -46,7 +54,6 @@ describe("MiniAppAutoConnect", () => {
     expect(mockConnect).toHaveBeenCalledWith({
       connector: mockFarcasterConnector,
     });
-    expect(mockReady).toHaveBeenCalledTimes(1);
   });
 
   it("does NOT call connect when already connected", async () => {
@@ -83,7 +90,5 @@ describe("MiniAppAutoConnect", () => {
     render(<MiniAppAutoConnect />);
     await new Promise((r) => setTimeout(r, 50));
     expect(mockConnect).not.toHaveBeenCalled();
-    // Still calls ready() since context was valid
-    expect(mockReady).toHaveBeenCalledTimes(1);
   });
 });

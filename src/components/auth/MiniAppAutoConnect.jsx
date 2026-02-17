@@ -15,6 +15,16 @@ export function MiniAppAutoConnect() {
   const { isInMiniApp } = useMiniAppContext();
   const attemptedRef = useRef(false);
 
+  // Call ready() as early as possible to dismiss the splash screen.
+  // This must not be gated on isInMiniApp (which resolves async).
+  const readyCalledRef = useRef(false);
+  useEffect(() => {
+    if (readyCalledRef.current) return;
+    readyCalledRef.current = true;
+    sdk.actions.ready();
+  }, []);
+
+  // Auto-connect the Farcaster wallet once context resolves.
   useEffect(() => {
     if (attemptedRef.current || isConnected || !isInMiniApp) return;
     attemptedRef.current = true;
@@ -26,8 +36,6 @@ export function MiniAppAutoConnect() {
     if (farcasterConnector) {
       connect({ connector: farcasterConnector });
     }
-
-    sdk.actions.ready();
   }, [connect, connectors, isConnected, isInMiniApp]);
 
   return null;
