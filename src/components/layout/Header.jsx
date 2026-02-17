@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Sun, Moon, Globe, LogOut } from "lucide-react";
 import { useAccount, useDisconnect } from "wagmi";
 import { Button } from "@/components/ui/button.jsx";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar.jsx";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +13,7 @@ import {
 import { useTheme } from "@/hooks/useTheme.js";
 import { useLoginModal } from "@/hooks/useLoginModal.js";
 import { useFarcaster } from "@/hooks/useFarcaster.js";
+import { useMiniAppContext } from "@/hooks/useMiniAppContext.js";
 import { cn } from "@/lib/utils";
 
 const LANGUAGES = [
@@ -25,6 +27,7 @@ export const Header = () => {
   const { resolvedTheme, setTheme } = useTheme();
   const { openLoginModal } = useLoginModal();
   const { isAuthenticated, profile, signOut } = useFarcaster();
+  const { context } = useMiniAppContext();
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const location = useLocation();
@@ -33,6 +36,10 @@ export const Header = () => {
   const displayName =
     profile?.displayName ||
     (address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "");
+  const pfpUrl = profile?.pfpUrl || context?.user?.pfpUrl || null;
+  const initials = (profile?.displayName || profile?.username || "")
+    .slice(0, 2)
+    .toUpperCase();
 
   const toggleTheme = () => {
     setTheme(resolvedTheme === "dark" ? "light" : "dark");
@@ -114,9 +121,12 @@ export const Header = () => {
           {isLoggedIn ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  {displayName}
-                </Button>
+                <button type="button" className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                  <Avatar>
+                    {pfpUrl && <AvatarImage src={pfpUrl} alt={displayName} />}
+                    <AvatarFallback>{initials || "?"}</AvatarFallback>
+                  </Avatar>
+                </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => { disconnect(); signOut?.(); }}>
