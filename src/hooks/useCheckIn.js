@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useWriteContract } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -22,23 +23,32 @@ const client = createPublicClient({
   transport: http(),
 });
 
+const attestedEvent = parseAbiItem(
+  "event Attested(address indexed recipient, address indexed attester, bytes32 uid, bytes32 indexed schemaUID)",
+);
+
 /**
  * Hook for performing a daily check-in attestation via EAS,
  * then auto-claiming the daily holdings bonus if available.
  *
  * Two-step flow:
- * 1. EAS attestation (existing behavior)
- * 2. If attestation succeeds AND user has DOJO holdings → claimDailyBonus()
+ * 1. EAS attestation
+ * 2. Wait for Attested event → claimDailyBonus()
+ *
+ * If the bonus claim fails, `bonusPending` is set so the
+ * CheckInButton can show a "Claim Bonus" retry state.
  */
 export function useCheckIn() {
   const { t } = useTranslation();
   const { address } = useWalletAddress();
   const queryClient = useQueryClient();
   const { writeContractAsync, isPending, isError, error } = useWriteContract();
+  const [bonusFailed, setBonusFailed] = useState(false);
   const {
     estimatedBonus,
     formattedBonus,
     claim: claimBonus,
+    isPending: bonusClaimPending,
     isConfigured: bonusConfigured,
   } = useDailyBonus();
 
@@ -56,6 +66,8 @@ export function useCheckIn() {
       parseAbiParameters("string app, uint32 day"),
       [APP_IDENTIFIER, day],
     );
+
+    setBonusFailed(false);
 
     try {
       const hash = await writeContractAsync({
@@ -80,45 +92,37 @@ export function useCheckIn() {
 
       toast.success(t("toast.checkinSuccess"));
 
-      // Wait for receipt, then query the Attested log from that exact block
-      client
-        .waitForTransactionReceipt({ hash })
-        .then((receipt) =>
-          client.getLogs({
-            address: EAS_ADDRESS,
-            event: parseAbiItem(
-              "event Attested(address indexed recipient, address indexed attester, bytes32 uid, bytes32 indexed schemaUID)",
-            ),
-            args: {
-              attester: address,
-              schemaUID: DOJO_SCHEMA_UID,
-            },
-            fromBlock: receipt.blockNumber,
-            toBlock: receipt.blockNumber,
-          }),
-        )
-        .then((logs) => {
-          if (logs.length === 0) return;
-          const newEntries = logs.map((log) => ({
-            timestamp: Number(log.blockNumber),
-            day: Math.floor(Number(log.blockNumber) / SECONDS_PER_DAY),
-          }));
-          queryClient.setQueryData(
-            ["checkInHistory", address],
-            (prev) => [...(prev ?? []), ...newEntries],
-          );
-        })
-        .catch(() => {
-          queryClient.invalidateQueries({ queryKey: ["checkInHistory"] });
-        });
+      // Wait for confirmation and get the Attested event log.
+      // The event proves the resolver accepted the attestation and
+      // updated lastCheckIn — safe to call claimDailyBonus after this.
+      const receipt = await client.waitForTransactionReceipt({ hash });
+      const logs = await client.getLogs({
+        address: EAS_ADDRESS,
+        event: attestedEvent,
+        args: { attester: address, schemaUID: DOJO_SCHEMA_UID },
+        fromBlock: receipt.blockNumber,
+        toBlock: receipt.blockNumber,
+      });
 
-      // Step 2: Auto-claim daily bonus if configured and user has holdings
+      // Update check-in history cache
+      if (logs.length > 0) {
+        const newEntries = logs.map((log) => ({
+          timestamp: Number(log.blockNumber),
+          day: Math.floor(Number(log.blockNumber) / SECONDS_PER_DAY),
+        }));
+        queryClient.setQueryData(
+          ["checkInHistory", address],
+          (prev) => [...(prev ?? []), ...newEntries],
+        );
+      }
+
+      // Step 2: Auto-claim daily bonus now that Attested event is confirmed
       if (bonusConfigured && estimatedBonus > 0n) {
         try {
           await claimBonus();
           toast.success(t("toast.bonusSuccess", { amount: formattedBonus }));
         } catch {
-          // Attestation already succeeded — don't fail the whole check-in
+          setBonusFailed(true);
           toast.error(t("toast.bonusFailed"));
         }
       }
@@ -133,9 +137,23 @@ export function useCheckIn() {
     }
   }
 
+  async function retryBonus() {
+    setBonusFailed(false);
+    try {
+      await claimBonus();
+      toast.success(t("toast.bonusSuccess", { amount: formattedBonus }));
+    } catch {
+      setBonusFailed(true);
+      toast.error(t("toast.bonusFailed"));
+    }
+  }
+
   return {
     checkIn,
+    retryBonus,
     isPending,
+    bonusClaimPending,
+    bonusFailed,
     isError,
     error,
   };

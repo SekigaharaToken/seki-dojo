@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -16,22 +15,25 @@ export function CheckInButton() {
   const { address, canTransact } = useWalletAddress();
   const { isAuthenticated } = useFarcaster();
   const { hasCheckedInToday, isLoading: streakLoading } = useStreak(address);
-  const { checkIn, isPending } = useCheckIn();
+  const { checkIn, retryBonus, isPending, bonusClaimPending, bonusFailed } = useCheckIn();
   const {
     canClaim: canClaimBonus,
     estimatedBonus,
     formattedBonus,
     bonusRatePercent,
-    claim: claimBonus,
-    isPending: bonusPending,
+    isPending: bonusDirectPending,
     isConfigured: bonusConfigured,
     dojoBalance,
   } = useDailyBonus();
   const { openLoginModal } = useLoginModal();
   const { openConnectModal } = useConnectModal();
-  const [bonusFailed, setBonusFailed] = useState(false);
 
-  const isDisabled = isPending || bonusPending || hasCheckedInToday || (canTransact && streakLoading);
+  const anyPending = isPending || bonusClaimPending || bonusDirectPending;
+
+  // After check-in, if bonus claim failed or is still available, show "Claim Bonus"
+  const showClaimBonusMode = hasCheckedInToday && canClaimBonus && bonusConfigured;
+
+  const isDisabled = anyPending || (hasCheckedInToday && !showClaimBonusMode) || (canTransact && streakLoading);
 
   function handleClick() {
     if (!canTransact) {
@@ -44,36 +46,25 @@ export function CheckInButton() {
       }
       return;
     }
-    setBonusFailed(false);
-    checkIn()
-      .catch(() => {})
-      .then(() => {
-        // If bonus claim failed inside useCheckIn, it toasts bonusFailed
-        // We detect this by checking canClaimBonus is still true after check-in
-      });
-  }
 
-  async function handleRetryBonus() {
-    try {
-      await claimBonus();
-      toast.success(t("toast.bonusSuccess", { amount: formattedBonus }));
-      setBonusFailed(false);
-    } catch {
-      toast.error(t("toast.bonusFailed"));
-      setBonusFailed(true);
+    if (showClaimBonusMode) {
+      retryBonus();
+      return;
     }
+
+    checkIn().catch(() => {});
   }
 
   function getLabel() {
     if (!address) return t("wallet.connect");
-    if (isPending || bonusPending) return t("checkin.buttonPending");
+    if (anyPending) return t("checkin.buttonPending");
+    if (showClaimBonusMode) return t("dailyBonus.claim");
     if (hasCheckedInToday) return t("checkin.buttonDone");
     return t("checkin.button");
   }
 
-  const showPulse = canTransact && !hasCheckedInToday && !isPending && !bonusPending && !streakLoading;
+  const showPulse = canTransact && !hasCheckedInToday && !anyPending && !streakLoading;
   const showBonusPreview = canTransact && !hasCheckedInToday && bonusConfigured && dojoBalance > 0n;
-  const showRetryBonus = hasCheckedInToday && canClaimBonus && bonusConfigured;
 
   return (
     <div className="flex flex-col items-center gap-2">
@@ -83,7 +74,7 @@ export function CheckInButton() {
         disabled={isDisabled}
         className={`min-w-48 text-lg ${showPulse ? "animate-gentle-pulse" : ""}`}
       >
-        {(isPending || bonusPending) && (
+        {anyPending && (
           <Loader2 className="mr-2 size-5 animate-spin" aria-hidden="true" />
         )}
         {getLabel()}
@@ -95,17 +86,6 @@ export function CheckInButton() {
           {" "}
           ({t("dailyBonus.rate", { rate: bonusRatePercent.toFixed(2) })})
         </p>
-      )}
-
-      {showRetryBonus && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleRetryBonus}
-          disabled={bonusPending}
-        >
-          {bonusPending ? t("toast.bonusPending") : t("dailyBonus.claim")}
-        </Button>
       )}
 
       {bonusFailed && hasCheckedInToday && (
