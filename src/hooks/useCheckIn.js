@@ -48,6 +48,7 @@ export function useCheckIn() {
     estimatedBonus,
     formattedBonus,
     claim: claimBonus,
+    refetchCanClaim,
     isPending: bonusClaimPending,
     isConfigured: bonusConfigured,
   } = useDailyBonus();
@@ -120,6 +121,7 @@ export function useCheckIn() {
       if (bonusConfigured && estimatedBonus > 0n) {
         try {
           await claimBonus();
+          refetchCanClaim();
           toast.success(t("toast.bonusSuccess", { amount: formattedBonus }));
         } catch {
           setBonusFailed(true);
@@ -141,6 +143,7 @@ export function useCheckIn() {
     setBonusFailed(false);
     try {
       await claimBonus();
+      refetchCanClaim();
       toast.success(t("toast.bonusSuccess", { amount: formattedBonus }));
     } catch {
       setBonusFailed(true);

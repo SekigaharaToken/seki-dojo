@@ -31,7 +31,7 @@ export function useDailyBonus() {
 
   const enabled = !!address && !!DAILY_BONUS_ADDRESS;
 
-  const { data: canClaim, isLoading: canClaimLoading } = useReadContract({
+  const { data: canClaim, isLoading: canClaimLoading, refetch: refetchCanClaim } = useReadContract({
     address: DAILY_BONUS_ADDRESS,
     abi: dailyBonusAbi,
     functionName: "canClaimToday",
@@ -90,6 +90,7 @@ export function useDailyBonus() {
     bonusRate,
     bonusRatePercent,
     claim,
+    refetchCanClaim,
     isPending,
     isConfigured: !!DAILY_BONUS_ADDRESS,
   };
