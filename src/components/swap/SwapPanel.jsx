@@ -5,7 +5,6 @@ import { formatUnits, parseUnits } from "viem";
 import { useWalletAddress } from "@/hooks/useWalletAddress.js";
 import { mintclub } from "@/lib/mintclub.js";
 import { wei } from "mint.club-v2-sdk";
-import { SWAP_TOKEN_ADDRESS, SWAP_NETWORK, DOJO_TOKEN_ADDRESS } from "@/config/contracts.js";
 import {
   Card,
   CardContent,
@@ -17,8 +16,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const RESERVE_LABEL = DOJO_TOKEN_ADDRESS ? "$SEKI" : "ETH";
-
 function formatPrice(value) {
   return parseFloat(formatUnits(value, 18)).toFixed(8);
 }
@@ -26,21 +23,21 @@ function formatPrice(value) {
 /**
  * Buy/sell panel using Mint Club V2 bonding curve.
  */
-export function SwapPanel() {
+export function SwapPanel({ tokenConfig }) {
   const { t } = useTranslation();
   const { address, canTransact } = useWalletAddress();
   const [mode, setMode] = useState("buy");
   const [amount, setAmount] = useState("");
   const [isPending, setIsPending] = useState(false);
 
-  const token = mintclub.network(SWAP_NETWORK).token(SWAP_TOKEN_ADDRESS);
+  const token = mintclub.network(tokenConfig.network).token(tokenConfig.address);
 
   const parsedAmount = amount && Number(amount) > 0
     ? parseUnits(amount, 18)
     : null;
 
   const { data: estimation, isLoading: estimationLoading } = useQuery({
-    queryKey: ["swapEstimation", SWAP_TOKEN_ADDRESS, mode, amount],
+    queryKey: ["swapEstimation", tokenConfig.address, mode, amount],
     queryFn: async () => {
       const fn = mode === "buy"
         ? token.getBuyEstimation(parsedAmount)
@@ -88,10 +85,10 @@ export function SwapPanel() {
         <Tabs value={mode} onValueChange={setMode}>
           <TabsList className="w-full">
             <TabsTrigger value="buy" className="flex-1">
-              {t("swap.buy")}
+              {t(tokenConfig.buyKey)}
             </TabsTrigger>
             <TabsTrigger value="sell" className="flex-1">
-              {t("swap.sell")}
+              {t(tokenConfig.sellKey)}
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -114,13 +111,13 @@ export function SwapPanel() {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t("swap.cost")}</span>
                   <span className="font-medium">
-                    {formatPrice(estimation.cost)} {RESERVE_LABEL}
+                    {formatPrice(estimation.cost)} {tokenConfig.reserveLabel}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t("swap.fee")}</span>
                   <span className="font-medium">
-                    {formatPrice(estimation.royalty)} {RESERVE_LABEL}
+                    {formatPrice(estimation.royalty)} {tokenConfig.reserveLabel}
                   </span>
                 </div>
                 <div className="flex justify-between border-t pt-1">
@@ -128,7 +125,7 @@ export function SwapPanel() {
                     {mode === "buy" ? t("swap.totalCost") : t("swap.receive")}
                   </span>
                   <span className="font-bold">
-                    {formatPrice(estimation.cost + estimation.royalty)} {RESERVE_LABEL}
+                    {formatPrice(estimation.cost + estimation.royalty)} {tokenConfig.reserveLabel}
                   </span>
                 </div>
               </div>
@@ -140,7 +137,7 @@ export function SwapPanel() {
           onClick={handleSubmit}
           disabled={!amount || isPending}
         >
-          {mode === "buy" ? t("swap.buy") : t("swap.sell")}
+          {mode === "buy" ? t(tokenConfig.buyKey) : t(tokenConfig.sellKey)}
         </Button>
 
         <p className="text-center text-[10px] text-muted-foreground">

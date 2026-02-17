@@ -1,22 +1,33 @@
 import { useTranslation } from "react-i18next";
-import { formatUnits } from "viem";
-import { useTokenPrice } from "@/hooks/useTokenPrice.js";
-import { DOJO_TOKEN_ADDRESS } from "@/config/contracts.js";
+import { formatUnits, parseUnits } from "viem";
+import { useQuery } from "@tanstack/react-query";
+import { mintclub } from "@/lib/mintclub.js";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const RESERVE_LABEL = DOJO_TOKEN_ADDRESS ? "$SEKI" : "ETH";
+const ONE_TOKEN = parseUnits("1", 18);
 
 function formatPrice(wei) {
   return parseFloat(formatUnits(wei, 18)).toFixed(8);
 }
 
 /**
- * Displays the current bonding curve price.
+ * Displays the current bonding curve price for a given token.
  */
-export function PriceDisplay() {
+export function PriceDisplay({ tokenConfig }) {
   const { t } = useTranslation();
-  const { buyPrice, isLoading, isError } = useTokenPrice();
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["tokenPrice", tokenConfig.address],
+    queryFn: async () => {
+      const token = mintclub.network(tokenConfig.network).token(tokenConfig.address);
+      const [reserveAmount, royalty] = await token.getBuyEstimation(ONE_TOKEN);
+      return { buyPrice: reserveAmount, royalty };
+    },
+    enabled: !!tokenConfig.address,
+    staleTime: 10_000,
+    retry: false,
+  });
 
   return (
     <Card className="w-full max-w-sm animate-fade-in-up">
@@ -32,7 +43,7 @@ export function PriceDisplay() {
           </p>
         ) : (
           <p className="text-2xl font-bold">
-            {formatPrice(buyPrice)} {RESERVE_LABEL}
+            {formatPrice(data?.buyPrice ?? 0n)} {tokenConfig.reserveLabel}
           </p>
         )}
       </CardContent>

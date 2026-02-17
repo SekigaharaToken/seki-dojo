@@ -62,6 +62,32 @@ const hasMainnetToken = DOJO_TOKEN_ADDRESS && chainId === 8453;
 export const SWAP_TOKEN_ADDRESS = hasMainnetToken ? DOJO_TOKEN_ADDRESS : PLACEHOLDER_SWAP_TOKEN;
 export const SWAP_NETWORK = hasMainnetToken ? MINT_CLUB_NETWORK : PLACEHOLDER_SWAP_NETWORK;
 
+// Token configs for the swap UI tabs
+const hasMainnetSeki = SEKI_TOKEN_ADDRESS && chainId === 8453;
+export const SEKI_SWAP_TOKEN_ADDRESS = hasMainnetSeki ? SEKI_TOKEN_ADDRESS : PLACEHOLDER_SWAP_TOKEN;
+export const SEKI_SWAP_NETWORK = hasMainnetSeki ? MINT_CLUB_NETWORK : PLACEHOLDER_SWAP_NETWORK;
+
+export const SWAP_TOKENS = [
+  {
+    key: "dojo",
+    label: "$DOJO",
+    address: SWAP_TOKEN_ADDRESS,
+    network: SWAP_NETWORK,
+    reserveLabel: DOJO_TOKEN_ADDRESS ? "$SEKI" : "ETH",
+    buyKey: "swap.buyDojo",
+    sellKey: "swap.sellDojo",
+  },
+  {
+    key: "seki",
+    label: "$SEKI",
+    address: SEKI_SWAP_TOKEN_ADDRESS,
+    network: SEKI_SWAP_NETWORK,
+    reserveLabel: "$HUNT",
+    buyKey: "swap.buySeki",
+    sellKey: "swap.sellSeki",
+  },
+];
+
 // DojoFaucet contract (loaded from env — set after deployment)
 export const DOJO_FAUCET_ADDRESS =
   getEnv("VITE_DOJO_FAUCET_ADDRESS", "");
