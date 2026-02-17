@@ -1,10 +1,8 @@
-import { useState } from "react";
 import { useWriteContract } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useWalletAddress } from "@/hooks/useWalletAddress.js";
-import { useDailyBonus } from "@/hooks/useDailyBonus.js";
 import {
   encodeAbiParameters,
   parseAbiParameters,
@@ -28,30 +26,14 @@ const attestedEvent = parseAbiItem(
 );
 
 /**
- * Hook for performing a daily check-in attestation via EAS,
- * then auto-claiming the daily holdings bonus if available.
- *
- * Two-step flow:
- * 1. EAS attestation
- * 2. Wait for Attested event → claimDailyBonus()
- *
- * If the bonus claim fails, `bonusPending` is set so the
- * CheckInButton can show a "Claim Bonus" retry state.
+ * Hook for performing a daily check-in attestation via EAS.
+ * Bonus payout happens automatically inside the resolver — single tx.
  */
 export function useCheckIn() {
   const { t } = useTranslation();
   const { address } = useWalletAddress();
   const queryClient = useQueryClient();
   const { writeContractAsync, isPending, isError, error } = useWriteContract();
-  const [bonusFailed, setBonusFailed] = useState(false);
-  const {
-    estimatedBonus,
-    formattedBonus,
-    claim: claimBonus,
-    refetchCanClaim,
-    isPending: bonusClaimPending,
-    isConfigured: bonusConfigured,
-  } = useDailyBonus();
 
   async function checkIn() {
     if (!DOJO_SCHEMA_UID) {
@@ -67,8 +49,6 @@ export function useCheckIn() {
       parseAbiParameters("string app, uint32 day"),
       [APP_IDENTIFIER, day],
     );
-
-    setBonusFailed(false);
 
     try {
       const hash = await writeContractAsync({
@@ -93,9 +73,6 @@ export function useCheckIn() {
 
       toast.success(t("toast.checkinSuccess"));
 
-      // Wait for confirmation and get the Attested event log.
-      // The event proves the resolver accepted the attestation and
-      // updated lastCheckIn — safe to call claimDailyBonus after this.
       const receipt = await client.waitForTransactionReceipt({ hash });
       const logs = await client.getLogs({
         address: EAS_ADDRESS,
@@ -105,7 +82,6 @@ export function useCheckIn() {
         toBlock: receipt.blockNumber,
       });
 
-      // Update check-in history cache
       if (logs.length > 0) {
         const newEntries = logs.map((log) => ({
           uid: log.data,
@@ -118,18 +94,6 @@ export function useCheckIn() {
         );
       }
 
-      // Step 2: Auto-claim daily bonus now that Attested event is confirmed
-      if (bonusConfigured && estimatedBonus > 0n) {
-        try {
-          await claimBonus();
-          refetchCanClaim();
-          toast.success(t("toast.bonusSuccess", { amount: formattedBonus }));
-        } catch {
-          setBonusFailed(true);
-          toast.error(t("toast.bonusFailed"));
-        }
-      }
-
       return hash;
     } catch (err) {
       const { key, params } = parseContractError(err);
@@ -140,24 +104,9 @@ export function useCheckIn() {
     }
   }
 
-  async function retryBonus() {
-    setBonusFailed(false);
-    try {
-      await claimBonus();
-      refetchCanClaim();
-      toast.success(t("toast.bonusSuccess", { amount: formattedBonus }));
-    } catch {
-      setBonusFailed(true);
-      toast.error(t("toast.bonusFailed"));
-    }
-  }
-
   return {
     checkIn,
-    retryBonus,
     isPending,
-    bonusClaimPending,
-    bonusFailed,
     isError,
     error,
   };
