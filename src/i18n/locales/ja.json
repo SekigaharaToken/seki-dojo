@@ -101,6 +101,19 @@
     "toggleTheme": "テーマを切替",
     "qrCode": "Warpcastサインイン用QRコード"
   },
+  "onboarding": {
+    "welcomeTitle": "道場へようこそ",
+    "welcomeDescription": "アプリに道場を追加して、1 $DOJOを受け取りましょう。",
+    "addApp": "道場をアプリに追加",
+    "addFailed": "アプリを追加できませんでした。もう一度お試しください。",
+    "addingApp": "道場を追加中...",
+    "claimingBonus": "ウェルカムボーナス受取中",
+    "claimingDescription": "1 $DOJOをウォレットに送信中...",
+    "retry": "再試行",
+    "successTitle": "1 $DOJOを受け取りました！",
+    "successDescription": "日々の修行が今始まります。",
+    "startTraining": "修行を開始"
+  },
   "footer": {
     "builtOn": "Base上に構築",
     "poweredBy": "Sekigahara提供"

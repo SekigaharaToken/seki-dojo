@@ -50,3 +50,7 @@ export const DOJO_TOKEN_ADDRESS =
 // DailyBonus contract (loaded from env — set after deployment)
 export const DAILY_BONUS_ADDRESS =
   getEnv("VITE_DAILY_BONUS_ADDRESS", "");
+
+// DojoFaucet contract (loaded from env — set after deployment)
+export const DOJO_FAUCET_ADDRESS =
+  getEnv("VITE_DOJO_FAUCET_ADDRESS", "");

@@ -101,6 +101,19 @@
     "toggleTheme": "테마 전환",
     "qrCode": "Warpcast 로그인용 QR 코드"
   },
+  "onboarding": {
+    "welcomeTitle": "도장에 오신 것을 환영합니다",
+    "welcomeDescription": "앱에 도장을 추가하고 1 $DOJO를 받으세요.",
+    "addApp": "내 앱에 도장 추가",
+    "addFailed": "앱을 추가할 수 없습니다. 다시 시도해주세요.",
+    "addingApp": "도장 추가 중...",
+    "claimingBonus": "환영 보너스 수령 중",
+    "claimingDescription": "1 $DOJO를 지갑으로 전송 중...",
+    "retry": "재시도",
+    "successTitle": "1 $DOJO를 받았습니다!",
+    "successDescription": "일일 수련이 지금 시작됩니다.",
+    "startTraining": "수련 시작"
+  },
   "footer": {
     "builtOn": "Base에서 구축",
     "poweredBy": "Sekigahara 제공"

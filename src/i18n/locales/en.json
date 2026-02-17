@@ -101,6 +101,19 @@
     "toggleTheme": "Toggle theme",
     "qrCode": "QR code for Warpcast sign in"
   },
+  "onboarding": {
+    "welcomeTitle": "Welcome to DOJO",
+    "welcomeDescription": "Add DOJO to your apps and receive 1 $DOJO to get started.",
+    "addApp": "Add DOJO to My Apps",
+    "addFailed": "Could not add app. Please try again.",
+    "addingApp": "Adding DOJO...",
+    "claimingBonus": "Claiming Welcome Bonus",
+    "claimingDescription": "Sending 1 $DOJO to your wallet...",
+    "retry": "Retry",
+    "successTitle": "You received 1 $DOJO!",
+    "successDescription": "Your daily training journey begins now.",
+    "startTraining": "Start Training"
+  },
   "footer": {
     "builtOn": "Built on Base",
     "poweredBy": "Powered by Sekigahara"

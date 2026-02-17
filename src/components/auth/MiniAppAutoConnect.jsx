@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useConnect, useAccount } from "wagmi";
 import sdk from "@farcaster/miniapp-sdk";
+import { useMiniAppContext } from "@/hooks/useMiniAppContext.js";
 
 /**
  * Auto-connects the Farcaster wallet when running inside a MiniApp iframe.
@@ -11,28 +12,23 @@ import sdk from "@farcaster/miniapp-sdk";
 export function MiniAppAutoConnect() {
   const { connect, connectors } = useConnect();
   const { isConnected } = useAccount();
+  const { isInMiniApp } = useMiniAppContext();
   const attemptedRef = useRef(false);
 
   useEffect(() => {
-    if (attemptedRef.current || isConnected) return;
+    if (attemptedRef.current || isConnected || !isInMiniApp) return;
     attemptedRef.current = true;
 
-    sdk.context
-      .then((context) => {
-        if (!context) return;
+    const farcasterConnector = connectors.find(
+      (c) => c.id === "farcaster" || c.name === "Farcaster",
+    );
 
-        const farcasterConnector = connectors.find(
-          (c) => c.id === "farcaster" || c.name === "Farcaster",
-        );
+    if (farcasterConnector) {
+      connect({ connector: farcasterConnector });
+    }
 
-        if (farcasterConnector) {
-          connect({ connector: farcasterConnector });
-        }
-
-        sdk.actions.ready();
-      })
-      .catch(() => {});
-  }, [connect, connectors, isConnected]);
+    sdk.actions.ready();
+  }, [connect, connectors, isConnected, isInMiniApp]);
 
   return null;
 }
