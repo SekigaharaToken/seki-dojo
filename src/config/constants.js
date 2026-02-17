@@ -59,3 +59,6 @@ export const DEPLOY_BLOCK = 42_263_066n;
 
 // Welcome bonus amount for onboarding (1 $DOJO)
 export const WELCOME_BONUS_AMOUNT = 1;
+
+// Public app URL for share embeds
+export const APP_URL = "https://seki-dojo.vercel.app";
