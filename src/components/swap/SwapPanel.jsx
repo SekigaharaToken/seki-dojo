@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { getCached, setCached } from "@/lib/immutableCache.js";
 
 const ONE_TOKEN = parseUnits("1", 18);
 
@@ -28,14 +29,15 @@ function formatPrice(value) {
 }
 
 function getAlertMessage({ mode, supplyIsZero, supplyIsMax, buyExceedsSupply, exceedsBalance, userBalance, sellAtLoss, t }) {
-  if (mode === "sell" && supplyIsZero) return { title: t("swap.sellWarningTitle"), desc: t("swap.noSupply") };
-  if (mode === "buy" && supplyIsMax) return { title: t("swap.sellWarningTitle"), desc: t("swap.maxSupply") };
-  if (buyExceedsSupply) return { title: t("swap.sellWarningTitle"), desc: t("swap.exceedsSupply") };
+  const title = t("swap.swapWarningTitle");
+  if (mode === "sell" && supplyIsZero) return { title, desc: t("swap.noSupply") };
+  if (mode === "buy" && supplyIsMax) return { title, desc: t("swap.maxSupply") };
+  if (buyExceedsSupply) return { title, desc: t("swap.exceedsSupply") };
   if (exceedsBalance) {
     const balance = parseFloat(formatUnits(userBalance, 18)).toFixed(2);
-    return { title: t("swap.sellWarningTitle"), desc: t("swap.exceedsBalance", { balance }) };
+    return { title, desc: t("swap.exceedsBalance", { balance }) };
   }
-  if (sellAtLoss) return { title: t("swap.sellWarningTitle"), desc: t("swap.sellWarning") };
+  if (sellAtLoss) return { title, desc: t("swap.sellWarning") };
   return null;
 }
 
@@ -163,17 +165,37 @@ export function SwapPanel({ tokenConfig }) {
     retry: false,
   });
 
-  // Token supply info (current + max)
+  // Token supply — maxSupply is immutable (cached), currentSupply is mutable
+  const cacheKey = `tokenDetail:${tokenConfig.address}`;
+  const cached = getCached(cacheKey);
+
   const { data: tokenDetail } = useQuery({
     queryKey: ["tokenDetail", tokenConfig.address],
-    queryFn: () => token.getDetail(),
+    queryFn: async () => {
+      if (cached) {
+        // Only fetch mutable currentSupply
+        const supply = await token.getTotalSupply();
+        return { ...cached, currentSupply: supply };
+      }
+      const detail = await token.getDetail();
+      const immutable = {
+        maxSupply: String(detail.info.maxSupply),
+        mintRoyalty: detail.mintRoyalty,
+        burnRoyalty: detail.burnRoyalty,
+      };
+      setCached(cacheKey, immutable);
+      return {
+        ...immutable,
+        currentSupply: detail.info.currentSupply,
+      };
+    },
     enabled: !!tokenConfig.address,
     staleTime: 10_000,
     retry: false,
   });
 
-  const currentSupply = tokenDetail?.info?.currentSupply ?? null;
-  const maxSupply = tokenDetail?.info?.maxSupply ?? null;
+  const currentSupply = tokenDetail?.currentSupply ?? null;
+  const maxSupply = tokenDetail?.maxSupply != null ? BigInt(tokenDetail.maxSupply) : null;
 
   // User's token balance (for sell validation)
   const { data: userBalance } = useReadContract({

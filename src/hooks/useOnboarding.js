@@ -6,6 +6,7 @@ import { useMiniAppContext } from "./useMiniAppContext.js";
 import { DOJO_TOKEN_ADDRESS, DOJO_FAUCET_ADDRESS } from "@/config/contracts.js";
 import { dojoFaucetAbi } from "@/config/abis/dojoFaucet.js";
 import { getEnv } from "@/config/env.js";
+import { getCached, setCachedOnce } from "@/lib/immutableCache.js";
 
 const FAUCET_SECRET = getEnv("VITE_FAUCET_SECRET", "");
 
@@ -32,13 +33,22 @@ export function useOnboarding() {
     query: { enabled: Boolean(address && DOJO_TOKEN_ADDRESS), staleTime: 60_000 },
   });
 
-  const { data: alreadyClaimed } = useReadContract({
+  const faucetCacheKey = address ? `faucetClaimed:${address}` : null;
+  const cachedClaimed = faucetCacheKey ? getCached(faucetCacheKey) : false;
+
+  const { data: onchainClaimed } = useReadContract({
     address: DOJO_FAUCET_ADDRESS || undefined,
     abi: dojoFaucetAbi,
     functionName: "hasClaimed",
     args: address ? [address] : undefined,
-    query: { enabled: Boolean(address && DOJO_FAUCET_ADDRESS), staleTime: 60_000 },
+    query: {
+      enabled: Boolean(address && DOJO_FAUCET_ADDRESS) && !cachedClaimed,
+      staleTime: 60_000,
+    },
   });
+
+  const alreadyClaimed = cachedClaimed || onchainClaimed;
+  if (alreadyClaimed && faucetCacheKey) setCachedOnce(faucetCacheKey, true);
 
   const { writeContract, data: txHash, isPending: isWritePending } = useWriteContract();
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash: txHash });

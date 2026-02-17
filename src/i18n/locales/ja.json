@@ -68,6 +68,7 @@
     "fee": "手数料",
     "totalCost": "合計コスト",
     "gasDisclaimer": "すべての取引にBaseネットワークのガス代が別途かかります。",
+    "swapWarningTitle": "警告",
     "sellWarningTitle": "大幅な価値損失",
     "sellWarning": "1トークンあたりの返金額が現在の購入価格を下回っています。この売却で大きな損失が発生する可能性があります。",
     "noSupply": "まだトークンが発行されていません。売却はできません。",

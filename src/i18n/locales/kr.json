@@ -68,6 +68,7 @@
     "fee": "수수료",
     "totalCost": "총 비용",
     "gasDisclaimer": "모든 거래에 Base 네트워크 가스 수수료가 별도로 부과됩니다.",
+    "swapWarningTitle": "경고",
     "sellWarningTitle": "상당한 가치 손실",
     "sellWarning": "토큰당 환불액이 현재 구매 가격보다 낮습니다. 이 매도로 큰 손실이 발생할 수 있습니다.",
     "noSupply": "아직 발행된 토큰이 없습니다. 매도할 수 없습니다.",
