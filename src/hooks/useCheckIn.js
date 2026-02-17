@@ -108,8 +108,9 @@ export function useCheckIn() {
       // Update check-in history cache
       if (logs.length > 0) {
         const newEntries = logs.map((log) => ({
-          timestamp: Number(log.blockNumber),
-          day: Math.floor(Number(log.blockNumber) / SECONDS_PER_DAY),
+          uid: log.data,
+          blockNumber: Number(log.blockNumber),
+          timestamp: Math.floor(Date.now() / 1000),
         }));
         queryClient.setQueryData(
           ["checkInHistory", address],
