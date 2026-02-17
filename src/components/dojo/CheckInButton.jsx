@@ -12,7 +12,7 @@ import { useLoginModal } from "@/hooks/useLoginModal.js";
 import { useShareStreak } from "@/hooks/useShareStreak.js";
 import { tapSpring } from "@/lib/motion.js";
 
-export function CheckInButton() {
+export function CheckInButton({ onCheckInSuccess }) {
   const { t } = useTranslation();
   const { address, canTransact } = useWalletAddress();
   const { isAuthenticated } = useFarcaster();
@@ -36,7 +36,9 @@ export function CheckInButton() {
       return;
     }
 
-    checkIn().catch(() => {});
+    checkIn().then(() => {
+      onCheckInSuccess?.();
+    }).catch(() => {});
   }
 
   function getLabel() {

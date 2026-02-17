@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "motion/react";
 import { StreakDisplay } from "@/components/dojo/StreakDisplay.jsx";
@@ -23,19 +23,6 @@ export default function HomePage() {
   const { shareStreak } = useShareStreak({ currentStreak, currentTier });
 
   const [shareOpen, setShareOpen] = useState(false);
-  const [shareDisplayed, setShareDisplayed] = useState(false);
-  const prevCheckedIn = useRef(hasCheckedInToday);
-
-  useEffect(() => {
-    if (!prevCheckedIn.current && hasCheckedInToday && !shareDisplayed) {
-      setShareOpen(true);
-      setShareDisplayed(true);
-    }
-    if (prevCheckedIn.current && !hasCheckedInToday) {
-      setShareDisplayed(false);
-    }
-    prevCheckedIn.current = hasCheckedInToday;
-  }, [hasCheckedInToday, shareDisplayed]);
 
   return (
     <div className="flex flex-col items-center gap-6 py-8">
@@ -71,7 +58,7 @@ export default function HomePage() {
       </motion.div>
 
       <motion.div {...fadeInUp} transition={{ ...fadeInUp.transition, ...staggerDelay(3) }}>
-        <CheckInButton />
+        <CheckInButton onCheckInSuccess={() => setShareOpen(true)} />
       </motion.div>
 
       <motion.div {...fadeInUp} transition={{ ...fadeInUp.transition, ...staggerDelay(4) }}>

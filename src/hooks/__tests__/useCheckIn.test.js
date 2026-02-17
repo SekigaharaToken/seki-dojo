@@ -129,7 +129,7 @@ describe("useCheckIn", () => {
     expect(request.data.recipient).toBe("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
   });
 
-  it("returns the transaction hash and fires success toast on success", async () => {
+  it("returns the transaction hash on success", async () => {
     const { result } = renderHook(() => useCheckIn());
 
     let txHash;
@@ -138,8 +138,6 @@ describe("useCheckIn", () => {
     });
 
     expect(txHash).toBe("0xmocktxhash");
-    expect(mockToastSuccess).toHaveBeenCalledTimes(1);
-    expect(mockToastSuccess).toHaveBeenCalledWith("toast.checkinSuccess");
   });
 
   it("throws and fires error toast when writeContractAsync rejects", async () => {

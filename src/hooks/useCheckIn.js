@@ -58,8 +58,6 @@ export function useCheckIn() {
         ],
       });
 
-      toast.success(t("toast.checkinSuccess"));
-
       // Wait for confirmation, then invalidate so UI refetches fresh data.
       // Best-effort — don't let receipt errors override the success toast.
       client.waitForTransactionReceipt({ hash }).then(() => {
