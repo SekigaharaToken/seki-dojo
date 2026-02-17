@@ -8,12 +8,15 @@ import { EAS } from "@ethereum-attestation-service/eas-contracts/contracts/EAS.s
 import { SchemaRegistry } from "@ethereum-attestation-service/eas-contracts/contracts/SchemaRegistry.sol";
 import { AttestationRequest, AttestationRequestData } from "@ethereum-attestation-service/eas-contracts/contracts/IEAS.sol";
 import { SchemaRecord } from "@ethereum-attestation-service/eas-contracts/contracts/ISchemaRegistry.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { DojoResolver } from "../src/DojoResolver.sol";
+import { DemoToken } from "../src/DemoToken.sol";
 
 contract DojoResolverTest is Test {
     EAS public eas;
     SchemaRegistry public registry;
     DojoResolver public resolver;
+    DemoToken public token;
     bytes32 public schemaUID;
 
     address public alice = makeAddr("alice");
@@ -24,8 +27,11 @@ contract DojoResolverTest is Test {
         registry = new SchemaRegistry();
         eas = new EAS(ISchemaRegistry(address(registry)));
 
+        // Deploy mock DOJO token
+        token = new DemoToken("DOJO", "DOJO", 1_000_000 ether);
+
         // Deploy DojoResolver
-        resolver = new DojoResolver(IEAS(address(eas)));
+        resolver = new DojoResolver(IEAS(address(eas)), IERC20(address(token)));
 
         // Register schema with resolver
         schemaUID = registry.register(

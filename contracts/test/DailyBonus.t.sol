@@ -7,6 +7,7 @@ import { ISchemaRegistry } from "@ethereum-attestation-service/eas-contracts/con
 import { EAS } from "@ethereum-attestation-service/eas-contracts/contracts/EAS.sol";
 import { SchemaRegistry } from "@ethereum-attestation-service/eas-contracts/contracts/SchemaRegistry.sol";
 import { AttestationRequest, AttestationRequestData } from "@ethereum-attestation-service/eas-contracts/contracts/IEAS.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { DojoResolver } from "../src/DojoResolver.sol";
 import { DailyBonus } from "../src/DailyBonus.sol";
 import { DemoToken } from "../src/DemoToken.sol";
@@ -32,15 +33,15 @@ contract DailyBonusTest is Test {
         // Warp to a realistic timestamp (Foundry default is 1, which causes day=0 collisions)
         vm.warp(1_700_000_000); // ~Nov 2023
 
-        // Deploy EAS infrastructure
-        registry = new SchemaRegistry();
-        eas = new EAS(ISchemaRegistry(address(registry)));
-        resolver = new DojoResolver(IEAS(address(eas)));
-        schemaUID = registry.register("string app, uint32 day", resolver, false);
-
         // Deploy mock DOJO token
         vm.prank(operator);
         token = new DemoToken("DOJO", "DOJO", INITIAL_SUPPLY);
+
+        // Deploy EAS infrastructure
+        registry = new SchemaRegistry();
+        eas = new EAS(ISchemaRegistry(address(registry)));
+        resolver = new DojoResolver(IEAS(address(eas)), IERC20(address(token)));
+        schemaUID = registry.register("string app, uint32 day", resolver, false);
 
         // Deploy DailyBonus
         bonus = new DailyBonus(address(token), address(resolver));
