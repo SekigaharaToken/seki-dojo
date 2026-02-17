@@ -33,6 +33,10 @@ vi.mock("@/hooks/useWalletAddress.js", () => ({
   useWalletAddress: (...args) => mockUseWalletAddress(...args),
 }));
 
+vi.mock("wagmi", () => ({
+  useReadContract: () => ({ data: undefined }),
+}));
+
 const { SwapPanel } = await import("@/components/swap/SwapPanel.jsx");
 
 const defaultTokenConfig = {

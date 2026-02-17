@@ -67,7 +67,12 @@
     "receive": "You receive",
     "fee": "Fee",
     "totalCost": "Total Cost",
-    "gasDisclaimer": "Additional Base network gas fees apply to all transactions."
+    "gasDisclaimer": "Additional Base network gas fees apply to all transactions.",
+    "sellWarningTitle": "Significant Value Loss",
+    "sellWarning": "The per-token refund is lower than the current buy price. You may lose significant value on this sell.",
+    "noSupply": "No tokens have been minted yet. Selling is not available.",
+    "maxSupply": "Maximum supply reached. Buying is not available.",
+    "exceedsBalance": "Amount exceeds your wallet balance of {{balance}}."
   },
   "toast": {
     "checkinPending": "Checking in...",

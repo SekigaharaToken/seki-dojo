@@ -2,7 +2,9 @@ import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
-import { formatUnits, parseUnits } from "viem";
+import { formatUnits, parseUnits, erc20Abi } from "viem";
+import { useReadContract } from "wagmi";
+import { TriangleAlert } from "lucide-react";
 import { useWalletAddress } from "@/hooks/useWalletAddress.js";
 import { mintclub } from "@/lib/mintclub.js";
 import { wei } from "mint.club-v2-sdk";
@@ -17,9 +19,72 @@ import { AnimatedTabsList, AnimatedTabsTrigger } from "@/components/ui/animated-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+
+const ONE_TOKEN = parseUnits("1", 18);
 
 function formatPrice(value) {
   return parseFloat(formatUnits(value, 18)).toFixed(8);
+}
+
+function getAlertMessage({ mode, supplyIsZero, supplyIsMax, exceedsBalance, userBalance, sellAtLoss, t }) {
+  if (mode === "sell" && supplyIsZero) return { title: t("swap.sellWarningTitle"), desc: t("swap.noSupply") };
+  if (mode === "buy" && supplyIsMax) return { title: t("swap.sellWarningTitle"), desc: t("swap.maxSupply") };
+  if (exceedsBalance) {
+    const balance = parseFloat(formatUnits(userBalance, 18)).toFixed(2);
+    return { title: t("swap.sellWarningTitle"), desc: t("swap.exceedsBalance", { balance }) };
+  }
+  if (sellAtLoss) return { title: t("swap.sellWarningTitle"), desc: t("swap.sellWarning") };
+  return null;
+}
+
+function SwapAlert({ mode, supplyIsZero, supplyIsMax, exceedsBalance, userBalance, sellAtLoss, parsedAmount, estimation, estimationLoading, tokenConfig, hasStaggered, t }) {
+  const alert = getAlertMessage({ mode, supplyIsZero, supplyIsMax, exceedsBalance, userBalance, sellAtLoss, t });
+  const showAlert = alert && (parsedAmount || supplyIsZero || supplyIsMax);
+
+  return (
+    <AnimatePresence initial={false} mode="wait">
+      {showAlert ? (
+        <motion.div
+          key="swap-alert"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        >
+          <Alert variant="destructive">
+            <TriangleAlert className="size-4" />
+            <AlertTitle>{alert.title}</AlertTitle>
+            <AlertDescription>{alert.desc}</AlertDescription>
+          </Alert>
+        </motion.div>
+      ) : parsedAmount ? (
+        <motion.div
+          key="estimation"
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="overflow-hidden"
+          onAnimationComplete={() => { hasStaggered.current = true; }}
+        >
+          <div className="rounded-md border px-3 py-2 text-sm">
+            {!estimation && estimationLoading ? (
+              <Skeleton className="h-4 w-full" />
+            ) : estimation ? (
+              <EstimationRows
+                estimation={estimation}
+                mode={mode}
+                tokenConfig={tokenConfig}
+                animate={!hasStaggered.current}
+                t={t}
+              />
+            ) : null}
+          </div>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
+  );
 }
 
 function EstimationRows({ estimation, mode, tokenConfig, animate, t }) {
@@ -85,6 +150,52 @@ export function SwapPanel({ tokenConfig }) {
     retry: false,
   });
 
+  // Current buy price for 1 token (shared cache with PriceDisplay)
+  const { data: priceData } = useQuery({
+    queryKey: ["tokenPrice", tokenConfig.address],
+    queryFn: async () => {
+      const [reserveAmount, royalty] = await token.getBuyEstimation(ONE_TOKEN);
+      return { buyPrice: reserveAmount, royalty };
+    },
+    enabled: !!tokenConfig.address,
+    staleTime: 10_000,
+    retry: false,
+  });
+
+  // Token supply info (current + max)
+  const { data: tokenDetail } = useQuery({
+    queryKey: ["tokenDetail", tokenConfig.address],
+    queryFn: () => token.getDetail(),
+    enabled: !!tokenConfig.address,
+    staleTime: 10_000,
+    retry: false,
+  });
+
+  const currentSupply = tokenDetail?.info?.currentSupply ?? null;
+  const maxSupply = tokenDetail?.info?.maxSupply ?? null;
+
+  // User's token balance (for sell validation)
+  const { data: userBalance } = useReadContract({
+    address: tokenConfig.address,
+    abi: erc20Abi,
+    functionName: "balanceOf",
+    args: [address],
+    query: { enabled: !!address && !!tokenConfig.address, staleTime: 10_000 },
+  });
+
+  // Edge cases
+  const supplyIsZero = currentSupply != null && currentSupply === 0n;
+  const supplyIsMax = currentSupply != null && maxSupply != null && currentSupply >= maxSupply;
+  const exceedsBalance = mode === "sell" && parsedAmount && userBalance != null && parsedAmount > userBalance;
+
+  // Detect if per-token sell refund is below the current buy price
+  const buyPrice = priceData?.buyPrice;
+  const sellAtLoss = mode === "sell"
+    && estimation
+    && parsedAmount
+    && buyPrice != null
+    && (estimation.cost * ONE_TOKEN / parsedAmount) < buyPrice;
+
   // Track whether the estimation rows have already stagger-animated
   const hasStaggered = useRef(false);
   if (!parsedAmount) hasStaggered.current = false;
@@ -141,37 +252,31 @@ export function SwapPanel({ tokenConfig }) {
           onChange={(e) => setAmount(e.target.value)}
         />
 
-        <AnimatePresence initial={false}>
-          {parsedAmount && (
-            <motion.div
-              key="estimation"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="overflow-hidden"
-              onAnimationComplete={() => { hasStaggered.current = true; }}
-            >
-              <div className="rounded-md border px-3 py-2 text-sm">
-                {!estimation && estimationLoading ? (
-                  <Skeleton className="h-4 w-full" />
-                ) : estimation ? (
-                  <EstimationRows
-                    estimation={estimation}
-                    mode={mode}
-                    tokenConfig={tokenConfig}
-                    animate={!hasStaggered.current}
-                    t={t}
-                  />
-                ) : null}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <SwapAlert
+          mode={mode}
+          supplyIsZero={supplyIsZero}
+          supplyIsMax={supplyIsMax}
+          exceedsBalance={exceedsBalance}
+          userBalance={userBalance}
+          sellAtLoss={sellAtLoss}
+          parsedAmount={parsedAmount}
+          estimation={estimation}
+          estimationLoading={estimationLoading}
+          tokenConfig={tokenConfig}
+          hasStaggered={hasStaggered}
+          t={t}
+        />
 
         <Button
           onClick={handleSubmit}
-          disabled={!amount || isPending}
+          disabled={
+            !amount
+            || isPending
+            || (mode === "sell" && supplyIsZero)
+            || (mode === "buy" && supplyIsMax)
+            || exceedsBalance
+            || sellAtLoss
+          }
         >
           {mode === "buy" ? t(tokenConfig.buyKey) : t(tokenConfig.sellKey)}
         </Button>
