@@ -53,6 +53,20 @@ vi.mock("@/hooks/useClaim.js", () => ({
   }),
 }));
 
+vi.mock("@/hooks/useOnboarding.js", () => ({
+  useOnboarding: () => ({
+    shouldOnboard: false,
+    step: "idle",
+    startOnboarding: vi.fn(),
+    addApp: vi.fn(),
+    claimWelcomeBonus: vi.fn(),
+    dismiss: vi.fn(),
+    isLoading: false,
+    isConfirmed: false,
+    error: null,
+  }),
+}));
+
 // Dynamic import after mocks
 const HomePage = (await import("@/pages/HomePage.jsx")).default;
 

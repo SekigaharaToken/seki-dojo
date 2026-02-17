@@ -17,6 +17,7 @@ vi.mock("@/hooks/useTokenPrice.js", () => ({
 
 vi.mock("mint.club-v2-sdk", () => ({
   mintclub: {
+    withPublicClient: vi.fn(),
     network: () => ({
       token: () => ({
         buy: vi.fn(),

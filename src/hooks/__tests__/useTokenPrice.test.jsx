@@ -6,14 +6,13 @@ import i18n from "@/i18n";
 
 // Mock the Mint Club SDK
 const mockGetBuyEstimation = vi.fn();
-const mockGetSellEstimation = vi.fn();
 
 vi.mock("mint.club-v2-sdk", () => ({
   mintclub: {
+    withPublicClient: vi.fn(),
     network: () => ({
       token: () => ({
         getBuyEstimation: mockGetBuyEstimation,
-        getSellEstimation: mockGetSellEstimation,
       }),
     }),
   },
@@ -35,11 +34,10 @@ function createWrapper() {
 describe("useTokenPrice", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetBuyEstimation.mockResolvedValue([50000000000000000n]);
-    mockGetSellEstimation.mockResolvedValue([45000000000000000n]);
+    mockGetBuyEstimation.mockResolvedValue([50000000000000000n, 500000000000000n]);
   });
 
-  it("returns buy and sell price estimations", async () => {
+  it("returns buy price and royalty", async () => {
     const { result } = renderHook(() => useTokenPrice(), {
       wrapper: createWrapper(),
     });
@@ -49,12 +47,11 @@ describe("useTokenPrice", () => {
     });
 
     expect(result.current.buyPrice).toBe(50000000000000000n);
-    expect(result.current.sellPrice).toBe(45000000000000000n);
+    expect(result.current.royalty).toBe(500000000000000n);
   });
 
   it("returns isLoading true initially", () => {
     mockGetBuyEstimation.mockReturnValue(new Promise(() => {}));
-    mockGetSellEstimation.mockReturnValue(new Promise(() => {}));
 
     const { result } = renderHook(() => useTokenPrice(), {
       wrapper: createWrapper(),
@@ -75,21 +72,8 @@ describe("useTokenPrice", () => {
     expect(mockGetBuyEstimation).toHaveBeenCalledWith(1000000000000000000n);
   });
 
-  it("calls getSellEstimation with 1 token (10^18 wei)", async () => {
-    const { result } = renderHook(() => useTokenPrice(), {
-      wrapper: createWrapper(),
-    });
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    expect(mockGetSellEstimation).toHaveBeenCalledWith(1000000000000000000n);
-  });
-
   it("returns null prices on error", async () => {
     mockGetBuyEstimation.mockRejectedValue(new Error("rpc error"));
-    mockGetSellEstimation.mockRejectedValue(new Error("rpc error"));
 
     const { result } = renderHook(() => useTokenPrice(), {
       wrapper: createWrapper(),
@@ -100,7 +84,7 @@ describe("useTokenPrice", () => {
     });
 
     expect(result.current.buyPrice).toBeNull();
-    expect(result.current.sellPrice).toBeNull();
+    expect(result.current.royalty).toBeNull();
     expect(result.current.isError).toBe(true);
   });
 });

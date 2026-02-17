@@ -10,6 +10,7 @@ const mockGetSellEstimation = vi.fn();
 
 vi.mock("mint.club-v2-sdk", () => ({
   mintclub: {
+    withPublicClient: vi.fn(),
     network: () => ({
       token: () => ({
         buy: mockBuy,
