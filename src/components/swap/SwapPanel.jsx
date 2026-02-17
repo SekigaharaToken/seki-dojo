@@ -27,9 +27,10 @@ function formatPrice(value) {
   return parseFloat(formatUnits(value, 18)).toFixed(8);
 }
 
-function getAlertMessage({ mode, supplyIsZero, supplyIsMax, exceedsBalance, userBalance, sellAtLoss, t }) {
+function getAlertMessage({ mode, supplyIsZero, supplyIsMax, buyExceedsSupply, exceedsBalance, userBalance, sellAtLoss, t }) {
   if (mode === "sell" && supplyIsZero) return { title: t("swap.sellWarningTitle"), desc: t("swap.noSupply") };
   if (mode === "buy" && supplyIsMax) return { title: t("swap.sellWarningTitle"), desc: t("swap.maxSupply") };
+  if (buyExceedsSupply) return { title: t("swap.sellWarningTitle"), desc: t("swap.exceedsSupply") };
   if (exceedsBalance) {
     const balance = parseFloat(formatUnits(userBalance, 18)).toFixed(2);
     return { title: t("swap.sellWarningTitle"), desc: t("swap.exceedsBalance", { balance }) };
@@ -38,8 +39,8 @@ function getAlertMessage({ mode, supplyIsZero, supplyIsMax, exceedsBalance, user
   return null;
 }
 
-function SwapAlert({ mode, supplyIsZero, supplyIsMax, exceedsBalance, userBalance, sellAtLoss, parsedAmount, estimation, estimationLoading, tokenConfig, hasStaggered, t }) {
-  const alert = getAlertMessage({ mode, supplyIsZero, supplyIsMax, exceedsBalance, userBalance, sellAtLoss, t });
+function SwapAlert({ mode, supplyIsZero, supplyIsMax, buyExceedsSupply, exceedsBalance, userBalance, sellAtLoss, parsedAmount, estimation, estimationLoading, tokenConfig, hasStaggered, t }) {
+  const alert = getAlertMessage({ mode, supplyIsZero, supplyIsMax, buyExceedsSupply, exceedsBalance, userBalance, sellAtLoss, t });
   const showAlert = alert && (parsedAmount || supplyIsZero || supplyIsMax);
 
   return (
@@ -186,6 +187,11 @@ export function SwapPanel({ tokenConfig }) {
   // Edge cases
   const supplyIsZero = currentSupply != null && currentSupply === 0n;
   const supplyIsMax = currentSupply != null && maxSupply != null && currentSupply >= maxSupply;
+  const buyExceedsSupply = mode === "buy"
+    && parsedAmount
+    && currentSupply != null
+    && maxSupply != null
+    && (currentSupply + parsedAmount > maxSupply);
   const exceedsBalance = mode === "sell" && parsedAmount && userBalance != null && parsedAmount > userBalance;
 
   // Detect if per-token sell refund is below the current buy price
@@ -256,6 +262,7 @@ export function SwapPanel({ tokenConfig }) {
           mode={mode}
           supplyIsZero={supplyIsZero}
           supplyIsMax={supplyIsMax}
+          buyExceedsSupply={buyExceedsSupply}
           exceedsBalance={exceedsBalance}
           userBalance={userBalance}
           sellAtLoss={sellAtLoss}
@@ -274,6 +281,7 @@ export function SwapPanel({ tokenConfig }) {
             || isPending
             || (mode === "sell" && supplyIsZero)
             || (mode === "buy" && supplyIsMax)
+            || buyExceedsSupply
             || exceedsBalance
             || sellAtLoss
           }

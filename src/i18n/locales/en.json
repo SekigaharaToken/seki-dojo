@@ -72,6 +72,7 @@
     "sellWarning": "The per-token refund is lower than the current buy price. You may lose significant value on this sell.",
     "noSupply": "No tokens have been minted yet. Selling is not available.",
     "maxSupply": "Maximum supply reached. Buying is not available.",
+    "exceedsSupply": "This amount would exceed the maximum token supply.",
     "exceedsBalance": "Amount exceeds your wallet balance of {{balance}}."
   },
   "toast": {
