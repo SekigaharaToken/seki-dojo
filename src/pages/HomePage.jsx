@@ -20,14 +20,19 @@ export default function HomePage() {
   const { shareStreak } = useShareStreak({ currentStreak, currentTier });
 
   const [shareOpen, setShareOpen] = useState(false);
+  const [shareDisplayed, setShareDisplayed] = useState(false);
   const prevCheckedIn = useRef(hasCheckedInToday);
 
   useEffect(() => {
-    if (!prevCheckedIn.current && hasCheckedInToday) {
+    if (!prevCheckedIn.current && hasCheckedInToday && !shareDisplayed) {
       setShareOpen(true);
+      setShareDisplayed(true);
+    }
+    if (prevCheckedIn.current && !hasCheckedInToday) {
+      setShareDisplayed(false);
     }
     prevCheckedIn.current = hasCheckedInToday;
-  }, [hasCheckedInToday]);
+  }, [hasCheckedInToday, shareDisplayed]);
 
   return (
     <div className="flex flex-col items-center gap-6 py-8">
