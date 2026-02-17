@@ -69,7 +69,9 @@
     "amount": "数量",
     "cost": "コスト",
     "receive": "受取額",
-    "fee": "手数料"
+    "fee": "手数料",
+    "totalCost": "合計コスト",
+    "gasDisclaimer": "すべての取引にBaseネットワークのガス代が別途かかります。"
   },
   "toast": {
     "checkinPending": "チェックイン中...",

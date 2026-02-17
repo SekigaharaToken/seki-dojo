@@ -69,7 +69,9 @@
     "amount": "수량",
     "cost": "비용",
     "receive": "수령액",
-    "fee": "수수료"
+    "fee": "수수료",
+    "totalCost": "총 비용",
+    "gasDisclaimer": "모든 거래에 Base 네트워크 가스 수수료가 별도로 부과됩니다."
   },
   "toast": {
     "checkinPending": "체크인 중...",

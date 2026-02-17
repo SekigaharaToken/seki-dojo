@@ -69,7 +69,9 @@
     "amount": "Amount",
     "cost": "Cost",
     "receive": "You receive",
-    "fee": "Fee"
+    "fee": "Fee",
+    "totalCost": "Total Cost",
+    "gasDisclaimer": "Additional Base network gas fees apply to all transactions."
   },
   "toast": {
     "checkinPending": "Checking in...",

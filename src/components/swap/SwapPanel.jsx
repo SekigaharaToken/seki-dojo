@@ -111,9 +111,7 @@ export function SwapPanel() {
             ) : estimation ? (
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">
-                    {mode === "buy" ? t("swap.cost") : t("swap.receive")}
-                  </span>
+                  <span className="text-muted-foreground">{t("swap.cost")}</span>
                   <span className="font-medium">
                     {formatPrice(estimation.cost)} {RESERVE_LABEL}
                   </span>
@@ -122,6 +120,14 @@ export function SwapPanel() {
                   <span className="text-muted-foreground">{t("swap.fee")}</span>
                   <span className="font-medium">
                     {formatPrice(estimation.royalty)} {RESERVE_LABEL}
+                  </span>
+                </div>
+                <div className="flex justify-between border-t pt-1">
+                  <span className="text-muted-foreground font-medium">
+                    {mode === "buy" ? t("swap.totalCost") : t("swap.receive")}
+                  </span>
+                  <span className="font-bold">
+                    {formatPrice(estimation.cost + estimation.royalty)} {RESERVE_LABEL}
                   </span>
                 </div>
               </div>
@@ -135,6 +141,10 @@ export function SwapPanel() {
         >
           {mode === "buy" ? t("swap.buy") : t("swap.sell")}
         </Button>
+
+        <p className="text-center text-[10px] text-muted-foreground">
+          {t("swap.gasDisclaimer")}
+        </p>
       </CardContent>
     </Card>
   );
