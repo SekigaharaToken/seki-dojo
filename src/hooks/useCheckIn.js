@@ -3,27 +3,14 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useWalletAddress } from "@/hooks/useWalletAddress.js";
-import {
-  encodeAbiParameters,
-  parseAbiParameters,
-  createPublicClient,
-  http,
-  parseAbiItem,
-} from "viem";
+import { encodeAbiParameters, parseAbiParameters, createPublicClient, http } from "viem";
 import { activeChain } from "@/config/chains.js";
 import { EAS_ADDRESS, DOJO_SCHEMA_UID } from "@/config/contracts.js";
 import { easAbi } from "@/config/abis/eas.js";
 import { APP_IDENTIFIER, SECONDS_PER_DAY } from "@/config/constants.js";
 import { parseContractError } from "@/lib/parseContractError.js";
 
-const client = createPublicClient({
-  chain: activeChain,
-  transport: http(),
-});
-
-const attestedEvent = parseAbiItem(
-  "event Attested(address indexed recipient, address indexed attester, bytes32 uid, bytes32 indexed schemaUID)",
-);
+const client = createPublicClient({ chain: activeChain, transport: http() });
 
 /**
  * Hook for performing a daily check-in attestation via EAS.
@@ -73,35 +60,12 @@ export function useCheckIn() {
 
       toast.success(t("toast.checkinSuccess"));
 
-      // Best-effort: update history cache from logs.
-      // Failures here must not surface as check-in errors.
-      try {
-        const receipt = await client.waitForTransactionReceipt({ hash });
-        const logs = await client.getLogs({
-          address: EAS_ADDRESS,
-          event: attestedEvent,
-          args: { attester: address, schemaUID: DOJO_SCHEMA_UID },
-          fromBlock: receipt.blockNumber,
-          toBlock: receipt.blockNumber,
-        });
-
-        if (logs.length > 0) {
-          const newEntries = logs.map((log) => ({
-            uid: log.data,
-            blockNumber: Number(log.blockNumber),
-            timestamp: Math.floor(Date.now() / 1000),
-          }));
-          queryClient.setQueryData(
-            ["checkInHistory", address],
-            (prev) => [...(prev ?? []), ...newEntries],
-          );
-        }
-      } catch {
-        // Log parsing failed — history will refresh on next query
-      }
-
-      // Invalidate streak data so it refetches from the resolver
-      queryClient.invalidateQueries({ queryKey: ["readContract"] });
+      // Wait for confirmation, then invalidate so UI refetches fresh data.
+      // Best-effort — don't let receipt errors override the success toast.
+      client.waitForTransactionReceipt({ hash }).then(() => {
+        queryClient.invalidateQueries({ queryKey: ["readContract"] });
+        queryClient.invalidateQueries({ queryKey: ["checkInHistory", address] });
+      }).catch(() => {});
 
       return hash;
     } catch (err) {
