@@ -60,10 +60,6 @@ const hasMainnetToken = DOJO_TOKEN_ADDRESS && chainId === 8453;
 export const SWAP_TOKEN_ADDRESS = hasMainnetToken ? DOJO_TOKEN_ADDRESS : PLACEHOLDER_SWAP_TOKEN;
 export const SWAP_NETWORK = hasMainnetToken ? MINT_CLUB_NETWORK : PLACEHOLDER_SWAP_NETWORK;
 
-// DailyBonus contract (loaded from env — set after deployment)
-export const DAILY_BONUS_ADDRESS =
-  getEnv("VITE_DAILY_BONUS_ADDRESS", "");
-
 // DojoFaucet contract (loaded from env — set after deployment)
 export const DOJO_FAUCET_ADDRESS =
   getEnv("VITE_DOJO_FAUCET_ADDRESS", "");

@@ -43,16 +43,6 @@
     "purpleBelt": "紫帯",
     "blackBelt": "黒帯"
   },
-  "dailyBonus": {
-    "title": "デイリーボーナス",
-    "rate": "保有量の{{rate}}%",
-    "estimated": "約{{amount}} $DOJO",
-    "claim": "ボーナス受取",
-    "claimed": "本日受取済み",
-    "notCheckedIn": "先にチェックインしてください",
-    "noBalance": "$DOJOを保有してデイリーボーナスを獲得",
-    "empty": "コントラクトへの入金が必要です"
-  },
   "rewards": {
     "title": "週間報酬",
     "claimable": "{{amount}} $DOJO 獲得可能",

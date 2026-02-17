@@ -39,12 +39,6 @@ export const STREAK_TIERS = [
   },
 ];
 
-// Daily bonus constants (holdings-based)
-export const DAILY_BONUS_BASE_RATE = 10; // 0.1% in basis points
-export const DAILY_BONUS_MAX_RATE = 20; // 0.2% in basis points
-export const DAILY_BONUS_RAMP_DAYS = 30; // days to reach max rate
-export const BASIS_POINTS = 10_000;
-
 /**
  * Get the tier for a given streak count.
  */

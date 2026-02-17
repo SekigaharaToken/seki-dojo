@@ -54,19 +54,6 @@ vi.mock("viem", () => ({
 vi.mock("@/config/contracts.js", () => ({
   EAS_ADDRESS: "0x4200000000000000000000000000000000000021",
   DOJO_SCHEMA_UID: "0xmockschemauid",
-  DAILY_BONUS_ADDRESS: "",
-  DOJO_TOKEN_ADDRESS: "",
-}));
-
-// Mock useDailyBonus
-const mockClaimBonus = vi.fn(() => Promise.resolve("0xbonustxhash"));
-vi.mock("@/hooks/useDailyBonus.js", () => ({
-  useDailyBonus: () => ({
-    estimatedBonus: 0n,
-    formattedBonus: "0",
-    claim: mockClaimBonus,
-    isConfigured: false,
-  }),
 }));
 
 // Mock @tanstack/react-query

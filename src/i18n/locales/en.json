@@ -43,16 +43,6 @@
     "purpleBelt": "Purple Belt",
     "blackBelt": "Black Belt"
   },
-  "dailyBonus": {
-    "title": "Daily Bonus",
-    "rate": "{{rate}}% of holdings",
-    "estimated": "~{{amount}} $DOJO",
-    "claim": "Claim Bonus",
-    "claimed": "Claimed Today",
-    "notCheckedIn": "Check in first",
-    "noBalance": "Hold $DOJO to earn daily bonus",
-    "empty": "Contract needs funding"
-  },
   "rewards": {
     "title": "Weekly Rewards",
     "claimable": "{{amount}} $DOJO available",
