@@ -35,7 +35,7 @@
     "days": "{{count}}일",
     "days_plural": "{{count}}일",
     "atRisk": "오늘 체크인하여 스트릭을 유지하세요!",
-    "nextCheckin": "다음 체크인까지 {{time}}"
+    "nextCheckin": "다음 체크인까지 "
   },
   "tier": {
     "whiteBelt": "백띠",

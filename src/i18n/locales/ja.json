@@ -35,7 +35,7 @@
     "days": "{{count}}日",
     "days_plural": "{{count}}日",
     "atRisk": "今日チェックインしてストリークを守ろう！",
-    "nextCheckin": "次のチェックインまで{{time}}"
+    "nextCheckin": "次のチェックインまで"
   },
   "tier": {
     "whiteBelt": "白帯",

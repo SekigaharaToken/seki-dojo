@@ -1,15 +1,8 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import NumberFlow from "@number-flow/react";
 import { useWalletAddress } from "@/hooks/useWalletAddress.js";
 import { useStreak } from "@/hooks/useStreak.js";
-import { SECONDS_PER_DAY } from "@/config/constants.js";
-
-function formatTime(seconds) {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = seconds % 60;
-  return `${h}h ${String(m).padStart(2, "0")}m ${String(s).padStart(2, "0")}s`;
-}
 
 export function CountdownTimer() {
   const { t } = useTranslation();
@@ -39,9 +32,16 @@ export function CountdownTimer() {
 
   if (!hasCheckedInToday) return null;
 
+  const h = Math.floor(remaining / 3600);
+  const m = Math.floor((remaining % 3600) / 60);
+  const s = remaining % 60;
+
   return (
-    <p className="text-sm text-muted-foreground" aria-live="polite" aria-atomic="true">
-      {t("streak.nextCheckin", { time: formatTime(remaining) })}
+    <p className="text-sm text-muted-foreground tabular-nums" aria-live="polite" aria-atomic="true">
+      {t("streak.nextCheckin")}
+      <NumberFlow value={h} />h{" "}
+      <NumberFlow value={m} format={{ minimumIntegerDigits: 2 }} />m{" "}
+      <NumberFlow value={s} format={{ minimumIntegerDigits: 2 }} />s
     </p>
   );
 }
