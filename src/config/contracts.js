@@ -39,7 +39,9 @@ export const MINT_CLUB =
 // Custom contracts (loaded from env — set after deployment)
 export const DOJO_RESOLVER_ADDRESS =
   getEnv("VITE_DOJO_RESOLVER_ADDRESS", "");
-export const DOJO_SCHEMA_UID = getEnv("VITE_DOJO_SCHEMA_UID", "");
+// Lowercase hex — Base RPC topic filters are case-sensitive
+const rawSchemaUid = getEnv("VITE_DOJO_SCHEMA_UID", "");
+export const DOJO_SCHEMA_UID = rawSchemaUid ? rawSchemaUid.toLowerCase() : "";
 
 // Project tokens (loaded from env — set after Mint Club creation)
 export const SEKI_TOKEN_ADDRESS =
