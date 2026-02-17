@@ -55,7 +55,7 @@ export const APP_IDENTIFIER = "dojo";
 
 // Block number from which to query EAS logs (DojoResolver deployment block).
 // Avoids querying from block 0 which exceeds public RPC log range limits.
-export const DEPLOY_BLOCK = 37_728_678n;
+export const DEPLOY_BLOCK = 42_263_066n;
 
 // Welcome bonus amount for onboarding (1 $DOJO)
 export const WELCOME_BONUS_AMOUNT = 1;

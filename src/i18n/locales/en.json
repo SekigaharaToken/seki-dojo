@@ -99,15 +99,15 @@
   },
   "onboarding": {
     "welcomeTitle": "Welcome to DOJO",
-    "welcomeDescription": "Add DOJO to your apps and receive 1 $DOJO to get started.",
-    "addApp": "Add DOJO to My Apps",
+    "welcomeDescription": "To receive your welcome gift of 1 $DOJO, add the app and enable notifications so you never miss a day.",
+    "addApp": "Add App & Enable Notifications",
     "addFailed": "Could not add app. Please try again.",
     "addingApp": "Adding DOJO...",
-    "claimingBonus": "Claiming Welcome Bonus",
+    "claimingBonus": "Claiming Welcome Gift",
     "claimingDescription": "Sending 1 $DOJO to your wallet...",
     "retry": "Retry",
     "successTitle": "You received 1 $DOJO!",
-    "successDescription": "Your daily training journey begins now.",
+    "successDescription": "You'll get a daily reminder to check in. Your training journey begins now.",
     "startTraining": "Start Training"
   },
   "footer": {
