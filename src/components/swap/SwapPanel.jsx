@@ -3,7 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { formatUnits, parseUnits } from "viem";
 import { useWalletAddress } from "@/hooks/useWalletAddress.js";
-import { mintclub, wei } from "mint.club-v2-sdk";
+import { mintclub } from "@/lib/mintclub.js";
+import { wei } from "mint.club-v2-sdk";
 import { SWAP_TOKEN_ADDRESS, SWAP_NETWORK, DOJO_TOKEN_ADDRESS } from "@/config/contracts.js";
 import {
   Card,
