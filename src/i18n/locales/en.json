@@ -60,6 +60,8 @@
     "buySeki": "Buy $SEKI",
     "sellSeki": "Sell $SEKI",
     "price": "Current Price",
+    "priceDojo": "Current $DOJO Price",
+    "priceSeki": "Current $SEKI Price",
     "amount": "Amount",
     "cost": "Cost",
     "receive": "You receive",

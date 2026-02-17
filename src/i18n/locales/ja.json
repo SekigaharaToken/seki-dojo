@@ -60,6 +60,8 @@
     "buySeki": "$SEKI を購入",
     "sellSeki": "$SEKI を売却",
     "price": "現在価格",
+    "priceDojo": "現在の$DOJO価格",
+    "priceSeki": "現在の$SEKI価格",
     "amount": "数量",
     "cost": "コスト",
     "receive": "受取額",

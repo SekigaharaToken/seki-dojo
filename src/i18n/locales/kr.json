@@ -60,6 +60,8 @@
     "buySeki": "$SEKI 구매",
     "sellSeki": "$SEKI 판매",
     "price": "현재 가격",
+    "priceDojo": "현재 $DOJO 가격",
+    "priceSeki": "현재 $SEKI 가격",
     "amount": "수량",
     "cost": "비용",
     "receive": "수령액",

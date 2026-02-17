@@ -32,7 +32,7 @@ export function PriceDisplay({ tokenConfig }) {
   return (
     <Card className="w-full max-w-sm animate-fade-in-up">
       <CardHeader>
-        <CardTitle className="text-center">{t("swap.price")}</CardTitle>
+        <CardTitle className="text-center">{t(tokenConfig.priceKey)}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-2">
         {isLoading ? (
