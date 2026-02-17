@@ -16,7 +16,8 @@
   "auth": {
     "signInWithFarcaster": "Farcasterでサインイン",
     "orConnectWallet": "またはウォレットで接続",
-    "scanQrCode": "Warpcastでスキャン",
+    "scanQrCode": "スマホでQRコードをスキャン",
+    "signInDescription": "Farcasterアカウントを接続して始めましょう",
     "openDirectly": "直接開く",
     "connectWithFarcaster": "Farcasterで接続",
     "creatingConnection": "接続中...",

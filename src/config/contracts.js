@@ -55,10 +55,10 @@ export const MINT_CLUB_NETWORK = chainId === 84532 ? "basesepolia" : "base";
 const PLACEHOLDER_SWAP_TOKEN = "0xC5aAEFD024Aa95C59712A931b3295e237fFD3f81";
 const PLACEHOLDER_SWAP_NETWORK = "base";
 
-// Use configured $DOJO if on mainnet, otherwise fallback to placeholder
-export const SWAP_TOKEN_ADDRESS = DOJO_TOKEN_ADDRESS || PLACEHOLDER_SWAP_TOKEN;
-export const SWAP_NETWORK =
-  DOJO_TOKEN_ADDRESS ? MINT_CLUB_NETWORK : PLACEHOLDER_SWAP_NETWORK;
+// Use real $DOJO on mainnet; on testnet (or when unconfigured) use placeholder
+const hasMainnetToken = DOJO_TOKEN_ADDRESS && chainId === 8453;
+export const SWAP_TOKEN_ADDRESS = hasMainnetToken ? DOJO_TOKEN_ADDRESS : PLACEHOLDER_SWAP_TOKEN;
+export const SWAP_NETWORK = hasMainnetToken ? MINT_CLUB_NETWORK : PLACEHOLDER_SWAP_NETWORK;
 
 // DailyBonus contract (loaded from env — set after deployment)
 export const DAILY_BONUS_ADDRESS =

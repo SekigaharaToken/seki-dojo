@@ -68,7 +68,7 @@ export const LoginModal = ({ onSuccess }) => {
             {t("auth.signInWithFarcaster")}
           </DialogTitle>
           <DialogDescription>
-            {t("auth.scanQrCode")}
+            {t("auth.signInDescription")}
           </DialogDescription>
         </DialogHeader>
 

@@ -16,7 +16,8 @@
   "auth": {
     "signInWithFarcaster": "Sign In With Farcaster",
     "orConnectWallet": "Or connect a wallet",
-    "scanQrCode": "Scan with Warpcast",
+    "scanQrCode": "Scan the QR code with your phone",
+    "signInDescription": "Connect your Farcaster account to get started",
     "openDirectly": "open directly",
     "connectWithFarcaster": "Connect with Farcaster",
     "creatingConnection": "Creating connection...",

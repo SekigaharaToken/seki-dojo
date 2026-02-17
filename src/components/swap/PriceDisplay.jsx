@@ -7,6 +7,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const RESERVE_LABEL = DOJO_TOKEN_ADDRESS ? "$SEKI" : "ETH";
 
+function formatPrice(wei) {
+  return parseFloat(formatUnits(wei, 18)).toFixed(8);
+}
+
 /**
  * Displays the current bonding curve price.
  */
@@ -29,10 +33,10 @@ export function PriceDisplay() {
         ) : (
           <>
             <p className="text-2xl font-bold">
-              {formatUnits(buyPrice, 18)} {RESERVE_LABEL}
+              {formatPrice(buyPrice)} {RESERVE_LABEL}
             </p>
             <p className="text-xs text-muted-foreground">
-              {t("swap.sell")}: {formatUnits(sellPrice, 18)} {RESERVE_LABEL}
+              {t("swap.sell")}: {formatPrice(sellPrice)} {RESERVE_LABEL}
             </p>
           </>
         )}
