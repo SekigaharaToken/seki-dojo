@@ -1,11 +1,14 @@
 import { useTranslation } from "react-i18next";
 import { formatUnits } from "viem";
 import { useTokenPrice } from "@/hooks/useTokenPrice.js";
+import { DOJO_TOKEN_ADDRESS } from "@/config/contracts.js";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
+const RESERVE_LABEL = DOJO_TOKEN_ADDRESS ? "$SEKI" : "ETH";
+
 /**
- * Displays the current $DOJO bonding curve price.
+ * Displays the current bonding curve price.
  */
 export function PriceDisplay() {
   const { t } = useTranslation();
@@ -26,10 +29,10 @@ export function PriceDisplay() {
         ) : (
           <>
             <p className="text-2xl font-bold">
-              {formatUnits(buyPrice, 18)} $SEKI
+              {formatUnits(buyPrice, 18)} {RESERVE_LABEL}
             </p>
             <p className="text-xs text-muted-foreground">
-              {t("swap.sell")}: {formatUnits(sellPrice, 18)} $SEKI
+              {t("swap.sell")}: {formatUnits(sellPrice, 18)} {RESERVE_LABEL}
             </p>
           </>
         )}

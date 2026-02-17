@@ -47,6 +47,19 @@ export const SEKI_TOKEN_ADDRESS =
 export const DOJO_TOKEN_ADDRESS =
   getEnv("VITE_DOJO_TOKEN_ADDRESS", "");
 
+// Mint Club SDK network name matching chain ID
+export const MINT_CLUB_NETWORK = chainId === 84532 ? "basesepolia" : "base";
+
+// Placeholder token for swap UI until $DOJO bonding curve is live
+// CATTBUTT on Base mainnet: https://mint.club/token/base/CATTBUTT
+const PLACEHOLDER_SWAP_TOKEN = "0xC5aAEFD024Aa95C59712A931b3295e237fFD3f81";
+const PLACEHOLDER_SWAP_NETWORK = "base";
+
+// Use configured $DOJO if on mainnet, otherwise fallback to placeholder
+export const SWAP_TOKEN_ADDRESS = DOJO_TOKEN_ADDRESS || PLACEHOLDER_SWAP_TOKEN;
+export const SWAP_NETWORK =
+  DOJO_TOKEN_ADDRESS ? MINT_CLUB_NETWORK : PLACEHOLDER_SWAP_NETWORK;
+
 // DailyBonus contract (loaded from env — set after deployment)
 export const DAILY_BONUS_ADDRESS =
   getEnv("VITE_DAILY_BONUS_ADDRESS", "");

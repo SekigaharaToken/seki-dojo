@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useWalletAddress } from "@/hooks/useWalletAddress.js";
 import { mintclub, wei } from "mint.club-v2-sdk";
-import { DOJO_TOKEN_ADDRESS } from "@/config/contracts.js";
+import { SWAP_TOKEN_ADDRESS, SWAP_NETWORK } from "@/config/contracts.js";
 import {
   Card,
   CardContent,
@@ -23,7 +23,7 @@ export function SwapPanel() {
   const [amount, setAmount] = useState("");
   const [isPending, setIsPending] = useState(false);
 
-  const token = mintclub.network("base").token(DOJO_TOKEN_ADDRESS);
+  const token = mintclub.network(SWAP_NETWORK).token(SWAP_TOKEN_ADDRESS);
 
   async function handleSubmit() {
     if (!amount || !address) return;

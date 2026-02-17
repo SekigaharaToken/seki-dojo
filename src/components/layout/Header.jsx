@@ -46,7 +46,7 @@ export const Header = () => {
           <Link to="/" className="font-serif text-xl font-bold tracking-wide">
             {t("app.name")}
           </Link>
-          <nav className="hidden items-center gap-4 sm:flex">
+          <nav className="flex items-center gap-4">
             <Link
               to="/"
               className={cn(
