@@ -87,7 +87,10 @@
     "claimFailed": "수령 실패",
     "bonusPending": "일일 보너스 수령 중...",
     "bonusSuccess": "일일 보너스를 수령했습니다!",
-    "bonusFailed": "보너스 수령 실패"
+    "bonusFailed": "보너스 수령 실패",
+    "swapBuySuccess": "구매 완료!",
+    "swapSellSuccess": "판매 완료!",
+    "swapFailed": "스왑 실패"
   },
   "errors": {
     "walletNotConnected": "지갑을 연결해주세요",

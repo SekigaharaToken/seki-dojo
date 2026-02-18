@@ -87,7 +87,10 @@
     "claimFailed": "Claim failed",
     "bonusPending": "Claiming daily bonus...",
     "bonusSuccess": "Daily bonus claimed!",
-    "bonusFailed": "Bonus claim failed"
+    "bonusFailed": "Bonus claim failed",
+    "swapBuySuccess": "Purchase complete!",
+    "swapSellSuccess": "Sale complete!",
+    "swapFailed": "Swap failed"
   },
   "errors": {
     "walletNotConnected": "Please connect your wallet",

@@ -87,7 +87,10 @@
     "claimFailed": "受取に失敗しました",
     "bonusPending": "デイリーボーナスを受取中...",
     "bonusSuccess": "デイリーボーナスを受取りました！",
-    "bonusFailed": "ボーナスの受取に失敗しました"
+    "bonusFailed": "ボーナスの受取に失敗しました",
+    "swapBuySuccess": "購入完了！",
+    "swapSellSuccess": "売却完了！",
+    "swapFailed": "スワップに失敗しました"
   },
   "errors": {
     "walletNotConnected": "ウォレットを接続してください",

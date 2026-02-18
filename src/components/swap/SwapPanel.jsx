@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formatUnits, parseUnits, erc20Abi } from "viem";
 import { useReadContract } from "wagmi";
 import { TriangleAlert } from "lucide-react";
+import { toast } from "sonner";
 import { useWalletAddress } from "@/hooks/useWalletAddress.js";
 import { mintclub } from "@/lib/mintclub.js";
 import { wei } from "mint.club-v2-sdk";
@@ -241,7 +242,10 @@ export function SwapPanel({ tokenConfig }) {
       } else {
         await token.sell({ amount: amountWei, slippage: 2 });
       }
+      toast.success(t(mode === "buy" ? "toast.swapBuySuccess" : "toast.swapSellSuccess"));
       setAmount("");
+    } catch {
+      toast.error(t("toast.swapFailed"));
     } finally {
       setIsPending(false);
     }
