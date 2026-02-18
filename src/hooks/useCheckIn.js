@@ -58,12 +58,13 @@ export function useCheckIn() {
         ],
       });
 
-      // Wait for confirmation, then invalidate so UI refetches fresh data.
-      // Best-effort — don't let receipt errors override the success toast.
-      client.waitForTransactionReceipt({ hash }).then(() => {
-        queryClient.invalidateQueries({ queryKey: ["readContract"] });
-        queryClient.invalidateQueries({ queryKey: ["checkInHistory", address] });
-      }).catch(() => {});
+      // Wait for confirmation so streak state is updated onchain,
+      // then invalidate so UI refetches fresh data before callers proceed.
+      await client.waitForTransactionReceipt({ hash });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["readContract"] }),
+        queryClient.invalidateQueries({ queryKey: ["checkInHistory", address] }),
+      ]);
 
       return hash;
     } catch (err) {
