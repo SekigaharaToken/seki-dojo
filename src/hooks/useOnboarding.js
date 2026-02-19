@@ -2,11 +2,9 @@ import { useState, useCallback } from "react";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { keccak256, encodePacked } from "viem";
 import sdk from "@farcaster/miniapp-sdk";
-import { useMiniAppContext } from "./useMiniAppContext.js";
+import { useMiniAppContext, getEnv, getCached, setCachedOnce } from "@sekigahara/engine";
 import { DOJO_TOKEN_ADDRESS, DOJO_FAUCET_ADDRESS } from "@/config/contracts.js";
 import { dojoFaucetAbi } from "@/config/abis/dojoFaucet.js";
-import { getEnv } from "@/config/env.js";
-import { getCached, setCachedOnce } from "@/lib/immutableCache.js";
 
 const FAUCET_SECRET = getEnv("VITE_FAUCET_SECRET", "");
 

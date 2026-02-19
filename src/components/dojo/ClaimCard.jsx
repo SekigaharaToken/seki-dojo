@@ -1,13 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { useWalletAddress } from "@/hooks/useWalletAddress.js";
+import { useWalletAddress, Card, CardContent, CardHeader, CardTitle, Button } from "@sekigahara/engine";
 import { useClaim } from "@/hooks/useClaim.js";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
 /**
  * Card showing weekly reward claim status and action.

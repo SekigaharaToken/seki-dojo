@@ -25,21 +25,22 @@ vi.mock("@/hooks/useCheckIn.js", () => ({
 
 // Mock useWalletAddress
 const mockUseWalletAddress = vi.fn(() => ({ address: undefined, isConnected: false }));
-vi.mock("@/hooks/useWalletAddress.js", () => ({
-  useWalletAddress: (...args) => mockUseWalletAddress(...args),
-}));
 
 // Mock useFarcaster
 const mockUseFarcaster = vi.fn(() => ({ isAuthenticated: false }));
-vi.mock("@/hooks/useFarcaster.js", () => ({
-  useFarcaster: (...args) => mockUseFarcaster(...args),
-}));
 
 // Mock useLoginModal
 const mockOpenLoginModal = vi.fn();
-vi.mock("@/hooks/useLoginModal.js", () => ({
-  useLoginModal: () => ({ openLoginModal: mockOpenLoginModal }),
-}));
+
+vi.mock("@sekigahara/engine", async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useWalletAddress: (...args) => mockUseWalletAddress(...args),
+    useFarcaster: (...args) => mockUseFarcaster(...args),
+    useLoginModal: () => ({ openLoginModal: mockOpenLoginModal }),
+  };
+});
 
 // Mock RainbowKit connect modal
 const mockOpenConnectModal = vi.fn();

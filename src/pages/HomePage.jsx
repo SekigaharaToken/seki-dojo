@@ -9,11 +9,9 @@ import { ClaimCard } from "@/components/dojo/ClaimCard.jsx";
 import { OnboardingOverlay } from "@/components/dojo/OnboardingOverlay.jsx";
 import { ShareModal } from "@/components/dojo/ShareModal.jsx";
 import { useOnboarding } from "@/hooks/useOnboarding.js";
-import { useWalletAddress } from "@/hooks/useWalletAddress.js";
+import { useWalletAddress, BackSekiLink, fadeInUp, staggerDelay } from "@sekigahara/engine";
 import { useStreak } from "@/hooks/useStreak.js";
 import { useShareStreak } from "@/hooks/useShareStreak.js";
-import { BackSekiLink } from "@/components/layout/BackSekiLink.jsx";
-import { fadeInUp, staggerDelay } from "@/lib/motion.js";
 
 export default function HomePage() {
   const { t } = useTranslation();

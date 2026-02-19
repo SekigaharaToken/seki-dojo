@@ -7,9 +7,10 @@ vi.mock("@farcaster/miniapp-sdk", () => ({
   },
 }));
 
-vi.mock("@/hooks/useMiniAppContext.js", () => ({
-  useMiniAppContext: vi.fn(() => ({ isInMiniApp: false })),
-}));
+vi.mock("@sekigahara/engine", async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, useMiniAppContext: vi.fn(() => ({ isInMiniApp: false })) };
+});
 
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
@@ -19,11 +20,12 @@ vi.mock("react-i18next", () => ({
       return key;
     },
   }),
+  initReactI18next: { type: "3rdParty", init: () => {} },
 }));
 
 import { renderHook, act } from "@testing-library/react";
 import { useShareStreak } from "../useShareStreak.js";
-import { useMiniAppContext } from "@/hooks/useMiniAppContext.js";
+import { useMiniAppContext } from "@sekigahara/engine";
 import sdk from "@farcaster/miniapp-sdk";
 
 describe("useShareStreak", () => {

@@ -4,6 +4,7 @@ import { renderHook, act } from "@testing-library/react";
 // Mock react-i18next
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (key, params) => params ? `${key}:${JSON.stringify(params)}` : key }),
+  initReactI18next: { type: "3rdParty", init: () => {} },
 }));
 
 // Mock sonner
@@ -32,9 +33,14 @@ const mockUseWalletAddress = vi.fn(() => ({
   address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
   isConnected: true,
 }));
-vi.mock("@/hooks/useWalletAddress.js", () => ({
-  useWalletAddress: (...args) => mockUseWalletAddress(...args),
-}));
+vi.mock("@sekigahara/engine", async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useWalletAddress: (...args) => mockUseWalletAddress(...args),
+    EAS_ADDRESS: "0x4200000000000000000000000000000000000021",
+  };
+});
 
 // Mock viem
 const mockWaitForTransactionReceipt = vi.fn(() => Promise.resolve({ blockNumber: 100n }));
@@ -52,19 +58,23 @@ vi.mock("viem", () => ({
 
 // Mock contracts — provide non-empty schema UID so checkIn doesn't bail early
 vi.mock("@/config/contracts.js", () => ({
-  EAS_ADDRESS: "0x4200000000000000000000000000000000000021",
   DOJO_SCHEMA_UID: "0xmockschemauid",
 }));
 
-// Mock @tanstack/react-query
+// Mock @tanstack/react-query — use importOriginal so the engine barrel
+// can still access QueryClient/QueryClientProvider for its TestWrapper export
 const mockInvalidateQueries = vi.fn();
 const mockSetQueryData = vi.fn();
-vi.mock("@tanstack/react-query", () => ({
-  useQueryClient: () => ({
-    invalidateQueries: mockInvalidateQueries,
-    setQueryData: mockSetQueryData,
-  }),
-}));
+vi.mock("@tanstack/react-query", async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useQueryClient: () => ({
+      invalidateQueries: mockInvalidateQueries,
+      setQueryData: mockSetQueryData,
+    }),
+  };
+});
 
 
 const { useCheckIn } = await import("@/hooks/useCheckIn.js");

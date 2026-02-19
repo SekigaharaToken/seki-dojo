@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import sdk from "@farcaster/miniapp-sdk";
-import { useMiniAppContext } from "@/hooks/useMiniAppContext.js";
+import { useMiniAppContext } from "@sekigahara/engine";
 import { APP_URL } from "@/config/constants.js";
 
 export function useShareStreak({ currentStreak, currentTier }) {

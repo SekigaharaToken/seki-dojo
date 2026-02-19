@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader2, CheckCircle2, Gift } from "lucide-react";
-import { Button } from "@/components/ui/button.jsx";
-import { Card, CardContent } from "@/components/ui/card.jsx";
+import { Button, Card, CardContent } from "@sekigahara/engine";
 
 /**
  * Full-screen onboarding overlay for first-time MiniApp users.

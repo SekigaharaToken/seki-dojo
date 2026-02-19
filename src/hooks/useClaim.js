@@ -1,7 +1,5 @@
 import { useWriteContract, useReadContract } from "wagmi";
-import { useWalletAddress } from "@/hooks/useWalletAddress.js";
-import { MINT_CLUB } from "@/config/contracts.js";
-import { merkleDistributorAbi } from "@/config/abis/merkleDistributor.js";
+import { useWalletAddress, MINT_CLUB, merkleDistributorAbi } from "@sekigahara/engine";
 
 /**
  * Hook for claiming a Merkle distribution reward.

@@ -1,7 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useWalletAddress } from "@/hooks/useWalletAddress.js";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.jsx";
-import { Skeleton } from "@/components/ui/skeleton.jsx";
+import { useWalletAddress, Card, CardContent, CardHeader, CardTitle, Skeleton } from "@sekigahara/engine";
 import { useCheckInHistory } from "@/hooks/useCheckInHistory.js";
 
 export function CheckInHistory() {

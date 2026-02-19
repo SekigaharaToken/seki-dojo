@@ -1,0 +1,76 @@
+{
+  "app": {
+    "name": "\ub3c4\uc7a5",
+    "tagline": "\ub9e4\uc77c \uc218\ub828. \uc628\uccb4\uc778\uc73c\ub85c."
+  },
+  "checkin": {
+    "button": "\uccb4\ud06c\uc778",
+    "buttonDone": "\uccb4\ud06c\uc778 \uc644\ub8cc",
+    "buttonPending": "\uccb4\ud06c\uc778 \uc911..."
+  },
+  "streak": {
+    "title": "\uc2a4\ud2b8\ub9ad",
+    "current": "\uc5f0\uc18d \uae30\ub85d",
+    "longest": "\uac1c\uc778 \ucd5c\uace0",
+    "days": "{{count}}\uc77c",
+    "days_plural": "{{count}}\uc77c",
+    "atRisk": "\uc624\ub298 \uccb4\ud06c\uc778\ud558\uc5ec \uc2a4\ud2b8\ub9ad\uc744 \uc720\uc9c0\ud558\uc138\uc694!",
+    "nextCheckin": "\ub2e4\uc74c \uccb4\ud06c\uc778\uae4c\uc9c0 "
+  },
+  "tier": {
+    "whiteBelt": "\ubc31\ub744",
+    "blueBelt": "\uccad\ub744",
+    "purpleBelt": "\uc790\ub744",
+    "blackBelt": "\ud751\ub744"
+  },
+  "rewards": {
+    "title": "\uc8fc\uac04 \ubcf4\uc0c1",
+    "claimable": "{{amount}} $DOJO \uc218\ub839 \uac00\ub2a5",
+    "claim": "\ubcf4\uc0c1 \uc218\ub839",
+    "claimed": "\uc218\ub839 \uc644\ub8cc",
+    "noClaim": "\uc774\ubc88 \uc8fc \ubcf4\uc0c1 \uc5c6\uc74c",
+    "tierEarned": "{{tier}}\ub85c \ud68d\ub4dd"
+  },
+  "toast": {
+    "checkinPending": "\uccb4\ud06c\uc778 \uc911...",
+    "checkinSuccess": "\uccb4\ud06c\uc778 \uc644\ub8cc!",
+    "checkinFailed": "\uccb4\ud06c\uc778 \uc2e4\ud328",
+    "checkinDuplicate": "\uc624\ub298\uc740 \uc774\ubbf8 \uccb4\ud06c\uc778\ud588\uc2b5\ub2c8\ub2e4",
+    "streakUpdated": "\uc2a4\ud2b8\ub9ad: {{count}}\uc77c",
+    "claimPending": "\ubcf4\uc0c1 \uc218\ub839 \uc911...",
+    "claimSuccess": "\ubcf4\uc0c1\uc744 \uc218\ub839\ud588\uc2b5\ub2c8\ub2e4!",
+    "claimFailed": "\uc218\ub839 \uc2e4\ud328",
+    "bonusPending": "\uc77c\uc77c \ubcf4\ub108\uc2a4 \uc218\ub839 \uc911...",
+    "bonusSuccess": "\uc77c\uc77c \ubcf4\ub108\uc2a4\ub97c \uc218\ub839\ud588\uc2b5\ub2c8\ub2e4!",
+    "bonusFailed": "\ubcf4\ub108\uc2a4 \uc218\ub839 \uc2e4\ud328"
+  },
+  "errors": {
+    "contractRevert": "\ucee8\ud2b8\ub799\ud2b8\uac00 \uccb4\ud06c\uc778\uc744 \uac70\ubd80: {{reason}}",
+    "notConfigured": "DOJO \ucee8\ud2b8\ub799\ud2b8\uac00 \uc544\uc9c1 \ubc30\ud3ec\ub418\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4"
+  },
+  "history": {
+    "title": "\uccb4\ud06c\uc778 \uae30\ub85d",
+    "totalCheckins": "\ucd1d \uccb4\ud06c\uc778 \uc218",
+    "noHistory": "\uae30\ub85d\uc774 \uc5c6\uc2b5\ub2c8\ub2e4"
+  },
+  "onboarding": {
+    "welcomeTitle": "\ub3c4\uc7a5\uc5d0 \uc624\uc2e0 \uac83\uc744 \ud658\uc601\ud569\ub2c8\ub2e4",
+    "welcomeDescription": "\uc571\uc5d0 \ub3c4\uc7a5\uc744 \ucd94\uac00\ud558\uace0 \ud658\uc601 \uc120\ubb3c 1 $DOJO\ub97c \ubc1b\uc73c\uc138\uc694.",
+    "addApp": "\uc120\ubb3c \ubc1b\uae30",
+    "noThanks": "\uad1c\ucc2e\uc2b5\ub2c8\ub2e4.",
+    "addFailed": "\uc571\uc744 \ucd94\uac00\ud560 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4. \ub2e4\uc2dc \uc2dc\ub3c4\ud574\uc8fc\uc138\uc694.",
+    "addingApp": "\ub3c4\uc7a5 \ucd94\uac00 \uc911...",
+    "claimingBonus": "\ud658\uc601 \uc120\ubb3c \uc218\ub839 \uc911",
+    "claimingDescription": "1 $DOJO\ub97c \uc9c0\uac11\uc73c\ub85c \uc804\uc1a1 \uc911...",
+    "retry": "\uc7ac\uc2dc\ub3c4",
+    "successTitle": "1 $DOJO\ub97c \ubc1b\uc558\uc2b5\ub2c8\ub2e4!",
+    "successDescription": "\uc77c\uc77c \uc218\ub828\uc774 \uc9c0\uae08 \uc2dc\uc791\ub429\ub2c8\ub2e4.",
+    "startTraining": "\uc218\ub828 \uc2dc\uc791"
+  },
+  "share": {
+    "toFarcaster": "Farcaster\uc5d0 \uacf5\uc720",
+    "close": "\ub2eb\uae30",
+    "modalTitle": "\uc798\ud588\uc2b5\ub2c8\ub2e4!",
+    "castText": "\ud83e\udd4b DOJO {{streak}}\uc77c \uc5f0\uc18d \uc2a4\ud2b8\ub9ad! {{tier}}\n\n\ub9e4\uc77c \uc218\ub828, \uc628\uccb4\uc778\uc73c\ub85c."
+  }
+}

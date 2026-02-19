@@ -1,0 +1,84 @@
+{
+  "app": {
+    "name": "DOJO",
+    "tagline": "Daily Practice. Onchain."
+  },
+  "checkin": {
+    "button": "Check In",
+    "buttonDone": "Checked In",
+    "buttonPending": "Checking In..."
+  },
+  "streak": {
+    "title": "Your Streak",
+    "current": "Current Streak",
+    "longest": "Personal Best",
+    "days": "{{count}} day",
+    "days_plural": "{{count}} days",
+    "atRisk": "Check in today to keep your streak!",
+    "nextCheckin": "Next check-in in "
+  },
+  "tier": {
+    "whiteBelt": "White Belt",
+    "blueBelt": "Blue Belt",
+    "purpleBelt": "Purple Belt",
+    "blackBelt": "Black Belt"
+  },
+  "rewards": {
+    "title": "Weekly Rewards",
+    "claimable": "{{amount}} $DOJO available",
+    "claim": "Claim Rewards",
+    "claimed": "Claimed",
+    "noClaim": "No rewards this week",
+    "tierEarned": "Earned as {{tier}}"
+  },
+  "toast": {
+    "checkinPending": "Checking in...",
+    "checkinSuccess": "Checked in!",
+    "checkinFailed": "Check-in failed",
+    "checkinDuplicate": "Already checked in today",
+    "streakUpdated": "Streak: {{count}} days",
+    "claimPending": "Claiming rewards...",
+    "claimSuccess": "Rewards claimed!",
+    "claimFailed": "Claim failed",
+    "bonusPending": "Claiming daily bonus...",
+    "bonusSuccess": "Daily bonus claimed!",
+    "bonusFailed": "Bonus claim failed"
+  },
+  "errors": {
+    "contractRevert": "Contract rejected the check-in: {{reason}}",
+    "notConfigured": "DOJO contracts are not deployed yet"
+  },
+  "history": {
+    "title": "Check-In History",
+    "totalCheckins": "Total Check-Ins",
+    "noHistory": "No history yet"
+  },
+  "onboarding": {
+    "welcomeTitle": "Welcome to DOJO",
+    "welcomeDescription": "Add DOJO to your apps and receive a welcome gift of 1 $DOJO.",
+    "addApp": "Ok, I'll take a free gift",
+    "noThanks": "No thanks.",
+    "addFailed": "Could not add app. Please try again.",
+    "addingApp": "Adding DOJO...",
+    "claimingBonus": "Claiming Welcome Gift",
+    "claimingDescription": "Sending 1 $DOJO to your wallet...",
+    "retry": "Retry",
+    "successTitle": "You received 1 $DOJO!",
+    "successDescription": "Your daily training journey begins now.",
+    "startTraining": "Start Training"
+  },
+  "swap": {
+    "priceDojo": "Current $DOJO Price",
+    "priceSeki": "Current $SEKI Price",
+    "buyDojo": "Buy $DOJO",
+    "sellDojo": "Sell $DOJO",
+    "buySeki": "Buy $SEKI",
+    "sellSeki": "Sell $SEKI"
+  },
+  "share": {
+    "toFarcaster": "Share to Farcaster",
+    "close": "Close",
+    "modalTitle": "Nice work!",
+    "castText": "\ud83e\udd4b Day {{streak}} streak on DOJO! {{tier}}\n\nDaily training, onchain."
+  }
+}

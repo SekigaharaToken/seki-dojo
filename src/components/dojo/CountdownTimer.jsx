@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import NumberFlow from "@number-flow/react";
-import { useWalletAddress } from "@/hooks/useWalletAddress.js";
+import { useWalletAddress } from "@sekigahara/engine";
 import { useStreak } from "@/hooks/useStreak.js";
 
 export function CountdownTimer() {

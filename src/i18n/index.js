@@ -1,21 +1,8 @@
+/**
+ * DOJO i18n — uses engine's initI18n factory with app-specific translations.
+ * This module is kept for backward compatibility with test files that
+ * import i18n from "@/i18n". The actual initialization happens in main.jsx.
+ */
 import i18n from "i18next";
-import { initReactI18next } from "react-i18next";
-import LanguageDetector from "i18next-browser-languagedetector";
-import en from "./locales/en.json";
-import ja from "./locales/ja.json";
-import kr from "./locales/kr.json";
-
-i18n
-  .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({
-    resources: {
-      en: { translation: en },
-      ja: { translation: ja },
-      kr: { translation: kr },
-    },
-    fallbackLng: "en",
-    interpolation: { escapeValue: false },
-  });
 
 export default i18n;

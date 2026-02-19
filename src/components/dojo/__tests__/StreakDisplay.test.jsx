@@ -7,9 +7,10 @@ vi.mock("@/hooks/useStreak.js", () => ({
   useStreak: (...args) => mockUseStreak(...args),
 }));
 
-vi.mock("@/hooks/useWalletAddress.js", () => ({
-  useWalletAddress: () => ({ address: "0x1234", isConnected: true }),
-}));
+vi.mock("@sekigahara/engine", async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, useWalletAddress: () => ({ address: "0x1234", isConnected: true }) };
+});
 
 const { StreakDisplay } = await import("@/components/dojo/StreakDisplay.jsx");
 

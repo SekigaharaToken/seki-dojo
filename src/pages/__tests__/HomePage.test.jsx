@@ -8,13 +8,14 @@ vi.mock("@rainbow-me/rainbowkit", () => ({
 }));
 
 // Mock all hooks used by child components
-vi.mock("@/hooks/useWalletAddress.js", () => ({
-  useWalletAddress: () => ({ address: undefined, isConnected: false }),
-}));
-
-vi.mock("@/hooks/useFarcaster.js", () => ({
-  useFarcaster: () => ({ isAuthenticated: false }),
-}));
+vi.mock("@sekigahara/engine", async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useWalletAddress: () => ({ address: undefined, isConnected: false }),
+    useFarcaster: () => ({ isAuthenticated: false }),
+  };
+});
 
 vi.mock("@/hooks/useStreak.js", () => ({
   useStreak: () => ({

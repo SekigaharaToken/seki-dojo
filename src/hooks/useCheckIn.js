@@ -2,13 +2,12 @@ import { useWriteContract } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { useWalletAddress } from "@/hooks/useWalletAddress.js";
+import {
+  useWalletAddress, activeChain, EAS_ADDRESS, easAbi, parseContractError,
+} from "@sekigahara/engine";
 import { encodeAbiParameters, parseAbiParameters, createPublicClient, http } from "viem";
-import { activeChain } from "@/config/chains.js";
-import { EAS_ADDRESS, DOJO_SCHEMA_UID } from "@/config/contracts.js";
-import { easAbi } from "@/config/abis/eas.js";
+import { DOJO_SCHEMA_UID } from "@/config/contracts.js";
 import { APP_IDENTIFIER, SECONDS_PER_DAY } from "@/config/constants.js";
-import { parseContractError } from "@/lib/parseContractError.js";
 
 const client = createPublicClient({ chain: activeChain, transport: http() });
 

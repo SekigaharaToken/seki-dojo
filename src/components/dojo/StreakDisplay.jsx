@@ -1,8 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { motion } from "motion/react";
-import { useWalletAddress } from "@/hooks/useWalletAddress.js";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.jsx";
-import { Skeleton } from "@/components/ui/skeleton.jsx";
+import { useWalletAddress, Card, CardContent, CardHeader, CardTitle, Skeleton } from "@sekigahara/engine";
 import { useStreak } from "@/hooks/useStreak.js";
 import { TierBadge } from "./TierBadge.jsx";
 import { StreakFire } from "./StreakFire.jsx";

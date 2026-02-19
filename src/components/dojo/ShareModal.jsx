@@ -1,11 +1,5 @@
 import { useTranslation } from "react-i18next";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog.jsx";
-import { Button } from "@/components/ui/button.jsx";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, Button } from "@sekigahara/engine";
 import { TierBadge } from "./TierBadge.jsx";
 
 export function ShareModal({ open, onClose, currentStreak, currentTier, onShare }) {

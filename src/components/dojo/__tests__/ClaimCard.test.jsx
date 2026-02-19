@@ -21,9 +21,10 @@ const mockUseWalletAddress = vi.fn(() => ({
   isConnected: true,
 }));
 
-vi.mock("@/hooks/useWalletAddress.js", () => ({
-  useWalletAddress: (...args) => mockUseWalletAddress(...args),
-}));
+vi.mock("@sekigahara/engine", async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, useWalletAddress: (...args) => mockUseWalletAddress(...args) };
+});
 
 const { ClaimCard } = await import("@/components/dojo/ClaimCard.jsx");
 

@@ -20,14 +20,32 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // Deduplicate packages — engine's file: dep has its own copies
+      "react": path.resolve(__dirname, "./node_modules/react"),
+      "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
+      "react/jsx-runtime": path.resolve(__dirname, "./node_modules/react/jsx-runtime"),
+      "react/jsx-dev-runtime": path.resolve(__dirname, "./node_modules/react/jsx-dev-runtime"),
+      "i18next": path.resolve(__dirname, "./node_modules/i18next"),
+      "react-i18next": path.resolve(__dirname, "./node_modules/react-i18next"),
     },
+    dedupe: ["react", "react-dom", "i18next", "react-i18next"],
+  },
+  optimizeDeps: {
+    exclude: ["@sekigahara/engine"],
   },
   test: {
+    root: path.resolve(__dirname),
     globals: true,
     environment: "jsdom",
     setupFiles: ["./src/test/setup.js"],
     css: false,
-    pool: "vmThreads",
+    pool: "forks",
     include: ["src/**/*.{test,spec}.{js,jsx}", "scripts/**/*.{test,spec}.{js,jsx}"],
+    exclude: ["node_modules/**"],
+    server: {
+      deps: {
+        inline: [/@vanilla-extract/, "@sekigahara/engine", /@radix-ui/],
+      },
+    },
   },
 });

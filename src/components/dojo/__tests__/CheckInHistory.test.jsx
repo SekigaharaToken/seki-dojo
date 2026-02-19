@@ -7,9 +7,10 @@ vi.mock("@/hooks/useCheckInHistory.js", () => ({
   useCheckInHistory: (...args) => mockUseCheckInHistory(...args),
 }));
 
-vi.mock("@/hooks/useWalletAddress.js", () => ({
-  useWalletAddress: () => ({ address: "0x1234", isConnected: true }),
-}));
+vi.mock("@sekigahara/engine", async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, useWalletAddress: () => ({ address: "0x1234", isConnected: true }) };
+});
 
 const { CheckInHistory } = await import("@/components/dojo/CheckInHistory.jsx");
 

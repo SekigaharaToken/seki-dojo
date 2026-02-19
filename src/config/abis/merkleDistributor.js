@@ -1,3 +1,7 @@
+/**
+ * Merkle Distributor ABI — duplicated from engine to avoid barrel import
+ * issues in scripts that mock viem. Keep in sync with engine's copy.
+ */
 export const merkleDistributorAbi = [
   {
     name: "createDistribution",

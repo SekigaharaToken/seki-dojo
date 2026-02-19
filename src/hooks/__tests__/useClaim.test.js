@@ -21,9 +21,10 @@ const mockUseWalletAddress = vi.fn(() => ({
   address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
   isConnected: true,
 }));
-vi.mock("@/hooks/useWalletAddress.js", () => ({
-  useWalletAddress: (...args) => mockUseWalletAddress(...args),
-}));
+vi.mock("@sekigahara/engine", async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, useWalletAddress: (...args) => mockUseWalletAddress(...args) };
+});
 
 const { useClaim } = await import("@/hooks/useClaim.js");
 

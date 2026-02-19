@@ -3,14 +3,10 @@ import { motion } from "motion/react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { Button } from "@/components/ui/button.jsx";
-import { useWalletAddress } from "@/hooks/useWalletAddress.js";
-import { useFarcaster } from "@/hooks/useFarcaster.js";
+import { Button, useWalletAddress, useFarcaster, useLoginModal, tapSpring } from "@sekigahara/engine";
 import { useStreak } from "@/hooks/useStreak.js";
 import { useCheckIn } from "@/hooks/useCheckIn.js";
-import { useLoginModal } from "@/hooks/useLoginModal.js";
 import { useShareStreak } from "@/hooks/useShareStreak.js";
-import { tapSpring } from "@/lib/motion.js";
 
 export function CheckInButton({ onCheckInSuccess }) {
   const { t } = useTranslation();

@@ -1,13 +1,21 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { TestWrapper } from "@/test/wrapper.jsx";
 
-vi.mock("@/hooks/useWalletAddress.js", () => ({
-  useWalletAddress: () => ({ address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", isConnected: true, canTransact: true }),
+vi.mock("wagmi", () => ({
+  useAccount: () => ({ address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", isConnected: true }),
+  useReadContract: () => ({ data: undefined }),
+  useConnect: () => ({ connectors: [], connect: vi.fn() }),
+  useSwitchChain: () => ({ switchChain: vi.fn() }),
+  useChainId: () => 8453,
 }));
 
-vi.mock("wagmi", () => ({
-  useReadContract: () => ({ data: undefined }),
+vi.mock("@farcaster/auth-kit", () => ({
+  useProfile: () => ({ isAuthenticated: false, profile: null }),
+}));
+
+vi.mock("@farcaster/miniapp-sdk", () => ({
+  sdk: { actions: { ready: vi.fn() }, context: Promise.resolve(null) },
 }));
 
 vi.mock("@/lib/mintclub.js", () => ({
@@ -43,9 +51,11 @@ describe("SwapPage", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Swap" })).toBeInTheDocument();
   });
 
-  it("renders the price display", () => {
+  it("renders the price display", async () => {
     render(<SwapPage />, { wrapper: TestWrapper });
-    expect(screen.getByText(/Current \$DOJO Price/)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/Current \$DOJO Price/)).toBeInTheDocument();
+    });
   });
 
   it("renders the swap panel", () => {

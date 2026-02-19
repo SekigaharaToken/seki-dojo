@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Badge } from "@/components/ui/badge.jsx";
+import { Badge } from "@sekigahara/engine";
 
 const TIER_STYLES = {
   "tier-white": "bg-white text-stone-900 border-stone-300",
