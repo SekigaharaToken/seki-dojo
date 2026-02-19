@@ -31,7 +31,8 @@ export default defineConfig({
     dedupe: ["react", "react-dom", "i18next", "react-i18next"],
   },
   optimizeDeps: {
-    include: ["@sekigahara/engine"],
+    // Engine is pre-bundled by esbuild (handles JSX natively).
+    // After updating the engine: rm -rf node_modules/.vite && npm run dev
   },
   test: {
     root: path.resolve(__dirname),
