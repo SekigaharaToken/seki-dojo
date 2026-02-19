@@ -1,6 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 
+// Mock mint.club-v2-sdk (engine barrel imports SwapPanel → mintclub.js at load time)
+vi.mock("mint.club-v2-sdk", () => ({
+  mintclub: { withPublicClient: vi.fn() },
+  wei: (n) => BigInt(n) * 10n ** 18n,
+}));
+
 // Mock react-i18next
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (key, params) => params ? `${key}:${JSON.stringify(params)}` : key }),
@@ -42,22 +48,22 @@ vi.mock("@sekigahara/engine", async (importOriginal) => {
   };
 });
 
-// Mock viem
+// Mock viem — use importOriginal so engine barrel's viem imports still work
 const mockWaitForTransactionReceipt = vi.fn(() => Promise.resolve({ blockNumber: 100n, logs: [] }));
 const mockReadContract = vi.fn(() => Promise.resolve(5n));
 const mockGetLogs = vi.fn(() => Promise.resolve([]));
-vi.mock("viem", () => ({
-  encodeAbiParameters: vi.fn(() => "0xmockencoded"),
-  parseAbiParameters: vi.fn(() => []),
-  parseAbiItem: vi.fn(() => ({})),
-  parseEventLogs: vi.fn(() => []),
-  createPublicClient: () => ({
-    waitForTransactionReceipt: (...args) => mockWaitForTransactionReceipt(...args),
-    readContract: (...args) => mockReadContract(...args),
-    getLogs: (...args) => mockGetLogs(...args),
-  }),
-  http: () => ({}),
-}));
+vi.mock("viem", async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    createPublicClient: () => ({
+      waitForTransactionReceipt: (...args) => mockWaitForTransactionReceipt(...args),
+      readContract: (...args) => mockReadContract(...args),
+      getLogs: (...args) => mockGetLogs(...args),
+    }),
+    http: () => ({}),
+  };
+});
 
 // Mock contracts — provide non-empty schema UID so checkIn doesn't bail early
 vi.mock("@/config/contracts.js", () => ({

@@ -18,7 +18,7 @@
     "@number-flow/react": "^0.5.12",
     "@openzeppelin/merkle-tree": "^1.0.8",
     "@rainbow-me/rainbowkit": "^2.2.10",
-    "@sekigahara/engine": "file:../AMATERASU",
+    "@sekigahara/engine": "github:SekigaharaToken/AMATERASU",
     "@tanstack/react-query": "^5.90.21",
     "@vercel/analytics": "^1.6.1",
     "i18next": "^25.8.7",

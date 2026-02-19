@@ -1,25 +1,38 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+// Mock mint.club-v2-sdk (engine barrel loads this at import time)
+vi.mock("mint.club-v2-sdk", () => ({
+  mintclub: { withPublicClient: vi.fn() },
+  wei: (n) => BigInt(n) * 10n ** 18n,
+}));
+
 const mockWriteContract = vi.fn();
 const mockWaitForTransactionReceipt = vi.fn();
 const mockReadContract = vi.fn();
 
-vi.mock("viem", () => ({
-  createPublicClient: vi.fn(() => ({
-    readContract: mockReadContract,
-    waitForTransactionReceipt: mockWaitForTransactionReceipt,
-    getBlock: vi.fn().mockResolvedValue({ timestamp: 1700000000n }),
-  })),
-  createWalletClient: vi.fn(() => ({
-    writeContract: mockWriteContract,
-  })),
-  http: vi.fn(() => "mockTransport"),
-  parseUnits: vi.fn((val) => BigInt(val) * 10n ** 18n),
-}));
+vi.mock("viem", async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    createPublicClient: vi.fn(() => ({
+      readContract: mockReadContract,
+      waitForTransactionReceipt: mockWaitForTransactionReceipt,
+      getBlock: vi.fn().mockResolvedValue({ timestamp: 1700000000n }),
+    })),
+    createWalletClient: vi.fn(() => ({
+      writeContract: mockWriteContract,
+    })),
+    http: vi.fn(() => "mockTransport"),
+  };
+});
 
-vi.mock("viem/accounts", () => ({
-  privateKeyToAccount: vi.fn(() => ({ address: "0xOperator" })),
-}));
+vi.mock("viem/accounts", async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    privateKeyToAccount: vi.fn(() => ({ address: "0xOperator" })),
+  };
+});
 
 const { createDistribution, approveToken } = await import(
   "../createDistributions.js"

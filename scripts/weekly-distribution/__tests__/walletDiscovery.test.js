@@ -1,18 +1,27 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { STREAK_TIERS } from "@/config/constants.js";
 
-// Mock viem client
+// Mock mint.club-v2-sdk (engine barrel loads this at import time)
+vi.mock("mint.club-v2-sdk", () => ({
+  mintclub: { withPublicClient: vi.fn() },
+  wei: (n) => BigInt(n) * 10n ** 18n,
+}));
+
+// Mock viem client — use importOriginal so engine barrel's viem imports still work
 const mockGetLogs = vi.fn();
 const mockReadContract = vi.fn();
 
-vi.mock("viem", () => ({
-  createPublicClient: vi.fn(() => ({
-    getLogs: mockGetLogs,
-    readContract: mockReadContract,
-  })),
-  http: vi.fn(() => "mockTransport"),
-  parseAbiItem: vi.fn(() => "mockAbiItem"),
-}));
+vi.mock("viem", async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    createPublicClient: vi.fn(() => ({
+      getLogs: mockGetLogs,
+      readContract: mockReadContract,
+    })),
+    http: vi.fn(() => "mockTransport"),
+  };
+});
 
 const { discoverWallets, bucketByTier } = await import(
   "../walletDiscovery.js"

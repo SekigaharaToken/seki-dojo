@@ -31,7 +31,7 @@ export default defineConfig({
     dedupe: ["react", "react-dom", "i18next", "react-i18next"],
   },
   optimizeDeps: {
-    exclude: ["@sekigahara/engine"],
+    include: ["@sekigahara/engine"],
   },
   test: {
     root: path.resolve(__dirname),

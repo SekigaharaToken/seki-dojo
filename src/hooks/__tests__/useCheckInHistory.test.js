@@ -2,15 +2,26 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { TestWrapper } from "@/test/wrapper.jsx";
 
-// Mock viem
-const mockGetLogs = vi.fn();
-vi.mock("viem", () => ({
-  parseAbiItem: vi.fn(() => "mockParsedAbi"),
-  createPublicClient: vi.fn(() => ({
-    getLogs: mockGetLogs,
-  })),
-  http: vi.fn(() => "mockTransport"),
+// Mock mint.club-v2-sdk (engine barrel loads this at import time)
+vi.mock("mint.club-v2-sdk", () => ({
+  mintclub: { withPublicClient: vi.fn() },
+  wei: (n) => BigInt(n) * 10n ** 18n,
 }));
+
+// Mock viem — use importOriginal so engine barrel's viem imports still work
+const { mockGetLogs } = vi.hoisted(() => ({
+  mockGetLogs: vi.fn(),
+}));
+vi.mock("viem", async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    createPublicClient: vi.fn(() => ({
+      getLogs: mockGetLogs,
+    })),
+    http: vi.fn(() => "mockTransport"),
+  };
+});
 
 // Mock wagmi
 vi.mock("wagmi", () => ({
