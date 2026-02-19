@@ -17,6 +17,7 @@ import {
   setStoragePrefix,
 } from "@sekigahara/engine";
 import { SWAP_TOKENS } from "@/config/contracts.js";
+import { version } from "../package.json";
 import { Analytics } from "@vercel/analytics/react";
 import App from "./App.jsx";
 import appEn from "./i18n/locales/app.en.json";
@@ -33,11 +34,13 @@ setStoragePrefix("dojo");
 
 const wagmiConfig = createWagmiConfig({ appName: "DOJO" });
 
+/* global __COMMIT_HASH__ */
 const engineConfig = {
   appName: "DOJO",
   storagePrefix: "dojo",
   accentColor: "#B33030",
   swapTokens: SWAP_TOKENS,
+  appVersion: `v${version}-${__COMMIT_HASH__}`,
 };
 
 const queryClient = new QueryClient({
