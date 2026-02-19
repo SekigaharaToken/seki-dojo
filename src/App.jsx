@@ -10,6 +10,7 @@ import {
   Skeleton,
 } from "@sekigahara/engine";
 import HomePage from "@/pages/HomePage.jsx";
+import HowItWorks from "@/components/dojo/HowItWorks.jsx";
 
 const SwapPage = lazy(() => import("@/pages/SwapPage.jsx"));
 
@@ -29,6 +30,7 @@ function App() {
         </PageWrapper>
       </ErrorBoundary>
       <Footer />
+      <HowItWorks />
       <LoginModal />
     </div>
   );

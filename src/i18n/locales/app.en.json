@@ -75,6 +75,28 @@
     "buySeki": "Buy $SEKI",
     "sellSeki": "Sell $SEKI"
   },
+  "howItWorks": {
+    "barText": "New here? Learn how DOJO works",
+    "title": "How It Works",
+    "page1Title": "Back $SEKI",
+    "page1Desc": "Start by backing the $SEKI project on Hunt.town. When you add the app we'll give you your first $SEKI for free.",
+    "page2Title": "Collect Your $SEKI",
+    "page2Desc": "Collect your previous day's $SEKI earnings from Hunt.town to your wallet.",
+    "page3Title": "Swap $SEKI for $DOJO",
+    "page3Desc": "More $DOJO in your wallet gives you a higher daily check-in bonus.",
+    "page4Title": "Daily Check-In",
+    "page4Desc": "Check in to maintain your streak and collect your daily $DOJO bonus.",
+    "page5Title": "Keep Your Streak",
+    "page5Desc": "Keep your streak going to earn a weekly bonus and increase your daily bonus rate.",
+    "page5RateNote": "Your daily bonus rate scales from 0.1% to 0.2% of your $DOJO holdings over your first 30 days.",
+    "tierStreak": "Streak",
+    "tierReward": "Weekly Bonus",
+    "tierDays": "{{min}}\u2013{{max}} days",
+    "tierDaysMax": "{{min}}+ days",
+    "next": "Next",
+    "back": "Back",
+    "done": "Got it!"
+  },
   "share": {
     "toFarcaster": "Share to Farcaster",
     "close": "Close",

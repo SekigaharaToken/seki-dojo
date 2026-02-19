@@ -26,8 +26,13 @@ import appKr from "./i18n/locales/app.kr.json";
 import "./index.css";
 import "@rainbow-me/rainbowkit/styles.css";
 
-// Initialize i18n with DOJO app translations
-initI18n({ en: appEn, ja: appJa, kr: appKr });
+// Initialize i18n with DOJO app translations merged into default namespace
+const i18n = initI18n({ en: appEn, ja: appJa, kr: appKr });
+
+// Register app translations as "app" namespace for namespaced access
+i18n.addResourceBundle("en", "app", appEn);
+i18n.addResourceBundle("ja", "app", appJa);
+i18n.addResourceBundle("kr", "app", appKr);
 
 // Set storage prefix for immutable cache
 setStoragePrefix("dojo");

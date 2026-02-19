@@ -1,76 +1,106 @@
 {
   "app": {
-    "name": "\u9053\u5834",
-    "tagline": "\u65e5\u3005\u306e\u4fee\u884c\u3002\u30aa\u30f3\u30c1\u30a7\u30fc\u30f3\u3067\u3002"
+    "name": "道場",
+    "tagline": "日々の修行。オンチェーンで。"
   },
   "checkin": {
-    "button": "\u30c1\u30a7\u30c3\u30af\u30a4\u30f3",
-    "buttonDone": "\u30c1\u30a7\u30c3\u30af\u30a4\u30f3\u6e08\u307f",
-    "buttonPending": "\u30c1\u30a7\u30c3\u30af\u30a4\u30f3\u4e2d..."
+    "button": "チェックイン",
+    "buttonDone": "チェックイン済み",
+    "buttonPending": "チェックイン中..."
   },
   "streak": {
-    "title": "\u30b9\u30c8\u30ea\u30fc\u30af",
-    "current": "\u9023\u7d9a\u8a18\u9332",
-    "longest": "\u81ea\u5df1\u30d9\u30b9\u30c8",
-    "days": "{{count}}\u65e5",
-    "days_plural": "{{count}}\u65e5",
-    "atRisk": "\u4eca\u65e5\u30c1\u30a7\u30c3\u30af\u30a4\u30f3\u3057\u3066\u30b9\u30c8\u30ea\u30fc\u30af\u3092\u5b88\u308d\u3046\uff01",
-    "nextCheckin": "\u6b21\u306e\u30c1\u30a7\u30c3\u30af\u30a4\u30f3\u307e\u3067"
+    "title": "ストリーク",
+    "current": "連続記録",
+    "longest": "自己ベスト",
+    "days": "{{count}}日",
+    "days_plural": "{{count}}日",
+    "atRisk": "今日チェックインしてストリークを守ろう！",
+    "nextCheckin": "次のチェックインまで"
   },
   "tier": {
-    "whiteBelt": "\u767d\u5e2f",
-    "blueBelt": "\u9752\u5e2f",
-    "purpleBelt": "\u7d2b\u5e2f",
-    "blackBelt": "\u9ed2\u5e2f"
+    "whiteBelt": "白帯",
+    "blueBelt": "青帯",
+    "purpleBelt": "紫帯",
+    "blackBelt": "黒帯"
   },
   "rewards": {
-    "title": "\u9031\u9593\u5831\u916c",
-    "claimable": "{{amount}} $DOJO \u7372\u5f97\u53ef\u80fd",
-    "claim": "\u5831\u916c\u3092\u53d7\u53d6",
-    "claimed": "\u53d7\u53d6\u6e08\u307f",
-    "noClaim": "\u4eca\u9031\u306e\u5831\u916c\u306f\u3042\u308a\u307e\u305b\u3093",
-    "tierEarned": "{{tier}}\u3068\u3057\u3066\u7372\u5f97"
+    "title": "週間報酬",
+    "claimable": "{{amount}} $DOJO 獲得可能",
+    "claim": "報酬を受取",
+    "claimed": "受取済み",
+    "noClaim": "今週の報酬はありません",
+    "tierEarned": "{{tier}}として獲得"
   },
   "toast": {
-    "checkinPending": "\u30c1\u30a7\u30c3\u30af\u30a4\u30f3\u4e2d...",
-    "checkinSuccess": "\u30c1\u30a7\u30c3\u30af\u30a4\u30f3\u5b8c\u4e86\uff01",
-    "checkinFailed": "\u30c1\u30a7\u30c3\u30af\u30a4\u30f3\u5931\u6557",
-    "checkinDuplicate": "\u672c\u65e5\u306f\u30c1\u30a7\u30c3\u30af\u30a4\u30f3\u6e08\u307f\u3067\u3059",
-    "streakUpdated": "\u30b9\u30c8\u30ea\u30fc\u30af: {{count}}\u65e5",
-    "claimPending": "\u5831\u916c\u3092\u53d7\u53d6\u4e2d...",
-    "claimSuccess": "\u5831\u916c\u3092\u53d7\u53d6\u308a\u307e\u3057\u305f\uff01",
-    "claimFailed": "\u53d7\u53d6\u306b\u5931\u6557\u3057\u307e\u3057\u305f",
-    "bonusPending": "\u30c7\u30a4\u30ea\u30fc\u30dc\u30fc\u30ca\u30b9\u3092\u53d7\u53d6\u4e2d...",
-    "bonusSuccess": "\u30c7\u30a4\u30ea\u30fc\u30dc\u30fc\u30ca\u30b9\u3092\u53d7\u53d6\u308a\u307e\u3057\u305f\uff01",
-    "bonusFailed": "\u30dc\u30fc\u30ca\u30b9\u306e\u53d7\u53d6\u306b\u5931\u6557\u3057\u307e\u3057\u305f"
+    "checkinPending": "チェックイン中...",
+    "checkinSuccess": "チェックイン完了！",
+    "checkinFailed": "チェックイン失敗",
+    "checkinDuplicate": "本日はチェックイン済みです",
+    "streakUpdated": "ストリーク: {{count}}日",
+    "claimPending": "報酬を受取中...",
+    "claimSuccess": "報酬を受取りました！",
+    "claimFailed": "受取に失敗しました",
+    "bonusPending": "デイリーボーナスを受取中...",
+    "bonusSuccess": "デイリーボーナスを受取りました！",
+    "bonusFailed": "ボーナスの受取に失敗しました"
   },
   "errors": {
-    "contractRevert": "\u30b3\u30f3\u30c8\u30e9\u30af\u30c8\u304c\u30c1\u30a7\u30c3\u30af\u30a4\u30f3\u3092\u62d2\u5426: {{reason}}",
-    "notConfigured": "DOJO\u30b3\u30f3\u30c8\u30e9\u30af\u30c8\u306f\u307e\u3060\u30c7\u30d7\u30ed\u30a4\u3055\u308c\u3066\u3044\u307e\u305b\u3093"
+    "contractRevert": "コントラクトがチェックインを拒否: {{reason}}",
+    "notConfigured": "DOJOコントラクトはまだデプロイされていません"
   },
   "history": {
-    "title": "\u30c1\u30a7\u30c3\u30af\u30a4\u30f3\u5c65\u6b74",
-    "totalCheckins": "\u5408\u8a08\u30c1\u30a7\u30c3\u30af\u30a4\u30f3\u6570",
-    "noHistory": "\u5c65\u6b74\u304c\u3042\u308a\u307e\u305b\u3093"
+    "title": "チェックイン履歴",
+    "totalCheckins": "合計チェックイン数",
+    "noHistory": "履歴がありません"
   },
   "onboarding": {
-    "welcomeTitle": "\u9053\u5834\u3078\u3088\u3046\u3053\u305d",
-    "welcomeDescription": "\u30a2\u30d7\u30ea\u306b\u9053\u5834\u3092\u8ffd\u52a0\u3057\u3066\u3001\u30a6\u30a7\u30eb\u30ab\u30e0\u30ae\u30d5\u30c8\u306e1 $DOJO\u3092\u53d7\u3051\u53d6\u308a\u307e\u3057\u3087\u3046\u3002",
-    "addApp": "\u30ae\u30d5\u30c8\u3092\u53d7\u3051\u53d6\u308b",
-    "noThanks": "\u7d50\u69cb\u3067\u3059\u3002",
-    "addFailed": "\u30a2\u30d7\u30ea\u3092\u8ffd\u52a0\u3067\u304d\u307e\u305b\u3093\u3067\u3057\u305f\u3002\u3082\u3046\u4e00\u5ea6\u304a\u8a66\u3057\u304f\u3060\u3055\u3044\u3002",
-    "addingApp": "\u9053\u5834\u3092\u8ffd\u52a0\u4e2d...",
-    "claimingBonus": "\u30a6\u30a7\u30eb\u30ab\u30e0\u30ae\u30d5\u30c8\u53d7\u53d6\u4e2d",
-    "claimingDescription": "1 $DOJO\u3092\u30a6\u30a9\u30ec\u30c3\u30c8\u306b\u9001\u4fe1\u4e2d...",
-    "retry": "\u518d\u8a66\u884c",
-    "successTitle": "1 $DOJO\u3092\u53d7\u3051\u53d6\u308a\u307e\u3057\u305f\uff01",
-    "successDescription": "\u65e5\u3005\u306e\u4fee\u884c\u304c\u4eca\u59cb\u307e\u308a\u307e\u3059\u3002",
-    "startTraining": "\u4fee\u884c\u3092\u958b\u59cb"
+    "welcomeTitle": "道場へようこそ",
+    "welcomeDescription": "アプリに道場を追加して、ウェルカムギフトの1 $DOJOを受け取りましょう。",
+    "addApp": "ギフトを受け取る",
+    "noThanks": "結構です。",
+    "addFailed": "アプリを追加できませんでした。もう一度お試しください。",
+    "addingApp": "道場を追加中...",
+    "claimingBonus": "ウェルカムギフト受取中",
+    "claimingDescription": "1 $DOJOをウォレットに送信中...",
+    "retry": "再試行",
+    "successTitle": "1 $DOJOを受け取りました！",
+    "successDescription": "日々の修行が今始まります。",
+    "startTraining": "修行を開始"
+  },
+  "swap": {
+    "priceDojo": "$DOJO 現在価格",
+    "priceSeki": "$SEKI 現在価格",
+    "buyDojo": "$DOJO を購入",
+    "sellDojo": "$DOJO を売却",
+    "buySeki": "$SEKI を購入",
+    "sellSeki": "$SEKI を売却"
+  },
+  "howItWorks": {
+    "barText": "初めてですか？DOJOの仕組みを学びましょう",
+    "title": "仕組み",
+    "page1Title": "$SEKIを応援",
+    "page1Desc": "Hunt.townで$SEKIプロジェクトを応援しましょう。アプリを追加すると、最初の$SEKIを無料でプレゼントします。",
+    "page2Title": "$SEKIを受け取る",
+    "page2Desc": "前日の$SEKI収益をHunt.townからウォレットに受け取りましょう。",
+    "page3Title": "$SEKIを$DOJOに交換",
+    "page3Desc": "ウォレットの$DOJOが多いほど、日々のチェックインボーナスが高くなります。",
+    "page4Title": "デイリーチェックイン",
+    "page4Desc": "チェックインしてストリークを維持し、日々の$DOJOボーナスを受け取りましょう。",
+    "page5Title": "ストリークを続けよう",
+    "page5Desc": "ストリークを続けて週間ボーナスを獲得し、日々のボーナス率を上げましょう。",
+    "page5RateNote": "日々のボーナス率は最初の30日間で$DOJO保有量の0.1%から0.2%に増加します。",
+    "tierStreak": "ストリーク",
+    "tierReward": "週間ボーナス",
+    "tierDays": "{{min}}〜{{max}}日",
+    "tierDaysMax": "{{min}}日以上",
+    "next": "次へ",
+    "back": "戻る",
+    "done": "わかった！"
   },
   "share": {
-    "toFarcaster": "Farcaster\u3067\u5171\u6709",
-    "close": "\u9589\u3058\u308b",
-    "modalTitle": "\u304a\u75b2\u308c\u69d8\uff01",
-    "castText": "\ud83e\udd4b DOJO\u3067{{streak}}\u65e5\u9023\u7d9a\uff01{{tier}}\n\n\u6bce\u65e5\u306e\u4fee\u884c\u3001\u30aa\u30f3\u30c1\u30a7\u30fc\u30f3\u3067\u3002"
+    "toFarcaster": "Farcasterで共有",
+    "close": "閉じる",
+    "modalTitle": "お疲れ様！",
+    "castText": "🥋 DOJOで{{streak}}日連続！{{tier}}\n\n毎日の修行、オンチェーンで。"
   }
 }

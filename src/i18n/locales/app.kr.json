@@ -1,76 +1,106 @@
 {
   "app": {
-    "name": "\ub3c4\uc7a5",
-    "tagline": "\ub9e4\uc77c \uc218\ub828. \uc628\uccb4\uc778\uc73c\ub85c."
+    "name": "도장",
+    "tagline": "매일 수련. 온체인으로."
   },
   "checkin": {
-    "button": "\uccb4\ud06c\uc778",
-    "buttonDone": "\uccb4\ud06c\uc778 \uc644\ub8cc",
-    "buttonPending": "\uccb4\ud06c\uc778 \uc911..."
+    "button": "체크인",
+    "buttonDone": "체크인 완료",
+    "buttonPending": "체크인 중..."
   },
   "streak": {
-    "title": "\uc2a4\ud2b8\ub9ad",
-    "current": "\uc5f0\uc18d \uae30\ub85d",
-    "longest": "\uac1c\uc778 \ucd5c\uace0",
-    "days": "{{count}}\uc77c",
-    "days_plural": "{{count}}\uc77c",
-    "atRisk": "\uc624\ub298 \uccb4\ud06c\uc778\ud558\uc5ec \uc2a4\ud2b8\ub9ad\uc744 \uc720\uc9c0\ud558\uc138\uc694!",
-    "nextCheckin": "\ub2e4\uc74c \uccb4\ud06c\uc778\uae4c\uc9c0 "
+    "title": "스트릭",
+    "current": "연속 기록",
+    "longest": "개인 최고",
+    "days": "{{count}}일",
+    "days_plural": "{{count}}일",
+    "atRisk": "오늘 체크인하여 스트릭을 유지하세요!",
+    "nextCheckin": "다음 체크인까지 "
   },
   "tier": {
-    "whiteBelt": "\ubc31\ub744",
-    "blueBelt": "\uccad\ub744",
-    "purpleBelt": "\uc790\ub744",
-    "blackBelt": "\ud751\ub744"
+    "whiteBelt": "백띠",
+    "blueBelt": "청띠",
+    "purpleBelt": "자띠",
+    "blackBelt": "흑띠"
   },
   "rewards": {
-    "title": "\uc8fc\uac04 \ubcf4\uc0c1",
-    "claimable": "{{amount}} $DOJO \uc218\ub839 \uac00\ub2a5",
-    "claim": "\ubcf4\uc0c1 \uc218\ub839",
-    "claimed": "\uc218\ub839 \uc644\ub8cc",
-    "noClaim": "\uc774\ubc88 \uc8fc \ubcf4\uc0c1 \uc5c6\uc74c",
-    "tierEarned": "{{tier}}\ub85c \ud68d\ub4dd"
+    "title": "주간 보상",
+    "claimable": "{{amount}} $DOJO 수령 가능",
+    "claim": "보상 수령",
+    "claimed": "수령 완료",
+    "noClaim": "이번 주 보상 없음",
+    "tierEarned": "{{tier}}로 획득"
   },
   "toast": {
-    "checkinPending": "\uccb4\ud06c\uc778 \uc911...",
-    "checkinSuccess": "\uccb4\ud06c\uc778 \uc644\ub8cc!",
-    "checkinFailed": "\uccb4\ud06c\uc778 \uc2e4\ud328",
-    "checkinDuplicate": "\uc624\ub298\uc740 \uc774\ubbf8 \uccb4\ud06c\uc778\ud588\uc2b5\ub2c8\ub2e4",
-    "streakUpdated": "\uc2a4\ud2b8\ub9ad: {{count}}\uc77c",
-    "claimPending": "\ubcf4\uc0c1 \uc218\ub839 \uc911...",
-    "claimSuccess": "\ubcf4\uc0c1\uc744 \uc218\ub839\ud588\uc2b5\ub2c8\ub2e4!",
-    "claimFailed": "\uc218\ub839 \uc2e4\ud328",
-    "bonusPending": "\uc77c\uc77c \ubcf4\ub108\uc2a4 \uc218\ub839 \uc911...",
-    "bonusSuccess": "\uc77c\uc77c \ubcf4\ub108\uc2a4\ub97c \uc218\ub839\ud588\uc2b5\ub2c8\ub2e4!",
-    "bonusFailed": "\ubcf4\ub108\uc2a4 \uc218\ub839 \uc2e4\ud328"
+    "checkinPending": "체크인 중...",
+    "checkinSuccess": "체크인 완료!",
+    "checkinFailed": "체크인 실패",
+    "checkinDuplicate": "오늘은 이미 체크인했습니다",
+    "streakUpdated": "스트릭: {{count}}일",
+    "claimPending": "보상 수령 중...",
+    "claimSuccess": "보상을 수령했습니다!",
+    "claimFailed": "수령 실패",
+    "bonusPending": "일일 보너스 수령 중...",
+    "bonusSuccess": "일일 보너스를 수령했습니다!",
+    "bonusFailed": "보너스 수령 실패"
   },
   "errors": {
-    "contractRevert": "\ucee8\ud2b8\ub799\ud2b8\uac00 \uccb4\ud06c\uc778\uc744 \uac70\ubd80: {{reason}}",
-    "notConfigured": "DOJO \ucee8\ud2b8\ub799\ud2b8\uac00 \uc544\uc9c1 \ubc30\ud3ec\ub418\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4"
+    "contractRevert": "컨트랙트가 체크인을 거부: {{reason}}",
+    "notConfigured": "DOJO 컨트랙트가 아직 배포되지 않았습니다"
   },
   "history": {
-    "title": "\uccb4\ud06c\uc778 \uae30\ub85d",
-    "totalCheckins": "\ucd1d \uccb4\ud06c\uc778 \uc218",
-    "noHistory": "\uae30\ub85d\uc774 \uc5c6\uc2b5\ub2c8\ub2e4"
+    "title": "체크인 기록",
+    "totalCheckins": "총 체크인 수",
+    "noHistory": "기록이 없습니다"
   },
   "onboarding": {
-    "welcomeTitle": "\ub3c4\uc7a5\uc5d0 \uc624\uc2e0 \uac83\uc744 \ud658\uc601\ud569\ub2c8\ub2e4",
-    "welcomeDescription": "\uc571\uc5d0 \ub3c4\uc7a5\uc744 \ucd94\uac00\ud558\uace0 \ud658\uc601 \uc120\ubb3c 1 $DOJO\ub97c \ubc1b\uc73c\uc138\uc694.",
-    "addApp": "\uc120\ubb3c \ubc1b\uae30",
-    "noThanks": "\uad1c\ucc2e\uc2b5\ub2c8\ub2e4.",
-    "addFailed": "\uc571\uc744 \ucd94\uac00\ud560 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4. \ub2e4\uc2dc \uc2dc\ub3c4\ud574\uc8fc\uc138\uc694.",
-    "addingApp": "\ub3c4\uc7a5 \ucd94\uac00 \uc911...",
-    "claimingBonus": "\ud658\uc601 \uc120\ubb3c \uc218\ub839 \uc911",
-    "claimingDescription": "1 $DOJO\ub97c \uc9c0\uac11\uc73c\ub85c \uc804\uc1a1 \uc911...",
-    "retry": "\uc7ac\uc2dc\ub3c4",
-    "successTitle": "1 $DOJO\ub97c \ubc1b\uc558\uc2b5\ub2c8\ub2e4!",
-    "successDescription": "\uc77c\uc77c \uc218\ub828\uc774 \uc9c0\uae08 \uc2dc\uc791\ub429\ub2c8\ub2e4.",
-    "startTraining": "\uc218\ub828 \uc2dc\uc791"
+    "welcomeTitle": "도장에 오신 것을 환영합니다",
+    "welcomeDescription": "앱에 도장을 추가하고 환영 선물 1 $DOJO를 받으세요.",
+    "addApp": "선물 받기",
+    "noThanks": "괜찮습니다.",
+    "addFailed": "앱을 추가할 수 없습니다. 다시 시도해주세요.",
+    "addingApp": "도장 추가 중...",
+    "claimingBonus": "환영 선물 수령 중",
+    "claimingDescription": "1 $DOJO를 지갑으로 전송 중...",
+    "retry": "재시도",
+    "successTitle": "1 $DOJO를 받았습니다!",
+    "successDescription": "일일 수련이 지금 시작됩니다.",
+    "startTraining": "수련 시작"
+  },
+  "swap": {
+    "priceDojo": "$DOJO 현재 가격",
+    "priceSeki": "$SEKI 현재 가격",
+    "buyDojo": "$DOJO 구매",
+    "sellDojo": "$DOJO 매도",
+    "buySeki": "$SEKI 구매",
+    "sellSeki": "$SEKI 매도"
+  },
+  "howItWorks": {
+    "barText": "처음이신가요? DOJO 작동 방식을 알아보세요",
+    "title": "작동 방식",
+    "page1Title": "$SEKI 후원",
+    "page1Desc": "Hunt.town에서 $SEKI 프로젝트를 후원하세요. 앱을 추가하면 첫 $SEKI를 무료로 드립니다.",
+    "page2Title": "$SEKI 수령",
+    "page2Desc": "전날의 $SEKI 수익을 Hunt.town에서 지갑으로 수령하세요.",
+    "page3Title": "$SEKI를 $DOJO로 교환",
+    "page3Desc": "지갑에 $DOJO가 많을수록 일일 체크인 보너스가 높아집니다.",
+    "page4Title": "일일 체크인",
+    "page4Desc": "체크인으로 스트릭을 유지하고 일일 $DOJO 보너스를 받으세요.",
+    "page5Title": "스트릭 유지",
+    "page5Desc": "스트릭을 유지하여 주간 보너스를 받고 일일 보너스 비율을 높이세요.",
+    "page5RateNote": "일일 보너스 비율은 처음 30일 동안 $DOJO 보유량의 0.1%에서 0.2%로 증가합니다.",
+    "tierStreak": "스트릭",
+    "tierReward": "주간 보너스",
+    "tierDays": "{{min}}–{{max}}일",
+    "tierDaysMax": "{{min}}일 이상",
+    "next": "다음",
+    "back": "뒤로",
+    "done": "알겠습니다!"
   },
   "share": {
-    "toFarcaster": "Farcaster\uc5d0 \uacf5\uc720",
-    "close": "\ub2eb\uae30",
-    "modalTitle": "\uc798\ud588\uc2b5\ub2c8\ub2e4!",
-    "castText": "\ud83e\udd4b DOJO {{streak}}\uc77c \uc5f0\uc18d \uc2a4\ud2b8\ub9ad! {{tier}}\n\n\ub9e4\uc77c \uc218\ub828, \uc628\uccb4\uc778\uc73c\ub85c."
+    "toFarcaster": "Farcaster에 공유",
+    "close": "닫기",
+    "modalTitle": "잘했습니다!",
+    "castText": "🥋 DOJO {{streak}}일 연속 스트릭! {{tier}}\n\n매일 수련, 온체인으로."
   }
 }
