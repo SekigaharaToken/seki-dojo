@@ -5,9 +5,21 @@ import { toast } from "sonner";
 import {
   useWalletAddress, activeChain, EAS_ADDRESS, easAbi, parseContractError,
 } from "@sekigahara/engine";
-import { encodeAbiParameters, parseAbiParameters, createPublicClient, http } from "viem";
-import { DOJO_SCHEMA_UID } from "@/config/contracts.js";
-import { APP_IDENTIFIER, SECONDS_PER_DAY } from "@/config/constants.js";
+import { encodeAbiParameters, parseAbiParameters, parseEventLogs, createPublicClient, http } from "viem";
+import { DOJO_SCHEMA_UID, DOJO_RESOLVER_ADDRESS } from "@/config/contracts.js";
+import { dojoResolverAbi } from "@/config/abis/dojoResolver.js";
+import { APP_IDENTIFIER, SECONDS_PER_DAY, getTierForStreak } from "@/config/constants.js";
+
+const bonusPaidAbi = [{
+  type: "event",
+  name: "BonusPaid",
+  inputs: [
+    { name: "user", type: "address", indexed: true },
+    { name: "amount", type: "uint256", indexed: false },
+    { name: "rate", type: "uint256", indexed: false },
+    { name: "streak", type: "uint256", indexed: false },
+  ],
+}];
 
 const client = createPublicClient({ chain: activeChain, transport: http() });
 
@@ -57,15 +69,45 @@ export function useCheckIn() {
         ],
       });
 
-      // Wait for confirmation so streak state is updated onchain,
-      // then invalidate so UI refetches fresh data before callers proceed.
-      await client.waitForTransactionReceipt({ hash });
+      // Wait for confirmation so streak state is updated onchain
+      const receipt = await client.waitForTransactionReceipt({ hash });
+
+      // Try to extract streak from the BonusPaid event (zero extra RPCs).
+      // Falls back to readContract if the event wasn't emitted (user had 0 $DOJO).
+      let streak;
+      try {
+        const logs = parseEventLogs({ abi: bonusPaidAbi, logs: receipt.logs });
+        const bonusLog = logs.find(
+          (l) => l.eventName === "BonusPaid" && l.args.user?.toLowerCase() === address.toLowerCase(),
+        );
+        if (bonusLog) {
+          streak = Number(bonusLog.args.streak);
+        }
+      } catch {
+        // parseEventLogs may throw if no matching logs — fall through
+      }
+
+      if (streak == null) {
+        const raw = await client.readContract({
+          address: DOJO_RESOLVER_ADDRESS,
+          abi: dojoResolverAbi,
+          functionName: "currentStreak",
+          args: [address],
+        });
+        streak = Number(raw);
+      }
+
+      // Invalidate cache so the rest of the UI catches up
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["readContract"] }),
         queryClient.invalidateQueries({ queryKey: ["checkInHistory", address] }),
       ]);
 
-      return hash;
+      return {
+        hash,
+        currentStreak: streak,
+        currentTier: getTierForStreak(streak),
+      };
     } catch (err) {
       const { key, params } = parseContractError(err);
       toast.error(t("toast.checkinFailed"), {

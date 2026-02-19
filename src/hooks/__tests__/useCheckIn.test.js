@@ -43,14 +43,17 @@ vi.mock("@sekigahara/engine", async (importOriginal) => {
 });
 
 // Mock viem
-const mockWaitForTransactionReceipt = vi.fn(() => Promise.resolve({ blockNumber: 100n }));
+const mockWaitForTransactionReceipt = vi.fn(() => Promise.resolve({ blockNumber: 100n, logs: [] }));
+const mockReadContract = vi.fn(() => Promise.resolve(5n));
 const mockGetLogs = vi.fn(() => Promise.resolve([]));
 vi.mock("viem", () => ({
   encodeAbiParameters: vi.fn(() => "0xmockencoded"),
   parseAbiParameters: vi.fn(() => []),
   parseAbiItem: vi.fn(() => ({})),
+  parseEventLogs: vi.fn(() => []),
   createPublicClient: () => ({
     waitForTransactionReceipt: (...args) => mockWaitForTransactionReceipt(...args),
+    readContract: (...args) => mockReadContract(...args),
     getLogs: (...args) => mockGetLogs(...args),
   }),
   http: () => ({}),
@@ -59,6 +62,7 @@ vi.mock("viem", () => ({
 // Mock contracts — provide non-empty schema UID so checkIn doesn't bail early
 vi.mock("@/config/contracts.js", () => ({
   DOJO_SCHEMA_UID: "0xmockschemauid",
+  DOJO_RESOLVER_ADDRESS: "0xmockresolver",
 }));
 
 // Mock @tanstack/react-query — use importOriginal so the engine barrel
@@ -139,15 +143,18 @@ describe("useCheckIn", () => {
     expect(request.data.recipient).toBe("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
   });
 
-  it("returns the transaction hash on success", async () => {
+  it("returns streak data and tx hash on success", async () => {
+    mockReadContract.mockResolvedValueOnce(5n);
     const { result } = renderHook(() => useCheckIn());
 
-    let txHash;
+    let res;
     await act(async () => {
-      txHash = await result.current.checkIn();
+      res = await result.current.checkIn();
     });
 
-    expect(txHash).toBe("0xmocktxhash");
+    expect(res.hash).toBe("0xmocktxhash");
+    expect(res.currentStreak).toBe(5);
+    expect(res.currentTier).toBeDefined();
   });
 
   it("throws and fires error toast when writeContractAsync rejects", async () => {

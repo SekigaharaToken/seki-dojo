@@ -21,6 +21,8 @@ export default function HomePage() {
   const { shareStreak } = useShareStreak({ currentStreak, currentTier });
 
   const [shareOpen, setShareOpen] = useState(false);
+  // Fresh streak values from the check-in tx, used by ShareModal
+  const [shareData, setShareData] = useState(null);
 
   return (
     <div className="flex flex-col items-center gap-6 py-8">
@@ -56,7 +58,10 @@ export default function HomePage() {
       </motion.div>
 
       <motion.div {...fadeInUp} transition={{ ...fadeInUp.transition, ...staggerDelay(3) }}>
-        <CheckInButton onCheckInSuccess={() => setShareOpen(true)} />
+        <CheckInButton onCheckInSuccess={(result) => {
+          setShareData(result);
+          setShareOpen(true);
+        }} />
       </motion.div>
 
       <motion.div {...fadeInUp} transition={{ ...fadeInUp.transition, ...staggerDelay(4) }}>
@@ -87,8 +92,8 @@ export default function HomePage() {
       <ShareModal
         open={shareOpen}
         onClose={() => setShareOpen(false)}
-        currentStreak={currentStreak}
-        currentTier={currentTier}
+        currentStreak={shareData?.currentStreak ?? currentStreak}
+        currentTier={shareData?.currentTier ?? currentTier}
         onShare={() => {
           shareStreak();
           setShareOpen(false);

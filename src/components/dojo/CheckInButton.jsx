@@ -32,8 +32,8 @@ export function CheckInButton({ onCheckInSuccess }) {
       return;
     }
 
-    checkIn().then(() => {
-      onCheckInSuccess?.();
+    checkIn().then((result) => {
+      onCheckInSuccess?.(result);
     }).catch(() => {});
   }
 
