@@ -97,10 +97,14 @@ export function useCheckIn() {
         streak = Number(raw);
       }
 
-      // Invalidate cache so the rest of the UI catches up
+      // Invalidate + refetch so the rest of the UI catches up immediately
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["readContract"] }),
         queryClient.invalidateQueries({ queryKey: ["checkInHistory", address] }),
+      ]);
+      await Promise.all([
+        queryClient.refetchQueries({ queryKey: ["readContract"] }),
+        queryClient.refetchQueries({ queryKey: ["checkInHistory", address] }),
       ]);
 
       return {

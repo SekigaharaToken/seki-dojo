@@ -74,6 +74,7 @@ vi.mock("@/config/contracts.js", () => ({
 // Mock @tanstack/react-query — use importOriginal so the engine barrel
 // can still access QueryClient/QueryClientProvider for its TestWrapper export
 const mockInvalidateQueries = vi.fn();
+const mockRefetchQueries = vi.fn();
 const mockSetQueryData = vi.fn();
 vi.mock("@tanstack/react-query", async (importOriginal) => {
   const actual = await importOriginal();
@@ -81,6 +82,7 @@ vi.mock("@tanstack/react-query", async (importOriginal) => {
     ...actual,
     useQueryClient: () => ({
       invalidateQueries: mockInvalidateQueries,
+      refetchQueries: mockRefetchQueries,
       setQueryData: mockSetQueryData,
     }),
   };
