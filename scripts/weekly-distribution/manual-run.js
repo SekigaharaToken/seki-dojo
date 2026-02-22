@@ -27,6 +27,7 @@ import { discoverWallets, bucketByTier } from "./walletDiscovery.js";
 import { buildMerkleTree } from "./merkleBuilder.js";
 import { pinToIpfs } from "./ipfsPin.js";
 import { approveToken, createDistribution } from "./createDistributions.js";
+import { notifyDistributions } from "./castNotifier.js";
 import { STREAK_TIERS } from "../../src/config/constants.js";
 import { DOJO_TOKEN_ADDRESS, MINT_CLUB } from "../../src/config/contracts.js";
 
@@ -118,6 +119,14 @@ async function main() {
     for (const { tier, walletCount, amountPerClaim, totalForTier } of tierData) {
       console.log(`   Tier ${tier.id}: ${walletCount} wallets × ${amountPerClaim / 10n ** 18n} = ${totalForTier / 10n ** 18n} $DOJO`);
     }
+
+    // Show cast preview (resolves FIDs but doesn't post)
+    try {
+      await notifyDistributions({ tierResults: tierData, weekNumber: WEEK_NUMBER, dryRun: true });
+    } catch (err) {
+      console.warn("Cast preview failed:", err.message);
+    }
+
     console.log("\n=== No transactions sent ===\n");
     return;
   }
@@ -150,6 +159,13 @@ async function main() {
       ipfsCID: cid,
     });
     console.log(`   TX: ${txHash}`);
+  }
+
+  // Step 6-7: Post Farcaster cast notifications (non-fatal)
+  try {
+    await notifyDistributions({ tierResults: tierData, weekNumber: WEEK_NUMBER });
+  } catch (err) {
+    console.warn("Cast notification failed (non-fatal):", err.message);
   }
 
   console.log(`\n=== Distribution complete (Week ${WEEK_NUMBER}, ${mode}) ===\n`);
