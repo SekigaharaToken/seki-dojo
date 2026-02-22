@@ -10,16 +10,47 @@ import { STREAK_TIERS, SECONDS_PER_DAY, DEPLOY_BLOCK } from "../../src/config/co
 
 const SEVEN_DAYS = 7 * SECONDS_PER_DAY;
 
-/**
- * Create a viem public client for Base.
- * Exported for testability (tests mock viem module).
- */
+// Base mainnet public RPCs limit eth_getLogs to ~3k blocks per request.
+// Use 2k to be safe on both mainnet and Sepolia.
+const MAX_BLOCK_RANGE = 2_000n;
+
 const RPC_URL = process.env.RPC_URL;
 
 const client = createPublicClient({
   chain: activeChain,
   transport: http(RPC_URL),
 });
+
+/**
+ * Fetch logs in paginated chunks to stay within RPC block range limits.
+ */
+async function getLogsPaginated({ address, event, args, fromBlock, toBlock }) {
+  const latest =
+    toBlock === "latest" ? await client.getBlockNumber() : toBlock;
+
+  const allLogs = [];
+  let cursor = fromBlock;
+
+  while (cursor <= latest) {
+    const end =
+      cursor + MAX_BLOCK_RANGE - 1n > latest
+        ? latest
+        : cursor + MAX_BLOCK_RANGE - 1n;
+
+    const logs = await client.getLogs({
+      address,
+      event,
+      args,
+      fromBlock: cursor,
+      toBlock: end,
+    });
+
+    allLogs.push(...logs);
+    cursor = end + 1n;
+  }
+
+  return allLogs;
+}
 
 /**
  * Discover all active DOJO wallets from EAS attestation logs.
@@ -30,7 +61,7 @@ const client = createPublicClient({
  * @returns {Promise<Array<{ address: string, currentStreak: number, lastCheckIn: number }>>}
  */
 export async function discoverWallets({ skipCutoff = false } = {}) {
-  const logs = await client.getLogs({
+  const logs = await getLogsPaginated({
     address: EAS_ADDRESS,
     event: parseAbiItem(
       "event Attested(address indexed recipient, address indexed attester, bytes32 uid, bytes32 indexed schemaUID)",

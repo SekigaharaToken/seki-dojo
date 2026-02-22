@@ -18,6 +18,7 @@ vi.mock("viem", async (importOriginal) => {
     createPublicClient: vi.fn(() => ({
       getLogs: mockGetLogs,
       readContract: mockReadContract,
+      getBlockNumber: vi.fn().mockResolvedValue(50_000_000n),
     })),
     http: vi.fn(() => "mockTransport"),
   };
