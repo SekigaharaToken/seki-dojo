@@ -35,13 +35,17 @@ jobs:
 
       - name: Run distribution script
         env:
-          OPERATOR_PRIVATE_KEY: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+          CDP_API_KEY_ID: ${{ secrets.CDP_API_KEY_ID }}
+          CDP_API_KEY_SECRET: ${{ secrets.CDP_API_KEY_SECRET }}
+          CDP_WALLET_SECRET: ${{ secrets.CDP_WALLET_SECRET }}
           VITE_PINATA_JWT: ${{ secrets.PINATA_JWT }}
           VITE_DOJO_TOKEN_ADDRESS: ${{ secrets.DOJO_TOKEN_ADDRESS }}
           VITE_DOJO_RESOLVER_ADDRESS: ${{ secrets.DOJO_RESOLVER_ADDRESS }}
           VITE_DOJO_SCHEMA_UID: ${{ secrets.DOJO_SCHEMA_UID }}
           VITE_CHAIN_ID: ${{ secrets.CHAIN_ID }}
           RPC_URL: ${{ secrets.RPC_URL }}
+          NEYNAR_API_KEY: ${{ secrets.NEYNAR_API_KEY }}
+          NEYNAR_SIGNER_UUID: ${{ secrets.NEYNAR_SIGNER_UUID }}
           WEEK_NUMBER: ${{ github.event.inputs.week_number || '' }}
         run: node scripts/weekly-distribution/index.js
 
