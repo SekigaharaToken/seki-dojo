@@ -1,37 +1,41 @@
-import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
+import { MerkleTree } from "merkletreejs";
+import { keccak256, toHex } from "viem";
 
 /**
- * Build a StandardMerkleTree from an array of wallet addresses.
- * Each leaf is [address].
+ * Wrap viem's keccak256 to accept both hex strings and Buffer/Uint8Array,
+ * since merkletreejs passes Buffer for intermediary node hashing.
+ */
+function hashFn(data) {
+  if (typeof data === "string") return keccak256(data);
+  return keccak256(toHex(data));
+}
+
+/**
+ * Build a Merkle tree from an array of wallet addresses.
+ * Uses merkletreejs with keccak256 + sortPairs to match Mint Club's
+ * MerkleDistributor contract verification.
  *
  * @param {string[]} wallets
- * @returns {StandardMerkleTree | null}
+ * @returns {{ tree: MerkleTree, root: string } | null}
  */
 export function buildMerkleTree(wallets) {
   if (wallets.length === 0) return null;
 
-  return StandardMerkleTree.of(
-    wallets.map((w) => [w]),
-    ["address"],
-  );
+  const leaves = wallets.map((addr) => hashFn(addr));
+  const tree = new MerkleTree(leaves, hashFn, { sortPairs: true });
+  const root = `0x${tree.getRoot().toString("hex")}`;
+
+  return { tree, root };
 }
 
 /**
- * Create the JSON structure for IPFS pinning.
+ * Generate a Merkle proof for a specific address.
  *
- * @param {{ tree: StandardMerkleTree, wallets: string[], week: number, tierId: number, tierName: string, amountPerClaim: string }} params
- * @returns {object}
+ * @param {MerkleTree} tree - The Merkle tree instance
+ * @param {string} address - The wallet address to prove
+ * @returns {string[]} Array of hex proof nodes
  */
-export function createTreeJson({ tree, wallets, week, tierId, tierName, amountPerClaim }) {
-  return {
-    version: 1,
-    week,
-    tier: tierId,
-    tierName,
-    amountPerClaim,
-    generatedAt: new Date().toISOString(),
-    root: tree.root,
-    walletCount: wallets.length,
-    wallets,
-  };
+export function getMerkleProof(tree, address) {
+  const leaf = hashFn(address);
+  return tree.getHexProof(leaf);
 }
