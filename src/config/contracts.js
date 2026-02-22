@@ -16,6 +16,9 @@ function getEnv(key, fallback = "") {
 
 const chainId = Number(getEnv("VITE_CHAIN_ID", "8453"));
 
+// EAS predeploy (same on all OP Stack chains)
+export const EAS_ADDRESS = "0x4200000000000000000000000000000000000021";
+
 // Custom contracts (loaded from env — set after deployment)
 export const DOJO_RESOLVER_ADDRESS =
   getEnv("VITE_DOJO_RESOLVER_ADDRESS", "");
