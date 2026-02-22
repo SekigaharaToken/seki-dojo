@@ -9,9 +9,11 @@
  * 5. Create distributions on MerkleDistributor contract
  *
  * Run: node --experimental-modules scripts/weekly-distribution/index.js
- * Requires: OPERATOR_PRIVATE_KEY, VITE_PINATA_JWT, VITE_DOJO_TOKEN_ADDRESS env vars
+ * Requires: CDP_API_KEY_ID, CDP_API_KEY_SECRET, CDP_WALLET_SECRET,
+ *           VITE_PINATA_JWT, VITE_DOJO_TOKEN_ADDRESS env vars
  */
 
+import "dotenv/config";
 import { parseUnits } from "viem";
 import { discoverWallets, bucketByTier } from "./walletDiscovery.js";
 import { buildMerkleTree, createTreeJson } from "./merkleBuilder.js";

@@ -1,9 +1,18 @@
 /**
  * DOJO-specific contract addresses and token config.
  * Engine-shared addresses (EAS, Mint Club, chains) come from @sekigahara/engine.
+ *
+ * getEnv is inlined here (instead of imported from engine) so that Node.js
+ * scripts can import this file without triggering the engine barrel export,
+ * which re-exports .jsx components that Node cannot parse.
  */
 
-import { getEnv } from "@sekigahara/engine";
+function getEnv(key, fallback = "") {
+  if (typeof import.meta !== "undefined" && import.meta.env) {
+    return import.meta.env[key] ?? fallback;
+  }
+  return process.env[key] ?? fallback;
+}
 
 const chainId = Number(getEnv("VITE_CHAIN_ID", "8453"));
 

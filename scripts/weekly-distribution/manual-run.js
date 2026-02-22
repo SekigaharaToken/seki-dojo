@@ -16,10 +16,12 @@
  *                 Use this for the first distribution after a mid-week launch.
  *   --dry-run     Show what would happen without sending transactions or pinning.
  *
- * Requires: OPERATOR_PRIVATE_KEY, VITE_PINATA_JWT, VITE_DOJO_TOKEN_ADDRESS,
+ * Requires: CDP_API_KEY_ID, CDP_API_KEY_SECRET, CDP_WALLET_SECRET,
+ *           VITE_PINATA_JWT, VITE_DOJO_TOKEN_ADDRESS,
  *           VITE_DOJO_RESOLVER_ADDRESS, VITE_DOJO_SCHEMA_UID in env or .env
  */
 
+import "dotenv/config";
 import { parseUnits } from "viem";
 import { discoverWallets, bucketByTier } from "./walletDiscovery.js";
 import { buildMerkleTree, createTreeJson } from "./merkleBuilder.js";

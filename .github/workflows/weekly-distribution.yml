@@ -35,7 +35,9 @@ jobs:
 
       - name: Run distribution script
         env:
-          OPERATOR_PRIVATE_KEY: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+          CDP_API_KEY_ID: ${{ secrets.CDP_API_KEY_ID }}
+          CDP_API_KEY_SECRET: ${{ secrets.CDP_API_KEY_SECRET }}
+          CDP_WALLET_SECRET: ${{ secrets.CDP_WALLET_SECRET }}
           VITE_PINATA_JWT: ${{ secrets.PINATA_JWT }}
           VITE_DOJO_TOKEN_ADDRESS: ${{ secrets.DOJO_TOKEN_ADDRESS }}
           VITE_DOJO_RESOLVER_ADDRESS: ${{ secrets.DOJO_RESOLVER_ADDRESS }}

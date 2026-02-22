@@ -30,9 +30,19 @@ vi.mock("viem/accounts", async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...actual,
-    privateKeyToAccount: vi.fn(() => ({ address: "0xOperator" })),
+    toAccount: vi.fn((cdpAccount) => cdpAccount),
   };
 });
+
+vi.mock("@coinbase/cdp-sdk", () => ({
+  CdpClient: class MockCdpClient {
+    constructor() {
+      this.evm = {
+        getOrCreateAccount: vi.fn().mockResolvedValue({ address: "0xOperator" }),
+      };
+    }
+  },
+}));
 
 const { createDistribution, approveToken } = await import(
   "../createDistributions.js"
