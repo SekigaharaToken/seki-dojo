@@ -17,8 +17,6 @@ Part of the [Sekigahara](https://github.com/SekigaharaToken) ecosystem.
 | 3 | 30-59 days | Purple | 180 $DOJO |
 | 4 | 60+ days | Black | 200 $DOJO |
 
-**Daily bonus:** On each check-in, claim 0.1-0.2% of your $DOJO holdings as a bonus. The rate scales linearly from 0.1% (day 1) to 0.2% (day 30+) based on streak length.
-
 No backend server. No admin keys. If the team disappears, the contracts and IPFS frontend keep working.
 
 ## Stack
@@ -61,7 +59,6 @@ VITE_DOJO_RESOLVER_ADDRESS=            # DojoResolver contract
 VITE_DOJO_SCHEMA_UID=                  # EAS schema UID
 VITE_SEKI_TOKEN_ADDRESS=               # $SEKI token
 VITE_DOJO_TOKEN_ADDRESS=               # $DOJO token
-VITE_DAILY_BONUS_ADDRESS=              # DailyBonus contract
 VITE_PINATA_JWT=                       # Pinata JWT (for weekly distribution script)
 ```
 
@@ -77,7 +74,7 @@ src/
   i18n/            Translation config and locale files
   assets/          Static images and fonts
 contracts/
-  src/             Solidity sources (DojoResolver, DailyBonus, DemoToken)
+  src/             Solidity sources (DojoResolver, DojoFaucet, DemoToken)
 scripts/
   weekly-distribution/   Weekly reward pipeline
   e2e-test.sh            End-to-end test on Anvil fork
@@ -85,13 +82,10 @@ scripts/
 
 ## Contracts
 
-**DojoResolver** -- custom EAS SchemaResolver that enforces one check-in per UTC day and tracks streaks onchain. All state is publicly readable (`currentStreak`, `longestStreak`, `lastCheckIn`).
-
-**DailyBonus** -- trustless contract that pays a percentage of the caller's $DOJO holdings as a daily bonus. Rate scales from 0.1% to 0.2% over 30 days of streak. No admin keys; the operator just keeps it funded.
+**DojoResolver** -- custom EAS SchemaResolver that enforces one check-in per UTC day and tracks streaks onchain. All state is publicly readable (`currentStreak`, `longestStreak`, `lastCheckIn`). Daily bonus rewards are also handled by the resolver -- on each successful attestation, a streak-scaled bonus is calculated and distributed directly, removing the need for a separate contract.
 
 **Deployed on Base Sepolia:**
 - DojoResolver: `0xA046B36f99a434CE30b14BB783310aF16D00009d`
-- DailyBonus: `0xdf1E7CE38d433E1Ef8429936D9014ecDB89eE4D1`
 - EAS schema: `0xc3d5fa683150402070fa90f53e23d4921826640823deed57d32cd53db62c6c0e`
 
 ## Weekly distribution
@@ -105,7 +99,7 @@ The `scripts/weekly-distribution/` pipeline runs as a weekly cron:
 5. Create distributions on Mint Club MerkleDistributor
 
 ```bash
-OPERATOR_PRIVATE_KEY=0x... node scripts/weekly-distribution/index.js
+node scripts/weekly-distribution/index.js
 ```
 
 ## E2E testing
