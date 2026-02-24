@@ -7,6 +7,7 @@ vi.stubGlobal("fetch", mockFetch);
 // Set env vars before import
 process.env.NEYNAR_API_KEY = "test-api-key";
 process.env.NEYNAR_SIGNER_UUID = "test-signer-uuid";
+process.env.VITE_SEKI_TOKEN_ADDRESS = "0xa4f51ca123d141d4ae3c63afc663ef7fb5c70b07";
 
 const {
   resolveAddressesToFids,
@@ -252,7 +253,9 @@ describe("castNotifier", () => {
       // Parent has channel + embed
       const parentBody = JSON.parse(mockFetch.mock.calls[0][1].body);
       expect(parentBody.channel_id).toBe("hunt");
-      expect(parentBody.embeds).toBeDefined();
+      expect(parentBody.embeds).toHaveLength(2);
+      expect(parentBody.embeds[0].url).toContain("mint.club");
+      expect(parentBody.embeds[1].url).toContain("farcaster.xyz/~/c/base:0xa4f51ca123d141d4ae3c63afc663ef7fb5c70b07");
       expect(parentBody.parent).toBeUndefined();
 
       // Reply has parent hash, no channel/embed

@@ -10,6 +10,10 @@ const NEYNAR_BASE = "https://api.neynar.com/v2/farcaster";
 const MENTION_LIMIT = 10; // Farcaster max mentions per cast
 const ADDRESS_BATCH_SIZE = 350; // Neynar bulk lookup limit
 const CLAIM_URL = "https://mint.club/token/base/DOJO";
+const SEKI_TOKEN = process.env.VITE_SEKI_TOKEN_ADDRESS?.toLowerCase() || "";
+const SEKI_EMBED_URL = SEKI_TOKEN
+  ? `https://farcaster.xyz/~/c/base:${SEKI_TOKEN}`
+  : null;
 const CHANNEL_ID = "hunt";
 
 /**
@@ -163,7 +167,9 @@ export async function postTierNotification({ tier, reward, weekNumber, fidMap, a
       text: cast.text,
       mentions: cast.mentions,
       mentionsPositions: cast.mentionsPositions,
-      embeds: cast.isParent ? [{ url: CLAIM_URL }] : undefined,
+      embeds: cast.isParent
+        ? [{ url: CLAIM_URL }, ...(SEKI_EMBED_URL ? [{ url: SEKI_EMBED_URL }] : [])]
+        : undefined,
       channelId: cast.isParent ? CHANNEL_ID : undefined,
       parentHash: parentHash || undefined,
     });
