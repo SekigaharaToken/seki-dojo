@@ -1,5 +1,4 @@
 import { useWriteContract } from "wagmi";
-import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
@@ -30,7 +29,6 @@ const client = createPublicClient({ chain: activeChain, transport: http() });
 export function useCheckIn() {
   const { t } = useTranslation();
   const { address } = useWalletAddress();
-  const queryClient = useQueryClient();
   const { writeContractAsync, isPending, isError, error } = useWriteContract();
 
   async function checkIn() {
@@ -97,15 +95,8 @@ export function useCheckIn() {
         streak = Number(raw);
       }
 
-      // Invalidate + refetch so the rest of the UI catches up immediately
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["readContract"] }),
-        queryClient.invalidateQueries({ queryKey: ["checkInHistory", address] }),
-      ]);
-      await Promise.all([
-        queryClient.refetchQueries({ queryKey: ["readContract"] }),
-        queryClient.refetchQueries({ queryKey: ["checkInHistory", address] }),
-      ]);
+      // UI updates are handled by useResolverEvents which watches BonusPaid
+      // events and writes directly into the TanStack Query cache.
 
       return {
         hash,

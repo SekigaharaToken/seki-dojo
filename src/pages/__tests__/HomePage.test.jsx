@@ -54,6 +54,10 @@ vi.mock("@/hooks/useClaim.js", () => ({
   }),
 }));
 
+vi.mock("@/hooks/useResolverEvents.js", () => ({
+  useResolverEvents: () => {},
+}));
+
 vi.mock("@/hooks/useOnboarding.js", () => ({
   useOnboarding: () => ({
     shouldOnboard: false,

@@ -12,6 +12,7 @@ import { useOnboarding } from "@/hooks/useOnboarding.js";
 import { useWalletAddress, BackSekiLink, fadeInUp, staggerDelay } from "@sekigahara/engine";
 import { useStreak } from "@/hooks/useStreak.js";
 import { useShareStreak } from "@/hooks/useShareStreak.js";
+import { useResolverEvents } from "@/hooks/useResolverEvents.js";
 
 export default function HomePage() {
   const { t } = useTranslation();
@@ -19,6 +20,7 @@ export default function HomePage() {
   const { address } = useWalletAddress();
   const { hasCheckedInToday, currentStreak, currentTier } = useStreak(address);
   const { shareStreak } = useShareStreak({ currentStreak, currentTier });
+  useResolverEvents();
 
   const [shareOpen, setShareOpen] = useState(false);
   // Fresh streak values from the check-in tx, used by ShareModal
