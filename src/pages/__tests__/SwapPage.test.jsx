@@ -15,7 +15,8 @@ vi.mock("@farcaster/auth-kit", () => ({
 }));
 
 vi.mock("@farcaster/miniapp-sdk", () => ({
-  sdk: { actions: { ready: vi.fn() }, context: Promise.resolve(null) },
+  default: { actions: { ready: vi.fn(), openUrl: vi.fn() }, context: Promise.resolve(null) },
+  sdk: { actions: { ready: vi.fn(), openUrl: vi.fn() }, context: Promise.resolve(null) },
 }));
 
 vi.mock("@/lib/mintclub.js", () => ({
