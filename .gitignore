@@ -38,9 +38,15 @@ contracts/broadcast/
 # Playwright MCP
 .playwright-mcp/
 
-# Ignore all .md in root except README
+# Ignore all .md in root except README and CLAUDE.md
 /*.md
 !README.md
+!CLAUDE.md
+
+# Claude Code — commit shared config, ignore local/private
+.claude/*
+!.claude/settings.json
+!.claude/skills/
 
 # Plan scratch files
 docs/plans/

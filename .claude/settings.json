@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "command": "case \"$CLAUDE_FILE_PATH\" in *.env.example) exit 0 ;; *.env|*.env.*) echo 'BLOCKED: Do not edit .env files directly'; exit 1 ;; *) exit 0 ;; esac"
+      }
+    ]
+  }
+}
