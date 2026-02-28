@@ -102,15 +102,9 @@ describe("useCheckIn", () => {
     expect(typeof result.current.checkIn).toBe("function");
   });
 
-  it("returns isPending from useWriteContract", () => {
-    mockUseWriteContract.mockReturnValueOnce({
-      writeContractAsync: mockWriteContractAsync,
-      isPending: true,
-      isError: false,
-      error: null,
-    });
+  it("returns isPending as false initially", () => {
     const { result } = renderHook(() => useCheckIn());
-    expect(result.current.isPending).toBe(true);
+    expect(result.current.isPending).toBe(false);
   });
 
   it("calls writeContractAsync with EAS attest params when checkIn is called", async () => {
@@ -182,14 +176,26 @@ describe("useCheckIn", () => {
     );
   });
 
-  it("returns isError state", () => {
-    mockUseWriteContract.mockReturnValueOnce({
-      writeContractAsync: mockWriteContractAsync,
-      isPending: false,
-      isError: true,
-      error: new Error("rpc failure"),
-    });
+  it("sets isPending during check-in and resets on error", async () => {
+    let rejectFn;
+    mockWriteContractAsync.mockReturnValueOnce(new Promise((_, reject) => { rejectFn = reject; }));
     const { result } = renderHook(() => useCheckIn());
-    expect(result.current.isError).toBe(true);
+
+    let checkInPromise;
+    act(() => {
+      checkInPromise = result.current.checkIn();
+    });
+
+    // isPending should be true while check-in is in flight
+    expect(result.current.isPending).toBe(true);
+
+    // Reject to trigger error path
+    await act(async () => {
+      rejectFn(new Error("User rejected the request."));
+      await checkInPromise.catch(() => {});
+    });
+
+    // isPending resets on error
+    expect(result.current.isPending).toBe(false);
   });
 });

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useWriteContract } from "wagmi";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -29,7 +30,10 @@ const client = createPublicClient({ chain: activeChain, transport: http() });
 export function useCheckIn() {
   const { t } = useTranslation();
   const { address } = useWalletAddress();
-  const { writeContractAsync, isPending, isError, error } = useWriteContract();
+  const { writeContractAsync } = useWriteContract();
+  // Track the entire check-in lifecycle (tx submit + receipt + streak read),
+  // not just the writeContractAsync call which resolves on tx hash alone.
+  const [isCheckingIn, setIsCheckingIn] = useState(false);
 
   async function checkIn() {
     if (!DOJO_SCHEMA_UID) {
@@ -46,6 +50,7 @@ export function useCheckIn() {
       [APP_IDENTIFIER, day],
     );
 
+    setIsCheckingIn(true);
     try {
       const hash = await writeContractAsync({
         address: EAS_ADDRESS,
@@ -104,6 +109,7 @@ export function useCheckIn() {
         currentTier: getTierForStreak(streak),
       };
     } catch (err) {
+      setIsCheckingIn(false);
       const { key, params } = parseContractError(err);
       toast.error(t("toast.checkinFailed"), {
         description: t(key, params),
@@ -114,8 +120,6 @@ export function useCheckIn() {
 
   return {
     checkIn,
-    isPending,
-    isError,
-    error,
+    isPending: isCheckingIn,
   };
 }
