@@ -4,7 +4,6 @@ import { motion } from "motion/react";
 import { StreakDisplay } from "@/components/dojo/StreakDisplay.jsx";
 import { CheckInButton } from "@/components/dojo/CheckInButton.jsx";
 import { CountdownTimer } from "@/components/dojo/CountdownTimer.jsx";
-import { CheckInHistory } from "@/components/dojo/CheckInHistory.jsx";
 import { ClaimCard } from "@/components/dojo/ClaimCard.jsx";
 import { OnboardingOverlay } from "@/components/dojo/OnboardingOverlay.jsx";
 import { ShareModal } from "@/components/dojo/ShareModal.jsx";
@@ -19,12 +18,17 @@ export default function HomePage() {
   const onboarding = useOnboarding();
   const { address } = useWalletAddress();
   const { hasCheckedInToday, currentStreak, currentTier } = useStreak(address);
-  const { shareStreak } = useShareStreak({ currentStreak, currentTier });
   useResolverEvents();
 
   const [shareOpen, setShareOpen] = useState(false);
-  // Fresh streak values from the check-in tx, used by ShareModal
+  // Fresh streak values from the check-in tx, used by ShareModal + cast composition
   const [shareData, setShareData] = useState(null);
+
+  // Use shareData (from the just-completed tx) when available, so the cast
+  // text uses the NEW streak — not the stale value from useStreak().
+  const streakForShare = shareData?.currentStreak ?? currentStreak;
+  const tierForShare = shareData?.currentTier ?? currentTier;
+  const { shareStreak } = useShareStreak({ currentStreak: streakForShare, currentTier: tierForShare });
 
   return (
     <div className="flex flex-col items-center gap-6 py-8">
@@ -83,19 +87,11 @@ export default function HomePage() {
         <BackSekiLink />
       </motion.div>
 
-      <motion.div
-        className="w-full"
-        {...fadeInUp}
-        transition={{ ...fadeInUp.transition, ...staggerDelay(7) }}
-      >
-        <CheckInHistory />
-      </motion.div>
-
       <ShareModal
         open={shareOpen}
         onClose={() => setShareOpen(false)}
-        currentStreak={shareData?.currentStreak ?? currentStreak}
-        currentTier={shareData?.currentTier ?? currentTier}
+        currentStreak={streakForShare}
+        currentTier={tierForShare}
         onShare={() => {
           shareStreak();
           setShareOpen(false);

@@ -37,14 +37,6 @@ vi.mock("@/hooks/useCheckIn.js", () => ({
   }),
 }));
 
-vi.mock("@/hooks/useCheckInHistory.js", () => ({
-  useCheckInHistory: () => ({
-    checkIns: [],
-    totalCheckIns: 0,
-    isLoading: false,
-  }),
-}));
-
 vi.mock("@/hooks/useClaim.js", () => ({
   useClaim: () => ({
     claim: null,
@@ -92,11 +84,6 @@ describe("HomePage", () => {
   it("renders the check-in button", () => {
     renderPage();
     expect(screen.getByRole("button", { name: /connect wallet/i })).toBeInTheDocument();
-  });
-
-  it("renders the check-in history section", () => {
-    renderPage();
-    expect(screen.getByText(/check-in history/i)).toBeInTheDocument();
   });
 
   it("shows app tagline", () => {
