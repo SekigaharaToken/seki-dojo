@@ -12,6 +12,8 @@ import { useWalletAddress, BackSekiLink, fadeInUp, staggerDelay } from "@sekigah
 import { useStreak } from "@/hooks/useStreak.js";
 import { useShareStreak } from "@/hooks/useShareStreak.js";
 import { useResolverEvents } from "@/hooks/useResolverEvents.js";
+import { useActiveAirdrops } from "@/hooks/useActiveAirdrops.js";
+import { STREAK_TIERS } from "@/config/constants.js";
 
 export default function HomePage() {
   const { t } = useTranslation();
@@ -19,6 +21,7 @@ export default function HomePage() {
   const { address } = useWalletAddress();
   const { hasCheckedInToday, currentStreak, currentTier } = useStreak(address);
   useResolverEvents();
+  const airdrop = useActiveAirdrops();
 
   const [shareOpen, setShareOpen] = useState(false);
   // Fresh streak values from the check-in tx, used by ShareModal + cast composition
@@ -76,10 +79,11 @@ export default function HomePage() {
 
       <motion.div {...fadeInUp} transition={{ ...fadeInUp.transition, ...staggerDelay(5) }}>
         <ClaimCard
-          distributionId={null}
-          proof={[]}
-          amount="0"
-          tierName=""
+          distributionId={airdrop.distributionId != null ? BigInt(airdrop.distributionId) : null}
+          proof={airdrop.proof}
+          amount={airdrop.reward ? String(airdrop.reward) : "0"}
+          tierName={airdrop.tierId ? t(STREAK_TIERS.find((tier) => tier.id === airdrop.tierId)?.nameKey ?? "") : ""}
+          airdropUrl={airdrop.airdropUrl}
         />
       </motion.div>
 

@@ -29,7 +29,8 @@
     "claim": "보상 수령",
     "claimed": "수령 완료",
     "noClaim": "이번 주 보상 없음",
-    "tierEarned": "{{tier}}로 획득"
+    "tierEarned": "{{tier}}로 획득",
+    "viewAirdrop": "mint.club에서 에어드랍 확인"
   },
   "toast": {
     "checkinPending": "체크인 중...",

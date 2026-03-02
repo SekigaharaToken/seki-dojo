@@ -29,7 +29,8 @@
     "claim": "報酬を受取",
     "claimed": "受取済み",
     "noClaim": "今週の報酬はありません",
-    "tierEarned": "{{tier}}として獲得"
+    "tierEarned": "{{tier}}として獲得",
+    "viewAirdrop": "mint.clubでエアドロップを確認"
   },
   "toast": {
     "checkinPending": "チェックイン中...",

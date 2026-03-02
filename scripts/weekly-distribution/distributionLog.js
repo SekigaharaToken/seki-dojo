@@ -11,7 +11,9 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = resolve(__dirname, "../..");
 const LOG_PATH = resolve(__dirname, "DISTRIBUTION_LOG.md");
+const JSON_PATH = resolve(REPO_ROOT, "public/data/distributions.json");
 const AIRDROP_BASE_URL = "https://mint.club/airdrops/base";
 
 /**
@@ -69,4 +71,48 @@ export async function writeDistributionLog({ weekNumber, tierData, fidMap }) {
   await writeFile(LOG_PATH, header + newEntry + body, "utf-8");
 
   console.log(`   Distribution log written to ${LOG_PATH}`);
+}
+
+/**
+ * Write/update public/data/distributions.json for frontend consumption.
+ * Newest week first. If the same week number exists, it is replaced.
+ *
+ * @param {{ weekNumber: number, tierData: object[] }} params
+ */
+export async function writeDistributionsJson({ weekNumber, tierData }) {
+  const { mkdir } = await import("node:fs/promises");
+  await mkdir(resolve(REPO_ROOT, "public/data"), { recursive: true });
+
+  const date = new Date().toISOString().split("T")[0];
+
+  const entry = {
+    week: weekNumber,
+    date,
+    tiers: tierData.map(({ tier, distributionId, addresses }) => ({
+      tier: tier.id,
+      distributionId: Number(distributionId),
+      reward: tier.reward,
+      addresses: addresses.map((a) => a.toLowerCase()),
+    })),
+  };
+
+  // Read existing or start fresh
+  let existing = [];
+  try {
+    const raw = await readFile(JSON_PATH, "utf-8");
+    existing = JSON.parse(raw);
+  } catch {
+    // File doesn't exist yet
+  }
+
+  // Replace same week if re-running, otherwise prepend
+  const idx = existing.findIndex((e) => e.week === weekNumber);
+  if (idx !== -1) {
+    existing[idx] = entry;
+  } else {
+    existing.unshift(entry);
+  }
+
+  await writeFile(JSON_PATH, JSON.stringify(existing, null, 2) + "\n", "utf-8");
+  console.log(`   Distributions JSON written to ${JSON_PATH}`);
 }
