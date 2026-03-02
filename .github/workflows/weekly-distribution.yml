@@ -11,7 +11,7 @@ on:
         required: false
         type: string
       dry_run:
-        description: "Dry run (no transactions, no IPFS pins)"
+        description: "Dry run only (skip real run)"
         required: false
         type: boolean
         default: false
@@ -23,8 +23,8 @@ permissions:
   contents: write
 
 jobs:
-  distribute:
-    name: Run Weekly Distribution
+  dry-run:
+    name: Dry Run
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -41,7 +41,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run distribution script
+      - name: Run distribution (dry run)
         env:
           CDP_API_KEY_ID: ${{ secrets.CDP_API_KEY_ID }}
           CDP_API_KEY_SECRET: ${{ secrets.CDP_API_KEY_SECRET }}
@@ -55,10 +55,46 @@ jobs:
           NEYNAR_SIGNER_UUID: ${{ secrets.NEYNAR_SIGNER_UUID }}
           VITE_SEKI_TOKEN_ADDRESS: ${{ secrets.SEKI_TOKEN_ADDRESS }}
           WEEK_NUMBER: ${{ github.event.inputs.week_number || '' }}
-        run: node scripts/weekly-distribution/index.js ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
+        run: node scripts/weekly-distribution/index.js --dry-run
+
+  distribute:
+    name: Run Distribution
+    needs: dry-run
+    if: github.event.inputs.dry_run != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run distribution
+        env:
+          CDP_API_KEY_ID: ${{ secrets.CDP_API_KEY_ID }}
+          CDP_API_KEY_SECRET: ${{ secrets.CDP_API_KEY_SECRET }}
+          CDP_WALLET_SECRET: ${{ secrets.CDP_WALLET_SECRET }}
+          VITE_PINATA_JWT: ${{ secrets.PINATA_JWT }}
+          VITE_DOJO_TOKEN_ADDRESS: ${{ secrets.DOJO_TOKEN_ADDRESS }}
+          VITE_DOJO_RESOLVER_ADDRESS: ${{ secrets.DOJO_RESOLVER_ADDRESS }}
+          VITE_DOJO_SCHEMA_UID: ${{ secrets.DOJO_SCHEMA_UID }}
+          VITE_CHAIN_ID: ${{ secrets.CHAIN_ID }}
+          NEYNAR_API_KEY: ${{ secrets.NEYNAR_API_KEY }}
+          NEYNAR_SIGNER_UUID: ${{ secrets.NEYNAR_SIGNER_UUID }}
+          VITE_SEKI_TOKEN_ADDRESS: ${{ secrets.SEKI_TOKEN_ADDRESS }}
+          WEEK_NUMBER: ${{ github.event.inputs.week_number || '' }}
+        run: node scripts/weekly-distribution/index.js
 
       - name: Commit distribution log
-        if: success() && github.event.inputs.dry_run != 'true'
+        if: success()
         env:
           WEEK_NUMBER: ${{ github.event.inputs.week_number || '' }}
         run: |
