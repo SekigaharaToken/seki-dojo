@@ -10,6 +10,11 @@ on:
         description: "Week number override"
         required: false
         type: string
+      dry_run:
+        description: "Dry run (no transactions, no IPFS pins)"
+        required: false
+        type: boolean
+        default: false
 
 env:
   NODE_VERSION: "20"
@@ -50,10 +55,10 @@ jobs:
           NEYNAR_SIGNER_UUID: ${{ secrets.NEYNAR_SIGNER_UUID }}
           VITE_SEKI_TOKEN_ADDRESS: ${{ secrets.SEKI_TOKEN_ADDRESS }}
           WEEK_NUMBER: ${{ github.event.inputs.week_number || '' }}
-        run: node scripts/weekly-distribution/index.js
+        run: node scripts/weekly-distribution/index.js ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
 
       - name: Commit distribution log
-        if: success()
+        if: success() && github.event.inputs.dry_run != 'true'
         env:
           WEEK_NUMBER: ${{ github.event.inputs.week_number || '' }}
         run: |
