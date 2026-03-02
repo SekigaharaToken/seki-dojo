@@ -5,9 +5,9 @@ import { useClaim } from "@/hooks/useClaim.js";
 /**
  * Card showing weekly reward claim status and action.
  *
- * @param {{ distributionId: bigint|null, proof: string[], amount: string, tierName: string }} props
+ * @param {{ distributionId: bigint|null, proof: string[], amount: string, tierName: string, airdropUrl: string|null }} props
  */
-export function ClaimCard({ distributionId, proof, amount, tierName }) {
+export function ClaimCard({ distributionId, proof, amount, tierName, airdropUrl }) {
   const { t } = useTranslation();
   const { address } = useWalletAddress();
   const { claim, isClaimed, isPending } = useClaim({ distributionId, proof });
@@ -34,6 +34,16 @@ export function ClaimCard({ distributionId, proof, amount, tierName }) {
               {t("rewards.claim")}
             </Button>
           </>
+        )}
+        {airdropUrl && (
+          <a
+            href={airdropUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-primary underline underline-offset-4 hover:text-primary/80"
+          >
+            {t("rewards.viewAirdrop")}
+          </a>
         )}
       </CardContent>
     </Card>

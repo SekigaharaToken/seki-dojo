@@ -29,7 +29,8 @@
     "claim": "Claim Rewards",
     "claimed": "Claimed",
     "noClaim": "No rewards this week",
-    "tierEarned": "Earned as {{tier}}"
+    "tierEarned": "Earned as {{tier}}",
+    "viewAirdrop": "View airdrop on mint.club"
   },
   "toast": {
     "checkinPending": "Checking in...",
