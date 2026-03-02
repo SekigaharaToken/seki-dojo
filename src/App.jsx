@@ -1,8 +1,10 @@
 import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
+import { Home, ArrowLeftRight } from "lucide-react";
 import {
   Header,
   Footer,
+  BottomNav,
   PageWrapper,
   NetworkGuardBanner,
   ErrorBoundary,
@@ -13,6 +15,11 @@ import HomePage from "@/pages/HomePage.jsx";
 import HowItWorks from "@/components/dojo/HowItWorks.jsx";
 
 const SwapPage = lazy(() => import("@/pages/SwapPage.jsx"));
+
+const NAV_ITEMS = [
+  { to: "/", icon: Home, labelKey: "nav.home" },
+  { to: "/swap", icon: ArrowLeftRight, labelKey: "nav.swap" },
+];
 
 function App() {
   return (
@@ -30,6 +37,7 @@ function App() {
         </PageWrapper>
       </ErrorBoundary>
       <Footer />
+      <BottomNav items={NAV_ITEMS} />
       <HowItWorks />
       <LoginModal />
     </div>
