@@ -43,7 +43,6 @@ jobs:
           VITE_DOJO_RESOLVER_ADDRESS: ${{ secrets.DOJO_RESOLVER_ADDRESS }}
           VITE_DOJO_SCHEMA_UID: ${{ secrets.DOJO_SCHEMA_UID }}
           VITE_CHAIN_ID: ${{ secrets.CHAIN_ID }}
-          RPC_URL: ${{ secrets.RPC_URL }}
           NEYNAR_API_KEY: ${{ secrets.NEYNAR_API_KEY }}
           NEYNAR_SIGNER_UUID: ${{ secrets.NEYNAR_SIGNER_UUID }}
           WEEK_NUMBER: ${{ github.event.inputs.week_number || '' }}

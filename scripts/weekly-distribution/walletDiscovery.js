@@ -1,4 +1,4 @@
-import { createPublicClient, http, parseAbiItem } from "viem";
+import { createPublicClient, http, fallback, parseAbiItem } from "viem";
 import { activeChain } from "../../src/config/chains.js";
 import {
   EAS_ADDRESS,
@@ -10,15 +10,19 @@ import { STREAK_TIERS, SECONDS_PER_DAY, DEPLOY_BLOCK } from "../../src/config/co
 
 const SEVEN_DAYS = 7 * SECONDS_PER_DAY;
 
-// Base mainnet public RPCs limit eth_getLogs to ~3k blocks per request.
-// Use 2k to be safe on both mainnet and Sepolia.
-const MAX_BLOCK_RANGE = 2_000n;
+// Our getLogs queries filter by indexed schemaUID topic, so result sets are
+// small even across large block ranges. 50k blocks is safe for filtered queries
+// on Base public RPCs (the 3k limit applies to unfiltered/broad queries).
+const MAX_BLOCK_RANGE = 50_000n;
 
-const RPC_URL = process.env.RPC_URL;
-
+// Multiple free Base RPCs — fallback in order if one is down.
 const client = createPublicClient({
   chain: activeChain,
-  transport: http(RPC_URL),
+  transport: fallback([
+    http("https://mainnet.base.org"),
+    http("https://base-rpc.publicnode.com"),
+    http("https://base.drpc.org"),
+  ]),
 });
 
 /**

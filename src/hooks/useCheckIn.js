@@ -102,6 +102,8 @@ export function useCheckIn() {
 
       // UI updates are handled by useResolverEvents which watches BonusPaid
       // events and writes directly into the TanStack Query cache.
+      // Reset so getLabel() falls through to hasCheckedInToday ("Checked in").
+      setIsCheckingIn(false);
 
       return {
         hash,
