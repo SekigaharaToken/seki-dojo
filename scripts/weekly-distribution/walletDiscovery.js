@@ -10,10 +10,9 @@ import { STREAK_TIERS, SECONDS_PER_DAY, DEPLOY_BLOCK } from "../../src/config/co
 
 const SEVEN_DAYS = 7 * SECONDS_PER_DAY;
 
-// Our getLogs queries filter by indexed schemaUID topic, so result sets are
-// small even across large block ranges. 50k blocks is safe for filtered queries
-// on Base public RPCs (the 3k limit applies to unfiltered/broad queries).
-const MAX_BLOCK_RANGE = 50_000n;
+// drpc.org free tier limits getLogs to 10k blocks per request.
+// Use 9,999 to stay safely within all free-tier RPC limits.
+const MAX_BLOCK_RANGE = 9_999n;
 
 // Multiple free Base RPCs — fallback in order if one is down.
 const client = createPublicClient({
