@@ -60,10 +60,19 @@ async function getLogsPaginated({ address, event, args, fromBlock, toBlock }) {
  * Reads currentStreak + lastCheckIn from DojoResolver.
  * Filters to wallets active within the last 7 days (unless skipCutoff is true).
  *
- * @param {{ skipCutoff?: boolean }} options
+ * @param {{ skipCutoff?: boolean, verbose?: boolean }} options
  * @returns {Promise<Array<{ address: string, currentStreak: number, lastCheckIn: number }>>}
  */
-export async function discoverWallets({ skipCutoff = false } = {}) {
+export async function discoverWallets({ skipCutoff = false, verbose = false } = {}) {
+  if (verbose) {
+    // Only VITE_* config — never expose CDP_* secrets
+    console.log(`   Config: chain=${activeChain.name} (${activeChain.id})`);
+    console.log(`   Config: EAS=${EAS_ADDRESS}`);
+    console.log(`   Config: schemaUID=${DOJO_SCHEMA_UID}`);
+    console.log(`   Config: resolver=${DOJO_RESOLVER_ADDRESS}`);
+    console.log(`   Config: DEPLOY_BLOCK=${DEPLOY_BLOCK}`);
+  }
+
   const logs = await getLogsPaginated({
     address: EAS_ADDRESS,
     event: parseAbiItem(
@@ -74,7 +83,10 @@ export async function discoverWallets({ skipCutoff = false } = {}) {
     toBlock: "latest",
   });
 
+  console.log(`   Attestation logs found: ${logs.length}`);
+
   const uniqueAddresses = [...new Set(logs.map((l) => l.args.attester))];
+  console.log(`   Unique attester addresses: ${uniqueAddresses.length}`);
 
   if (uniqueAddresses.length === 0) return [];
 
@@ -107,8 +119,15 @@ export async function discoverWallets({ skipCutoff = false } = {}) {
   );
 
   // Filter to active wallets (checked in within last 7 days)
-  if (skipCutoff) return wallets.filter((w) => w.currentStreak > 0);
-  return wallets.filter((w) => w.lastCheckIn >= cutoff);
+  if (skipCutoff) {
+    const active = wallets.filter((w) => w.currentStreak > 0);
+    console.log(`   After streak>0 filter: ${active.length} wallets`);
+    return active;
+  }
+
+  const active = wallets.filter((w) => w.lastCheckIn >= cutoff);
+  console.log(`   After 7-day filter: ${active.length} of ${wallets.length} wallets`);
+  return active;
 }
 
 /**

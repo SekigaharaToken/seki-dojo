@@ -21,9 +21,11 @@ npm run test:watch   # Run tests in watch mode
 # Deploy (always use --force to skip Vercel build cache after engine updates)
 vercel deploy --prod --force
 
-# Weekly distribution (automated via GitHub Actions, or manual)
-node scripts/weekly-distribution/manual-run.js --dry-run   # Preview
-node scripts/weekly-distribution/manual-run.js              # Execute
+# Weekly distribution (same script for local + CI — no divergence)
+node scripts/weekly-distribution/index.js --dry-run          # Preview
+node scripts/weekly-distribution/index.js                    # Execute
+node scripts/weekly-distribution/index.js --partial          # Include all streaks (no 7-day window)
+node scripts/weekly-distribution/index.js --week 2           # Override week number
 
 # Foundry (contracts/)
 forge build          # Compile contracts
