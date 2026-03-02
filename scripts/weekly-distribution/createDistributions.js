@@ -1,4 +1,4 @@
-import { createPublicClient, createWalletClient, http } from "viem";
+import { createPublicClient, createWalletClient, http, fallback } from "viem";
 import { toAccount } from "viem/accounts";
 import { CdpClient } from "@coinbase/cdp-sdk";
 import { activeChain } from "../../src/config/chains.js";
@@ -6,11 +6,16 @@ import { MINT_CLUB } from "../../src/config/contracts.js";
 import { merkleDistributorAbi } from "../../src/config/abis/merkleDistributor.js";
 import { SECONDS_PER_DAY } from "../../src/config/constants.js";
 
-const RPC_URL = process.env.RPC_URL;
+// Same fallback RPCs as walletDiscovery — no divergence.
+const transport = fallback([
+  http("https://mainnet.base.org"),
+  http("https://base-rpc.publicnode.com"),
+  http("https://base.drpc.org"),
+]);
 
 const publicClient = createPublicClient({
   chain: activeChain,
-  transport: http(RPC_URL),
+  transport,
 });
 
 let _walletClient;
@@ -22,7 +27,7 @@ async function getWalletClient() {
   _walletClient = createWalletClient({
     account: toAccount(cdpAccount),
     chain: activeChain,
-    transport: http(RPC_URL),
+    transport,
   });
   return _walletClient;
 }
@@ -41,7 +46,8 @@ const ERC20_APPROVE_ABI = [
 ];
 
 /**
- * Approve ERC20 token spending.
+ * Approve ERC20 token spending. Waits for confirmation so nonce is
+ * up-to-date for any subsequent writes.
  */
 export async function approveToken({ tokenAddress, spender, amount }) {
   const walletClient = await getWalletClient();
@@ -51,11 +57,13 @@ export async function approveToken({ tokenAddress, spender, amount }) {
     functionName: "approve",
     args: [spender, amount],
   });
+  await publicClient.waitForTransactionReceipt({ hash });
   return hash;
 }
 
 /**
  * Create a single Merkle distribution on the MerkleDistributor contract.
+ * Waits for confirmation so nonce is up-to-date for the next tier.
  *
  * @param {{ tokenAddress: string, amountPerClaim: bigint, walletCount: number, merkleRoot: string, title: string, ipfsCID: string }} params
  * @returns {Promise<string>} Transaction hash
@@ -92,5 +100,6 @@ export async function createDistribution({
     ],
   });
 
+  await publicClient.waitForTransactionReceipt({ hash });
   return hash;
 }
