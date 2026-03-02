@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useWalletAddress, Card, CardContent, CardHeader, CardTitle, Button } from "@sekigahara/engine";
+import { useWalletAddress, Card, CardContent, CardHeader, CardTitle, Button, MiniAppLink } from "@sekigahara/engine";
 import { useClaim } from "@/hooks/useClaim.js";
 
 /**
@@ -36,14 +36,12 @@ export function ClaimCard({ distributionId, proof, amount, tierName, airdropUrl 
           </>
         )}
         {airdropUrl && (
-          <a
+          <MiniAppLink
             href={airdropUrl}
-            target="_blank"
-            rel="noopener noreferrer"
             className="text-sm text-primary underline underline-offset-4 hover:text-primary/80"
           >
             {t("rewards.viewAirdrop")}
-          </a>
+          </MiniAppLink>
         )}
       </CardContent>
     </Card>
