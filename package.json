@@ -18,7 +18,7 @@
     "@farcaster/miniapp-wagmi-connector": "^1.1.1",
     "@number-flow/react": "^0.5.12",
     "@rainbow-me/rainbowkit": "^2.2.10",
-    "@sekigahara/engine": "github:SekigaharaToken/AMATERASU#125d2f2",
+    "@sekigahara/engine": "github:SekigaharaToken/AMATERASU#3a6eb65",
     "@tanstack/react-query": "^5.90.21",
     "@vercel/analytics": "^1.6.1",
     "i18next": "^25.8.7",
