@@ -214,6 +214,7 @@ export function formatDryRunPreview({ tierData, weekNumber, fidMap }) {
  * Top-level orchestrator: resolve FIDs and post casts for all tiers.
  * Non-fatal — catches and warns on errors.
  * @param {{ tierResults: object[], weekNumber: number, dryRun?: boolean }} params
+ * @returns {Promise<Map<string, { fid: number, username: string }>>} fidMap
  */
 export async function notifyDistributions({ tierResults, weekNumber, dryRun = false }) {
   // Collect all unique addresses
@@ -221,7 +222,7 @@ export async function notifyDistributions({ tierResults, weekNumber, dryRun = fa
 
   if (allAddresses.length === 0) {
     console.log("   No addresses to notify.");
-    return;
+    return new Map();
   }
 
   console.log(`\n6. Resolving Farcaster accounts for ${allAddresses.length} addresses...`);
@@ -230,7 +231,7 @@ export async function notifyDistributions({ tierResults, weekNumber, dryRun = fa
 
   if (dryRun) {
     console.log(formatDryRunPreview({ tierData: tierResults, weekNumber, fidMap }));
-    return;
+    return fidMap;
   }
 
   console.log("7. Posting cast notifications...");
@@ -249,4 +250,6 @@ export async function notifyDistributions({ tierResults, weekNumber, dryRun = fa
       console.warn(`   Tier ${tier.id} cast failed (non-fatal): ${err.message}`);
     }
   }
+
+  return fidMap;
 }

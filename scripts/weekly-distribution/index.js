@@ -35,6 +35,7 @@ import { buildMerkleTree } from "./merkleBuilder.js";
 import { pinToIpfs } from "./ipfsPin.js";
 import { approveToken, createDistribution } from "./createDistributions.js";
 import { notifyDistributions } from "./castNotifier.js";
+import { writeDistributionLog } from "./distributionLog.js";
 import { STREAK_TIERS } from "../../src/config/constants.js";
 import { DOJO_TOKEN_ADDRESS, MINT_CLUB } from "../../src/config/contracts.js";
 
@@ -197,15 +198,25 @@ async function main() {
     console.log(`   TX: ${txHash}`);
     console.log(`   Distribution ID: ${distributionId}`);
 
-    // Attach distributionId for cast notifications
+    // Attach tx results for cast notifications + log
     td.distributionId = distributionId;
+    td.txHash = txHash;
   }
 
   // Step 6-7: Post Farcaster cast notifications (non-fatal)
+  let fidMap = new Map();
   try {
-    await notifyDistributions({ tierResults: tierData, weekNumber: WEEK_NUMBER });
+    fidMap = await notifyDistributions({ tierResults: tierData, weekNumber: WEEK_NUMBER }) || new Map();
   } catch (err) {
     console.warn("Cast notification failed (non-fatal):", err.message);
+  }
+
+  // Step 8: Write distribution log
+  console.log("\n8. Writing distribution log...");
+  try {
+    await writeDistributionLog({ weekNumber: WEEK_NUMBER, tierData, fidMap });
+  } catch (err) {
+    console.warn("Log write failed (non-fatal):", err.message);
   }
 
   console.log(`\n=== Distribution complete (Week ${WEEK_NUMBER}, ${mode}) ===\n`);

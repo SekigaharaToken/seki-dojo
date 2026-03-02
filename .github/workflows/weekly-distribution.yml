@@ -14,6 +14,9 @@ on:
 env:
   NODE_VERSION: "20"
 
+permissions:
+  contents: write
+
 jobs:
   distribute:
     name: Run Weekly Distribution
@@ -45,14 +48,17 @@ jobs:
           VITE_CHAIN_ID: ${{ secrets.CHAIN_ID }}
           NEYNAR_API_KEY: ${{ secrets.NEYNAR_API_KEY }}
           NEYNAR_SIGNER_UUID: ${{ secrets.NEYNAR_SIGNER_UUID }}
+          VITE_SEKI_TOKEN_ADDRESS: ${{ secrets.SEKI_TOKEN_ADDRESS }}
           WEEK_NUMBER: ${{ github.event.inputs.week_number || '' }}
         run: node scripts/weekly-distribution/index.js
 
-      - name: Upload distribution logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: distribution-logs-${{ github.run_number }}
-          path: logs/
-          retention-days: 90
-          if-no-files-found: ignore
+      - name: Commit distribution log
+        if: success()
+        env:
+          WEEK_NUMBER: ${{ github.event.inputs.week_number || '' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add scripts/weekly-distribution/DISTRIBUTION_LOG.md
+          git diff --cached --quiet || git commit -m "chore: update distribution log (Week ${WEEK_NUMBER:-auto})"
+          git push
