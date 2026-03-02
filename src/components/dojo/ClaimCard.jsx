@@ -20,8 +20,6 @@ export function ClaimCard({ distributionId, proof, amount, tierName, airdropUrl 
       <CardContent className="flex flex-col items-center gap-3">
         {!claim ? (
           <p className="text-muted-foreground">{t("rewards.noClaim")}</p>
-        ) : isClaimed ? (
-          <p className="font-semibold text-green-600" role="status">{t("rewards.claimed")}</p>
         ) : (
           <>
             <p className="text-lg font-bold">
@@ -30,9 +28,13 @@ export function ClaimCard({ distributionId, proof, amount, tierName, airdropUrl 
             <p className="text-sm text-muted-foreground">
               {t("rewards.tierEarned", { tier: tierName })}
             </p>
-            <Button onClick={claim} disabled={isPending}>
-              {t("rewards.claim")}
-            </Button>
+            {isClaimed ? (
+              <p className="font-semibold text-green-600" role="status">{t("rewards.claimed")}</p>
+            ) : (
+              <Button onClick={claim} disabled={isPending}>
+                {t("rewards.claim")}
+              </Button>
+            )}
           </>
         )}
         {airdropUrl && (

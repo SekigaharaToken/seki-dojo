@@ -69,7 +69,7 @@ describe("ClaimCard", () => {
     expect(mockClaim).toHaveBeenCalledTimes(1);
   });
 
-  it("shows claimed state when already claimed", () => {
+  it("shows claimed state with tier and amount when already claimed", () => {
     mockUseClaim.mockReturnValue({
       claim: mockClaim,
       isClaimed: true,
@@ -78,6 +78,8 @@ describe("ClaimCard", () => {
     });
     render(<ClaimCard {...defaultProps} />, { wrapper: TestWrapper });
     expect(screen.getByText("Claimed")).toBeInTheDocument();
+    expect(screen.getByText(/100 \$DOJO/)).toBeInTheDocument();
+    expect(screen.getByText(/Apprentice/)).toBeInTheDocument();
   });
 
   it("shows pending state while claiming", () => {
