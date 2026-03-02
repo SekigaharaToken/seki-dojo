@@ -9,7 +9,7 @@
 const NEYNAR_BASE = "https://api.neynar.com/v2/farcaster";
 const MENTION_LIMIT = 10; // Farcaster max mentions per cast
 const ADDRESS_BATCH_SIZE = 350; // Neynar bulk lookup limit
-const CLAIM_URL = "https://mint.club/token/base/DOJO";
+const AIRDROP_BASE_URL = "https://mint.club/airdrops/base";
 const SEKI_TOKEN = process.env.VITE_SEKI_TOKEN_ADDRESS?.toLowerCase() || "";
 const SEKI_EMBED_URL = SEKI_TOKEN
   ? `https://farcaster.xyz/~/c/base:${SEKI_TOKEN}`
@@ -59,8 +59,9 @@ export async function resolveAddressesToFids(addresses) {
 }
 
 /**
- * Compose a cast for a tier, splitting mentions into chunks of MENTION_LIMIT.
- * Returns an array of cast payloads (first = parent, rest = replies).
+ * Compose casts for a tier. Parent cast is the announcement (no mentions).
+ * All @-mentions go in reply casts, max MENTION_LIMIT per reply.
+ *
  * @param {{ tier: object, reward: number, weekNumber: number, fidMap: Map, addresses: string[] }} params
  * @returns {{ text: string, mentions: number[], mentionsPositions: number[], isParent: boolean }[]}
  */
@@ -72,31 +73,21 @@ export function composeCasts({ tier, reward, weekNumber, fidMap, addresses }) {
     .map((a) => fidMap.get(a));
 
   const walletCount = addresses.length;
-  const header = `DOJO Week ${weekNumber} rewards are ready!\n\nTier ${tier.id}: ${walletCount} warrior${walletCount !== 1 ? "s" : ""} earned ${reward} $DOJO each.\n\nClaim yours:\n`;
+  const header = `DOJO Week ${weekNumber} rewards are ready!\n\nTier ${tier.id}: ${walletCount} warrior${walletCount !== 1 ? "s" : ""} earned ${reward} $DOJO each.\n\nClaim yours:`;
 
-  if (mentionable.length === 0) {
-    return [{ text: header, mentions: [], mentionsPositions: [], isParent: true }];
-  }
+  // Parent cast: announcement only, no mentions
+  const casts = [{ text: header, mentions: [], mentionsPositions: [], isParent: true }];
 
-  // Chunk mentionable users into groups of MENTION_LIMIT
-  const chunks = [];
+  if (mentionable.length === 0) return casts;
+
+  // Reply casts: chunk mentionable users into groups of MENTION_LIMIT
   for (let i = 0; i < mentionable.length; i += MENTION_LIMIT) {
-    chunks.push(mentionable.slice(i, i + MENTION_LIMIT));
-  }
-
-  const casts = [];
-
-  for (let ci = 0; ci < chunks.length; ci++) {
-    const chunk = chunks[ci];
-    const isParent = ci === 0;
-
-    // For parent: full header + mentions. For replies: just mentions.
-    let text = isParent ? header : "";
+    const chunk = mentionable.slice(i, i + MENTION_LIMIT);
+    let text = "";
     const mentions = [];
     const mentionsPositions = [];
 
     for (let mi = 0; mi < chunk.length; mi++) {
-      // Each mention is inserted at the current byte position
       const bytePos = Buffer.byteLength(text, "utf8");
       mentions.push(chunk[mi].fid);
       mentionsPositions.push(bytePos);
@@ -104,7 +95,7 @@ export function composeCasts({ tier, reward, weekNumber, fidMap, addresses }) {
       text += mi < chunk.length - 1 ? " " : "";
     }
 
-    casts.push({ text, mentions, mentionsPositions, isParent });
+    casts.push({ text, mentions, mentionsPositions, isParent: false });
   }
 
   return casts;
@@ -154,22 +145,32 @@ export async function postCast({ text, mentions, mentionsPositions, embeds, chan
 
 /**
  * Post notification casts for a single tier.
- * First chunk is parent with embed, subsequent chunks are threaded replies.
+ * Parent cast has the announcement + airdrop embed link.
+ * Reply casts contain @-mentions (max 10 per reply).
+ * @param {{ tier: object, reward: number, weekNumber: number, fidMap: Map, addresses: string[], distributionId?: number }} params
  * @returns {Promise<string[]>} array of cast hashes
  */
-export async function postTierNotification({ tier, reward, weekNumber, fidMap, addresses }) {
+export async function postTierNotification({ tier, reward, weekNumber, fidMap, addresses, distributionId }) {
   const casts = composeCasts({ tier, reward, weekNumber, fidMap, addresses });
   const hashes = [];
   let parentHash = null;
 
+  const claimUrl = distributionId
+    ? `${AIRDROP_BASE_URL}/${distributionId}`
+    : null;
+
   for (const cast of casts) {
+    const embeds = [];
+    if (cast.isParent) {
+      if (claimUrl) embeds.push({ url: claimUrl });
+      if (SEKI_EMBED_URL) embeds.push({ url: SEKI_EMBED_URL });
+    }
+
     const hash = await postCast({
       text: cast.text,
       mentions: cast.mentions,
       mentionsPositions: cast.mentionsPositions,
-      embeds: cast.isParent
-        ? [{ url: CLAIM_URL }, ...(SEKI_EMBED_URL ? [{ url: SEKI_EMBED_URL }] : [])]
-        : undefined,
+      embeds: embeds.length > 0 ? embeds : undefined,
       channelId: cast.isParent ? CHANNEL_ID : undefined,
       parentHash: parentHash || undefined,
     });
@@ -198,10 +199,10 @@ export function formatDryRunPreview({ tierData, weekNumber, fidMap }) {
     lines.push(`    ${addresses.length} wallets, ${mentionable.length} with Farcaster accounts`);
     if (mentionable.length > 0) {
       lines.push(`    Mentions: ${mentionable.join(", ")}`);
-      const castCount = Math.ceil(mentionable.length / MENTION_LIMIT);
-      lines.push(`    Would post ${castCount} cast${castCount !== 1 ? "s" : ""} to /${CHANNEL_ID}`);
+      const replyCount = Math.ceil(mentionable.length / MENTION_LIMIT);
+      lines.push(`    Would post 1 announcement + ${replyCount} reply cast${replyCount !== 1 ? "s" : ""} to /${CHANNEL_ID}`);
     } else {
-      lines.push(`    Would post 1 cast (no mentions) to /${CHANNEL_ID}`);
+      lines.push(`    Would post 1 announcement (no mentions) to /${CHANNEL_ID}`);
     }
   }
 
@@ -233,7 +234,7 @@ export async function notifyDistributions({ tierResults, weekNumber, dryRun = fa
   }
 
   console.log("7. Posting cast notifications...");
-  for (const { tier, addresses } of tierResults) {
+  for (const { tier, addresses, distributionId } of tierResults) {
     try {
       const hashes = await postTierNotification({
         tier,
@@ -241,6 +242,7 @@ export async function notifyDistributions({ tierResults, weekNumber, dryRun = fa
         weekNumber,
         fidMap,
         addresses,
+        distributionId,
       });
       console.log(`   Tier ${tier.id}: ${hashes.length} cast(s) posted — ${hashes.join(", ")}`);
     } catch (err) {

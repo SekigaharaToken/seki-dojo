@@ -4,6 +4,16 @@
  */
 export const merkleDistributorAbi = [
   {
+    name: "Created",
+    type: "event",
+    inputs: [
+      { name: "distributionId", type: "uint256", indexed: true },
+      { name: "token", type: "address", indexed: true },
+      { name: "isERC20", type: "bool", indexed: false },
+      { name: "startTime", type: "uint40", indexed: false },
+    ],
+  },
+  {
     name: "createDistribution",
     type: "function",
     stateMutability: "nonpayable",

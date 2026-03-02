@@ -94,7 +94,7 @@ describe("castNotifier", () => {
   });
 
   describe("composeCasts", () => {
-    it("creates a single cast for <=10 mentionable users", () => {
+    it("parent cast has no mentions, replies have mentions", () => {
       const fidMap = new Map([
         ["0xaaa", { fid: 1, username: "alice" }],
         ["0xbbb", { fid: 2, username: "bob" }],
@@ -108,15 +108,17 @@ describe("castNotifier", () => {
         addresses: ["0xAAA", "0xBBB", "0xCCC"],
       });
 
-      expect(casts).toHaveLength(1);
+      // 1 parent (no mentions) + 1 reply (2 mentions)
+      expect(casts).toHaveLength(2);
       expect(casts[0].isParent).toBe(true);
-      expect(casts[0].mentions).toEqual([1, 2]);
-      expect(casts[0].mentionsPositions).toHaveLength(2);
+      expect(casts[0].mentions).toEqual([]);
       expect(casts[0].text).toContain("Week 3");
       expect(casts[0].text).toContain("3 warriors");
+      expect(casts[1].isParent).toBe(false);
+      expect(casts[1].mentions).toEqual([1, 2]);
     });
 
-    it("splits into multiple casts for >10 mentionable users", () => {
+    it("splits mentions into multiple replies for >10 users", () => {
       const fidMap = new Map();
       const addresses = [];
       for (let i = 0; i < 25; i++) {
@@ -133,17 +135,19 @@ describe("castNotifier", () => {
         addresses,
       });
 
-      // 25 users = 3 casts (10 + 10 + 5)
-      expect(casts).toHaveLength(3);
+      // 1 parent + 3 replies (10 + 10 + 5)
+      expect(casts).toHaveLength(4);
       expect(casts[0].isParent).toBe(true);
-      expect(casts[0].mentions).toHaveLength(10);
+      expect(casts[0].mentions).toEqual([]);
       expect(casts[1].isParent).toBe(false);
       expect(casts[1].mentions).toHaveLength(10);
       expect(casts[2].isParent).toBe(false);
-      expect(casts[2].mentions).toHaveLength(5);
+      expect(casts[2].mentions).toHaveLength(10);
+      expect(casts[3].isParent).toBe(false);
+      expect(casts[3].mentions).toHaveLength(5);
     });
 
-    it("handles zero mentionable users", () => {
+    it("returns only parent when zero mentionable users", () => {
       const fidMap = new Map();
       const casts = composeCasts({
         tier: makeTier(1),
@@ -154,6 +158,7 @@ describe("castNotifier", () => {
       });
 
       expect(casts).toHaveLength(1);
+      expect(casts[0].isParent).toBe(true);
       expect(casts[0].mentions).toEqual([]);
       expect(casts[0].text).toContain("1 warrior");
     });
@@ -219,7 +224,7 @@ describe("castNotifier", () => {
   });
 
   describe("postTierNotification", () => {
-    it("posts parent + reply casts for overflow mentions", async () => {
+    it("posts parent announcement + reply casts with mentions", async () => {
       const fidMap = new Map();
       const addresses = [];
       for (let i = 0; i < 15; i++) {
@@ -228,15 +233,20 @@ describe("castNotifier", () => {
         addresses.push(addr);
       }
 
-      // Parent cast
+      // Parent cast (announcement, no mentions)
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ cast: { hash: "0xparent" } }),
       });
-      // Reply cast
+      // Reply cast 1 (10 mentions)
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ cast: { hash: "0xreply" } }),
+        json: () => Promise.resolve({ cast: { hash: "0xreply1" } }),
+      });
+      // Reply cast 2 (5 mentions)
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ cast: { hash: "0xreply2" } }),
       });
 
       const hashes = await postTierNotification({
@@ -245,29 +255,37 @@ describe("castNotifier", () => {
         weekNumber: 1,
         fidMap,
         addresses,
+        distributionId: 5644,
       });
 
-      expect(hashes).toEqual(["0xparent", "0xreply"]);
-      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(hashes).toEqual(["0xparent", "0xreply1", "0xreply2"]);
+      expect(mockFetch).toHaveBeenCalledTimes(3);
 
-      // Parent has channel + embed
+      // Parent has channel + airdrop embed with specific distribution ID, no mentions
       const parentBody = JSON.parse(mockFetch.mock.calls[0][1].body);
       expect(parentBody.channel_id).toBe("hunt");
       expect(parentBody.embeds).toHaveLength(2);
-      expect(parentBody.embeds[0].url).toContain("mint.club");
+      expect(parentBody.embeds[0].url).toBe("https://mint.club/airdrops/base/5644");
       expect(parentBody.embeds[1].url).toContain("farcaster.xyz/~/c/base:0xa4f51ca123d141d4ae3c63afc663ef7fb5c70b07");
       expect(parentBody.parent).toBeUndefined();
+      expect(parentBody.mentions).toBeUndefined();
 
-      // Reply has parent hash, no channel/embed
-      const replyBody = JSON.parse(mockFetch.mock.calls[1][1].body);
-      expect(replyBody.parent).toBe("0xparent");
-      expect(replyBody.channel_id).toBeUndefined();
-      expect(replyBody.embeds).toBeUndefined();
+      // Reply 1 has parent hash + 10 mentions, no channel/embed
+      const reply1Body = JSON.parse(mockFetch.mock.calls[1][1].body);
+      expect(reply1Body.parent).toBe("0xparent");
+      expect(reply1Body.mentions).toHaveLength(10);
+      expect(reply1Body.channel_id).toBeUndefined();
+      expect(reply1Body.embeds).toBeUndefined();
+
+      // Reply 2 has parent hash + 5 mentions
+      const reply2Body = JSON.parse(mockFetch.mock.calls[2][1].body);
+      expect(reply2Body.parent).toBe("0xparent");
+      expect(reply2Body.mentions).toHaveLength(5);
     });
   });
 
   describe("formatDryRunPreview", () => {
-    it("formats preview with mention counts", () => {
+    it("formats preview with mention counts and reply info", () => {
       const fidMap = new Map([
         ["0xaaa", { fid: 1, username: "alice" }],
       ]);
@@ -280,6 +298,8 @@ describe("castNotifier", () => {
       expect(preview).toContain("2 wallets");
       expect(preview).toContain("1 with Farcaster");
       expect(preview).toContain("@alice");
+      expect(preview).toContain("1 announcement");
+      expect(preview).toContain("1 reply cast");
       expect(preview).toContain("dry run");
     });
   });
@@ -294,10 +314,15 @@ describe("castNotifier", () => {
             "0xaaa": [{ fid: 1, username: "alice" }],
           }),
       });
-      // Cast post
+      // Parent cast (announcement)
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ cast: { hash: "0xcast1" } }),
+        json: () => Promise.resolve({ cast: { hash: "0xparent" } }),
+      });
+      // Reply cast (mentions)
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ cast: { hash: "0xreply" } }),
       });
 
       const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
@@ -307,7 +332,8 @@ describe("castNotifier", () => {
         weekNumber: 1,
       });
 
-      expect(mockFetch).toHaveBeenCalledTimes(2);
+      // 1 FID lookup + 1 parent + 1 reply
+      expect(mockFetch).toHaveBeenCalledTimes(3);
       consoleSpy.mockRestore();
     });
 
@@ -340,7 +366,12 @@ describe("castNotifier", () => {
             "0xaaa": [{ fid: 1, username: "alice" }],
           }),
       });
-      // Cast post fails
+      // Parent cast succeeds
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ cast: { hash: "0xparent" } }),
+      });
+      // Reply cast fails
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 500,

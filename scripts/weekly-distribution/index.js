@@ -176,7 +176,8 @@ async function main() {
   console.log("   Approved.");
 
   // Steps 4-5: Pin + create distribution per tier
-  for (const { tier, root, addresses, amountPerClaim, walletCount } of tierData) {
+  for (const td of tierData) {
+    const { tier, root, addresses, amountPerClaim, walletCount } = td;
     const suffix = PARTIAL_WEEK ? " (partial)" : "";
     const name = `dojo-week-${WEEK_NUMBER}-tier-${tier.id}.json`;
 
@@ -185,7 +186,7 @@ async function main() {
     console.log(`   CID: ${cid}`);
 
     console.log(`5. Creating distribution for Tier ${tier.id}${suffix}...`);
-    const txHash = await createDistribution({
+    const { hash: txHash, distributionId } = await createDistribution({
       tokenAddress: DOJO_TOKEN_ADDRESS,
       amountPerClaim,
       walletCount,
@@ -194,6 +195,10 @@ async function main() {
       ipfsCID: cid,
     });
     console.log(`   TX: ${txHash}`);
+    console.log(`   Distribution ID: ${distributionId}`);
+
+    // Attach distributionId for cast notifications
+    td.distributionId = distributionId;
   }
 
   // Step 6-7: Post Farcaster cast notifications (non-fatal)

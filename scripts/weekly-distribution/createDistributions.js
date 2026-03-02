@@ -1,4 +1,4 @@
-import { createPublicClient, createWalletClient, http, fallback } from "viem";
+import { createPublicClient, createWalletClient, http, fallback, parseEventLogs } from "viem";
 import { toAccount } from "viem/accounts";
 import { CdpClient } from "@coinbase/cdp-sdk";
 import { activeChain } from "../../src/config/chains.js";
@@ -66,7 +66,7 @@ export async function approveToken({ tokenAddress, spender, amount }) {
  * Waits for confirmation so nonce is up-to-date for the next tier.
  *
  * @param {{ tokenAddress: string, amountPerClaim: bigint, walletCount: number, merkleRoot: string, title: string, ipfsCID: string }} params
- * @returns {Promise<string>} Transaction hash
+ * @returns {Promise<{ hash: string, distributionId: number }>}
  */
 export async function createDistribution({
   tokenAddress,
@@ -100,6 +100,9 @@ export async function createDistribution({
     ],
   });
 
-  await publicClient.waitForTransactionReceipt({ hash });
-  return hash;
+  const receipt = await publicClient.waitForTransactionReceipt({ hash });
+  const logs = parseEventLogs({ abi: merkleDistributorAbi, logs: receipt.logs });
+  const createdLog = logs.find((l) => l.eventName === "Created");
+  const distributionId = createdLog ? Number(createdLog.args.distributionId) : null;
+  return { hash, distributionId };
 }
