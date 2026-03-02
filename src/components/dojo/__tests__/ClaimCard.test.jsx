@@ -114,4 +114,22 @@ describe("ClaimCard", () => {
     render(<ClaimCard {...defaultProps} />, { wrapper: TestWrapper });
     expect(screen.getByText(/Apprentice/)).toBeInTheDocument();
   });
+
+  it("renders airdrop link using MiniAppLink when airdropUrl is provided", () => {
+    render(
+      <ClaimCard {...defaultProps} airdropUrl="https://mint.club/airdrops/base/5700" />,
+      { wrapper: TestWrapper },
+    );
+    const link = screen.getByRole("link", { name: /airdrop/i });
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute("href", "https://mint.club/airdrops/base/5700");
+  });
+
+  it("does not render airdrop link when airdropUrl is null", () => {
+    render(
+      <ClaimCard {...defaultProps} airdropUrl={null} />,
+      { wrapper: TestWrapper },
+    );
+    expect(screen.queryByRole("link", { name: /airdrop/i })).not.toBeInTheDocument();
+  });
 });
