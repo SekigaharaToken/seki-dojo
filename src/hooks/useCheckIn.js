@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useWriteContract } from "wagmi";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
@@ -31,6 +32,7 @@ export function useCheckIn() {
   const { t } = useTranslation();
   const { address } = useWalletAddress();
   const { writeContractAsync } = useWriteContract();
+  const queryClient = useQueryClient();
   // Track the entire check-in lifecycle (tx submit + receipt + streak read),
   // not just the writeContractAsync call which resolves on tx hash alone.
   const [isCheckingIn, setIsCheckingIn] = useState(false);
@@ -100,9 +102,10 @@ export function useCheckIn() {
         streak = Number(raw);
       }
 
-      // UI updates are handled by useResolverEvents which watches BonusPaid
-      // events and writes directly into the TanStack Query cache.
-      // Reset so getLabel() falls through to hasCheckedInToday ("Checked in").
+      // Invalidate all readContract queries so useStreak refetches immediately.
+      // useResolverEvents may also fire later but this ensures instant UI update.
+      queryClient.invalidateQueries({ queryKey: ["readContract"] });
+      queryClient.invalidateQueries({ queryKey: ["checkInHistory", address] });
       setIsCheckingIn(false);
 
       return {

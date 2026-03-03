@@ -159,6 +159,19 @@ describe("useCheckIn", () => {
     expect(res.currentTier).toBeDefined();
   });
 
+  it("invalidates streak queries after successful check-in", async () => {
+    mockReadContract.mockResolvedValueOnce(5n);
+    const { result } = renderHook(() => useCheckIn());
+
+    await act(async () => {
+      await result.current.checkIn();
+    });
+
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({
+      queryKey: ["readContract"],
+    });
+  });
+
   it("throws and fires error toast when writeContractAsync rejects", async () => {
     mockWriteContractAsync.mockRejectedValueOnce(new Error("User rejected the request."));
     const { result } = renderHook(() => useCheckIn());
