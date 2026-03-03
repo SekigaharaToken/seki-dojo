@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useWriteContract } from "wagmi";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
@@ -31,6 +32,7 @@ export function useCheckIn() {
   const { t } = useTranslation();
   const { address } = useWalletAddress();
   const { writeContractAsync } = useWriteContract();
+  const queryClient = useQueryClient();
   // Track the entire check-in lifecycle (tx submit + receipt + streak read),
   // not just the writeContractAsync call which resolves on tx hash alone.
   const [isCheckingIn, setIsCheckingIn] = useState(false);
@@ -100,9 +102,39 @@ export function useCheckIn() {
         streak = Number(raw);
       }
 
-      // UI updates are handled by useResolverEvents which watches BonusPaid
-      // events and writes directly into the TanStack Query cache.
-      // Reset so getLabel() falls through to hasCheckedInToday ("Checked in").
+      // Write streak data directly into existing query cache entries so
+      // useStreak re-renders instantly. We find the actual cached queries via
+      // getQueryCache().findAll() and write with their real keys — this avoids
+      // hash mismatches from constructing keys manually.
+      // Same pattern as useResolverEvents BonusPaid handler (lines 109-125).
+      const nowTimestamp = BigInt(Math.floor(Date.now() / 1000));
+      const resolverAddr = DOJO_RESOLVER_ADDRESS.toLowerCase();
+      const userAddr = address.toLowerCase();
+
+      for (const query of queryClient.getQueryCache().findAll({ queryKey: ["readContract"] })) {
+        const params = query.queryKey[1];
+        if (!params || params.address?.toLowerCase() !== resolverAddr) continue;
+        if (params.args?.[0]?.toLowerCase() !== userAddr) continue;
+
+        const fn = params.functionName;
+        if (fn === "currentStreak") {
+          queryClient.setQueryData(query.queryKey, BigInt(streak));
+        } else if (fn === "lastCheckIn") {
+          queryClient.setQueryData(query.queryKey, nowTimestamp);
+        } else if (fn === "longestStreak") {
+          const old = query.state.data;
+          if (old == null || BigInt(streak) > old) {
+            queryClient.setQueryData(query.queryKey, BigInt(streak));
+          }
+        }
+      }
+
+      // Force immediate refetch so useStreak picks up fresh onchain data.
+      // refetchQueries ignores staleTime (unlike invalidateQueries which may
+      // skip if the query is still "fresh"). Belt-and-suspenders with the
+      // setQueryData above — mirrors SecondOrder's debouncedRefresh pattern.
+      queryClient.refetchQueries({ queryKey: ["readContract"] });
+      queryClient.refetchQueries({ queryKey: ["checkInHistory", address] });
       setIsCheckingIn(false);
 
       return {
