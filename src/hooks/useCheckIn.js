@@ -102,10 +102,39 @@ export function useCheckIn() {
         streak = Number(raw);
       }
 
-      // Invalidate all readContract queries so useStreak refetches immediately.
-      // useResolverEvents may also fire later but this ensures instant UI update.
-      queryClient.invalidateQueries({ queryKey: ["readContract"] });
-      queryClient.invalidateQueries({ queryKey: ["checkInHistory", address] });
+      // Write streak data directly into existing query cache entries so
+      // useStreak re-renders instantly. We find the actual cached queries via
+      // getQueryCache().findAll() and write with their real keys — this avoids
+      // hash mismatches from constructing keys manually.
+      // Same pattern as useResolverEvents BonusPaid handler (lines 109-125).
+      const nowTimestamp = BigInt(Math.floor(Date.now() / 1000));
+      const resolverAddr = DOJO_RESOLVER_ADDRESS.toLowerCase();
+      const userAddr = address.toLowerCase();
+
+      for (const query of queryClient.getQueryCache().findAll({ queryKey: ["readContract"] })) {
+        const params = query.queryKey[1];
+        if (!params || params.address?.toLowerCase() !== resolverAddr) continue;
+        if (params.args?.[0]?.toLowerCase() !== userAddr) continue;
+
+        const fn = params.functionName;
+        if (fn === "currentStreak") {
+          queryClient.setQueryData(query.queryKey, BigInt(streak));
+        } else if (fn === "lastCheckIn") {
+          queryClient.setQueryData(query.queryKey, nowTimestamp);
+        } else if (fn === "longestStreak") {
+          const old = query.state.data;
+          if (old == null || BigInt(streak) > old) {
+            queryClient.setQueryData(query.queryKey, BigInt(streak));
+          }
+        }
+      }
+
+      // Force immediate refetch so useStreak picks up fresh onchain data.
+      // refetchQueries ignores staleTime (unlike invalidateQueries which may
+      // skip if the query is still "fresh"). Belt-and-suspenders with the
+      // setQueryData above — mirrors SecondOrder's debouncedRefresh pattern.
+      queryClient.refetchQueries({ queryKey: ["readContract"] });
+      queryClient.refetchQueries({ queryKey: ["checkInHistory", address] });
       setIsCheckingIn(false);
 
       return {

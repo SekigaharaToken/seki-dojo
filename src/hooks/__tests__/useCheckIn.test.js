@@ -76,6 +76,24 @@ vi.mock("@/config/contracts.js", () => ({
 const mockInvalidateQueries = vi.fn();
 const mockRefetchQueries = vi.fn();
 const mockSetQueryData = vi.fn();
+// Simulate the query cache entries that wagmi's useReadContract creates.
+// useCheckIn uses getQueryCache().findAll() to find these, then calls
+// setQueryData with their real keys (same pattern as useResolverEvents).
+const mockQueryCacheEntries = [
+  {
+    queryKey: ["readContract", { address: "0xmockresolver", functionName: "currentStreak", args: ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"], chainId: 8453 }],
+    state: { data: 4n },
+  },
+  {
+    queryKey: ["readContract", { address: "0xmockresolver", functionName: "lastCheckIn", args: ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"], chainId: 8453 }],
+    state: { data: 0n },
+  },
+  {
+    queryKey: ["readContract", { address: "0xmockresolver", functionName: "longestStreak", args: ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"], chainId: 8453 }],
+    state: { data: 4n },
+  },
+];
+const mockFindAll = vi.fn(() => mockQueryCacheEntries);
 vi.mock("@tanstack/react-query", async (importOriginal) => {
   const actual = await importOriginal();
   return {
@@ -84,6 +102,7 @@ vi.mock("@tanstack/react-query", async (importOriginal) => {
       invalidateQueries: mockInvalidateQueries,
       refetchQueries: mockRefetchQueries,
       setQueryData: mockSetQueryData,
+      getQueryCache: () => ({ findAll: mockFindAll }),
     }),
   };
 });
@@ -159,7 +178,7 @@ describe("useCheckIn", () => {
     expect(res.currentTier).toBeDefined();
   });
 
-  it("invalidates streak queries after successful check-in", async () => {
+  it("writes streak data directly to query cache via findAll pattern", async () => {
     mockReadContract.mockResolvedValueOnce(5n);
     const { result } = renderHook(() => useCheckIn());
 
@@ -167,7 +186,44 @@ describe("useCheckIn", () => {
       await result.current.checkIn();
     });
 
-    expect(mockInvalidateQueries).toHaveBeenCalledWith({
+    // Must search the query cache for existing readContract entries
+    expect(mockFindAll).toHaveBeenCalledWith({ queryKey: ["readContract"] });
+
+    // Must call setQueryData with the ACTUAL query keys from the cache
+    // (not constructed keys), ensuring hash match with wagmi's entries.
+
+    // currentStreak — written with the real query key from cache
+    expect(mockSetQueryData).toHaveBeenCalledWith(
+      mockQueryCacheEntries[0].queryKey,
+      5n,
+    );
+
+    // lastCheckIn — written with a recent timestamp
+    const lastCheckInCall = mockSetQueryData.mock.calls.find(
+      ([key]) => key === mockQueryCacheEntries[1].queryKey,
+    );
+    expect(lastCheckInCall).toBeDefined();
+    expect(typeof lastCheckInCall[1]).toBe("bigint");
+    const nowSec = BigInt(Math.floor(Date.now() / 1000));
+    expect(lastCheckInCall[1]).toBeGreaterThan(nowSec - 10n);
+    expect(lastCheckInCall[1]).toBeLessThanOrEqual(nowSec + 1n);
+
+    // longestStreak — written because streak (5) > old (4)
+    expect(mockSetQueryData).toHaveBeenCalledWith(
+      mockQueryCacheEntries[2].queryKey,
+      5n,
+    );
+  });
+
+  it("forces immediate refetch of streak queries after cache write", async () => {
+    mockReadContract.mockResolvedValueOnce(5n);
+    const { result } = renderHook(() => useCheckIn());
+
+    await act(async () => {
+      await result.current.checkIn();
+    });
+
+    expect(mockRefetchQueries).toHaveBeenCalledWith({
       queryKey: ["readContract"],
     });
   });
