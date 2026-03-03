@@ -5,6 +5,7 @@ import { TestWrapper } from "@/test/wrapper.jsx";
 vi.mock("wagmi", () => ({
   useAccount: () => ({ address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", isConnected: true }),
   useReadContract: () => ({ data: undefined }),
+  useWalletClient: () => ({ data: { account: { address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" }, chain: { id: 8453 } } }),
   useConnect: () => ({ connectors: [], connect: vi.fn() }),
   useSwitchChain: () => ({ switchChain: vi.fn() }),
   useChainId: () => 8453,
@@ -32,6 +33,7 @@ vi.mock("@/lib/mintclub.js", () => ({
 vi.mock("mint.club-v2-sdk", () => ({
   mintclub: {
     withPublicClient: vi.fn(),
+    withWalletClient: vi.fn(),
     network: () => ({
       token: () => ({
         buy: vi.fn(),
