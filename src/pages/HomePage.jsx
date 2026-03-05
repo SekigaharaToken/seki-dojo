@@ -7,6 +7,7 @@ import { CountdownTimer } from "@/components/dojo/CountdownTimer.jsx";
 import { ClaimCard } from "@/components/dojo/ClaimCard.jsx";
 import { OnboardingOverlay } from "@/components/dojo/OnboardingOverlay.jsx";
 import { ShareModal } from "@/components/dojo/ShareModal.jsx";
+import { KamonPromoModal, isKamonPromoDismissed } from "@/components/dojo/KamonPromoModal.jsx";
 import { useOnboarding } from "@/hooks/useOnboarding.js";
 import { useWalletAddress, BackSekiLink, fadeInUp, staggerDelay } from "@sekigahara/engine";
 import { useStreak } from "@/hooks/useStreak.js";
@@ -24,8 +25,16 @@ export default function HomePage() {
   const airdrop = useActiveAirdrops();
 
   const [shareOpen, setShareOpen] = useState(false);
+  const [kamonPromoOpen, setKamonPromoOpen] = useState(false);
   // Fresh streak values from the check-in tx, used by ShareModal + cast composition
   const [shareData, setShareData] = useState(null);
+
+  function handleShareModalClose() {
+    setShareOpen(false);
+    if (!isKamonPromoDismissed()) {
+      setKamonPromoOpen(true);
+    }
+  }
 
   // Use shareData (from the just-completed tx) when available, so the cast
   // text uses the NEW streak — not the stale value from useStreak().
@@ -93,13 +102,18 @@ export default function HomePage() {
 
       <ShareModal
         open={shareOpen}
-        onClose={() => setShareOpen(false)}
+        onClose={handleShareModalClose}
         currentStreak={streakForShare}
         currentTier={tierForShare}
         onShare={() => {
           shareStreak();
-          setShareOpen(false);
+          handleShareModalClose();
         }}
+      />
+
+      <KamonPromoModal
+        open={kamonPromoOpen}
+        onClose={() => setKamonPromoOpen(false)}
       />
     </div>
   );
