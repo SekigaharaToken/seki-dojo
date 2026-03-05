@@ -5,8 +5,8 @@ import {
   DialogHeader,
   DialogTitle,
   Button,
-  MiniAppLink,
 } from "@sekigahara/engine";
+import { MiniAppLink } from "@/components/ui/MiniAppLink.jsx";
 
 const KAMON_URL = "https://seki-kamon.vercel.app";
 const DISMISS_KEY = "kamon-promo-dismissed";

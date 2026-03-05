@@ -1,7 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { ExternalLink, Shield } from "lucide-react";
 import { motion } from "motion/react";
-import { Button, MiniAppLink, fadeInUp, staggerDelay } from "@sekigahara/engine";
+import { Button, fadeInUp, staggerDelay } from "@sekigahara/engine";
+import { MiniAppLink } from "@/components/ui/MiniAppLink.jsx";
 
 const APPS = [
   {
