@@ -103,5 +103,12 @@
     "close": "닫기",
     "modalTitle": "잘했습니다!",
     "castText": "🥋 DOJO {{streak}}일 연속 스트릭! {{tier}}\n\n매일 수련, 온체인으로."
+  },
+  "kamon": {
+    "modalTitle": "$SEKI 생태계의 새로운 앱",
+    "headline": "카몬",
+    "description": "DOJO가 수련을 보상한다면, KAMON은 그것을 팀 스포츠로 만듭니다. 다섯 가문 중 하나에 가입하고, $SEKI를 스테이킹하여 시즌 상금을 놓고 경쟁하세요.",
+    "cta": "카몬 탐험하기",
+    "dismiss": "다시 표시하지 않기"
   }
 }

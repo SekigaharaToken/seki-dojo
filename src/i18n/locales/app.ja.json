@@ -103,5 +103,12 @@
     "close": "閉じる",
     "modalTitle": "お疲れ様！",
     "castText": "🥋 DOJOで{{streak}}日連続！{{tier}}\n\n毎日の修行、オンチェーンで。"
+  },
+  "kamon": {
+    "modalTitle": "$SEKIエコシステムに新登場",
+    "headline": "家紋",
+    "description": "道場が鍛錬を報いるなら、家紋はそれをチームスポーツにします。五つの家から一つを選び、$SEKIをステークして、シーズン賞を競いましょう。",
+    "cta": "家紋を見る",
+    "dismiss": "今後表示しない"
   }
 }

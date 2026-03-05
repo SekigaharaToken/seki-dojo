@@ -103,5 +103,12 @@
     "close": "Close",
     "modalTitle": "Nice work!",
     "castText": "\ud83e\udd4b Day {{streak}} streak on DOJO! {{tier}}\n\nDaily training, onchain."
+  },
+  "kamon": {
+    "modalTitle": "New in the $SEKI ecosystem",
+    "headline": "KAMON",
+    "description": "If DOJO rewards discipline, KAMON makes it a team sport. Join one of five Houses, stake $SEKI, and compete for seasonal prizes.",
+    "cta": "Explore KAMON",
+    "dismiss": "Don't show this again"
   }
 }
