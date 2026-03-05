@@ -1,13 +1,13 @@
 import { useTranslation } from "react-i18next";
-import { Flame, Shield } from "lucide-react";
+import { ExternalLink, Shield } from "lucide-react";
 import { motion } from "motion/react";
 import { Button, MiniAppLink, fadeInUp, staggerDelay } from "@sekigahara/engine";
 
 const APPS = [
   {
-    labelKey: "apps.backSeki",
-    href: "https://hunt.town/project/sekigahara",
-    icon: Flame,
+    labelKey: "hunt.backSeki",
+    href: "https://hunt.town/project/SEKI",
+    icon: ExternalLink,
   },
   {
     labelKey: "apps.kamon",
