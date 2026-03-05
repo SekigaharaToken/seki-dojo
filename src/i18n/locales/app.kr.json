@@ -104,6 +104,15 @@
     "modalTitle": "잘했습니다!",
     "castText": "🥋 DOJO {{streak}}일 연속 스트릭! {{tier}}\n\n매일 수련, 온체인으로."
   },
+  "nav": {
+    "apps": "앱"
+  },
+  "apps": {
+    "title": "앱",
+    "subtitle": "$SEKI 생태계",
+    "backSeki": "Hunt.town에서 $SEKI 후원",
+    "kamon": "카몬"
+  },
   "kamon": {
     "modalTitle": "$SEKI 생태계의 새로운 앱",
     "headline": "카몬",

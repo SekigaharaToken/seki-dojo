@@ -28,7 +28,7 @@ vi.mock("@/components/dojo/HowItWorks.jsx", () => ({
 const { default: App } = await import("@/App.jsx");
 
 describe("App", () => {
-  it("renders bottom navigation with Home and Swap links on mobile", () => {
+  it("renders bottom navigation with Home, Swap, and Apps links on mobile", () => {
     render(
       <TestWrapper>
         <App />
@@ -39,8 +39,9 @@ describe("App", () => {
     expect(bottomNav).toBeInTheDocument();
     // Should contain nav items with translated labels
     const links = bottomNav.querySelectorAll("a");
-    expect(links.length).toBe(2);
+    expect(links.length).toBe(3);
     expect(links[0]).toHaveAttribute("href", "/");
     expect(links[1]).toHaveAttribute("href", "/swap");
+    expect(links[2]).toHaveAttribute("href", "/apps");
   });
 });

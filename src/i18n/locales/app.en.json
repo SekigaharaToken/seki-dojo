@@ -104,6 +104,15 @@
     "modalTitle": "Nice work!",
     "castText": "\ud83e\udd4b Day {{streak}} streak on DOJO! {{tier}}\n\nDaily training, onchain."
   },
+  "nav": {
+    "apps": "Apps"
+  },
+  "apps": {
+    "title": "Apps",
+    "subtitle": "The $SEKI ecosystem",
+    "backSeki": "Back $SEKI on Hunt.town",
+    "kamon": "KAMON"
+  },
   "kamon": {
     "modalTitle": "New in the $SEKI ecosystem",
     "headline": "KAMON",
