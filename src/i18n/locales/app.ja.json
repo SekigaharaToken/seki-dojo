@@ -104,6 +104,15 @@
     "modalTitle": "お疲れ様！",
     "castText": "🥋 DOJOで{{streak}}日連続！{{tier}}\n\n毎日の修行、オンチェーンで。"
   },
+  "nav": {
+    "apps": "アプリ"
+  },
+  "apps": {
+    "title": "アプリ",
+    "subtitle": "$SEKIエコシステム",
+    "backSeki": "Hunt.townで$SEKIを応援",
+    "kamon": "家紋"
+  },
   "kamon": {
     "modalTitle": "$SEKIエコシステムに新登場",
     "headline": "家紋",

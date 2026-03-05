@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
-import { Home, ArrowLeftRight } from "lucide-react";
+import { Home, ArrowLeftRight, LayoutGrid } from "lucide-react";
 import {
   Header,
   Footer,
@@ -15,10 +15,12 @@ import HomePage from "@/pages/HomePage.jsx";
 import HowItWorks from "@/components/dojo/HowItWorks.jsx";
 
 const SwapPage = lazy(() => import("@/pages/SwapPage.jsx"));
+const AppsPage = lazy(() => import("@/pages/AppsPage.jsx"));
 
 const NAV_ITEMS = [
   { to: "/", icon: Home, labelKey: "nav.home" },
   { to: "/swap", icon: ArrowLeftRight, labelKey: "nav.swap" },
+  { to: "/apps", icon: LayoutGrid, labelKey: "nav.apps" },
 ];
 
 function App() {
@@ -32,6 +34,7 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/swap" element={<SwapPage />} />
+              <Route path="/apps" element={<AppsPage />} />
             </Routes>
           </Suspense>
         </PageWrapper>
