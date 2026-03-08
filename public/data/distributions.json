@@ -1,0 +1,29 @@
+[
+  {
+    "week": 1,
+    "date": "2026-03-08",
+    "tiers": [
+      {
+        "tier": 1,
+        "distributionId": 5681,
+        "reward": 100,
+        "addresses": [
+          "0x91f4fd5c834a023d8682ffe3105c93987027b175",
+          "0xd559e433718b1f2667fde7c859fc982cf0bc491f",
+          "0x9a6c3498bdc8d02c9d8946af8e0be34263c6eaae",
+          "0x177defdca55b524c3c841bd713cabcf8809109e5",
+          "0xf251912bf3a6fadb3cdab8ecd96e5e0a21beedd3",
+          "0x5314eb9d579e8962267665a9c987fc4397ed7f9d"
+        ]
+      },
+      {
+        "tier": 2,
+        "distributionId": 5682,
+        "reward": 150,
+        "addresses": [
+          "0x48ffcbcabb0b10b2a185d398ee67c48080b9d7e7"
+        ]
+      }
+    ]
+  }
+]
