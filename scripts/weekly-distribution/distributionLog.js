@@ -74,6 +74,25 @@ export async function writeDistributionLog({ weekNumber, tierData, fidMap }) {
 }
 
 /**
+ * Read the highest week number from distributions.json and return next.
+ * Returns the provided minimum if no prior distributions exist.
+ *
+ * @param {{ minimum?: number }} options
+ * @returns {Promise<number>}
+ */
+export async function getNextWeekNumber({ minimum = 1 } = {}) {
+  try {
+    const raw = await readFile(JSON_PATH, "utf-8");
+    const entries = JSON.parse(raw);
+    if (entries.length === 0) return minimum;
+    const maxWeek = Math.max(...entries.map((e) => e.week));
+    return Math.max(maxWeek + 1, minimum);
+  } catch {
+    return minimum;
+  }
+}
+
+/**
  * Write/update public/data/distributions.json for frontend consumption.
  * Newest week first. If the same week number exists, it is replaced.
  *
