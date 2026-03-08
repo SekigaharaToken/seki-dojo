@@ -20,7 +20,7 @@ env:
   NODE_VERSION: "20"
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   dry-run:
@@ -50,6 +50,7 @@ jobs:
           VITE_DOJO_TOKEN_ADDRESS: ${{ secrets.DOJO_TOKEN_ADDRESS }}
           VITE_DOJO_RESOLVER_ADDRESS: ${{ secrets.DOJO_RESOLVER_ADDRESS }}
           VITE_DOJO_SCHEMA_UID: ${{ secrets.DOJO_SCHEMA_UID }}
+          VITE_DOJO_DISTRIBUTION_SCHEMA_UID: ${{ secrets.DOJO_DISTRIBUTION_SCHEMA_UID }}
           VITE_CHAIN_ID: ${{ secrets.CHAIN_ID }}
           NEYNAR_API_KEY: ${{ secrets.NEYNAR_API_KEY }}
           NEYNAR_SIGNER_UUID: ${{ secrets.NEYNAR_SIGNER_UUID }}
@@ -86,20 +87,10 @@ jobs:
           VITE_DOJO_TOKEN_ADDRESS: ${{ secrets.DOJO_TOKEN_ADDRESS }}
           VITE_DOJO_RESOLVER_ADDRESS: ${{ secrets.DOJO_RESOLVER_ADDRESS }}
           VITE_DOJO_SCHEMA_UID: ${{ secrets.DOJO_SCHEMA_UID }}
+          VITE_DOJO_DISTRIBUTION_SCHEMA_UID: ${{ secrets.DOJO_DISTRIBUTION_SCHEMA_UID }}
           VITE_CHAIN_ID: ${{ secrets.CHAIN_ID }}
           NEYNAR_API_KEY: ${{ secrets.NEYNAR_API_KEY }}
           NEYNAR_SIGNER_UUID: ${{ secrets.NEYNAR_SIGNER_UUID }}
           VITE_SEKI_TOKEN_ADDRESS: ${{ secrets.SEKI_TOKEN_ADDRESS }}
           WEEK_NUMBER: ${{ github.event.inputs.week_number || '' }}
         run: node scripts/weekly-distribution/index.js
-
-      - name: Commit distribution log
-        if: success()
-        env:
-          WEEK_NUMBER: ${{ github.event.inputs.week_number || '' }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add scripts/weekly-distribution/DISTRIBUTION_LOG.md public/data/distributions.json
-          git diff --cached --quiet || git commit -m "chore: update distribution log (Week ${WEEK_NUMBER:-auto})"
-          git push

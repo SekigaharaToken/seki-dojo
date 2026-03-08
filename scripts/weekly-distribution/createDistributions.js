@@ -20,7 +20,11 @@ const publicClient = createPublicClient({
 
 let _walletClient;
 
-async function getWalletClient() {
+export function getPublicClient() {
+  return publicClient;
+}
+
+export async function getWalletClient() {
   if (_walletClient) return _walletClient;
   const cdp = new CdpClient();
   const cdpAccount = await cdp.evm.getOrCreateAccount({ name: "dojo-operator" });
