@@ -35,7 +35,7 @@ import { buildMerkleTree } from "./merkleBuilder.js";
 import { pinToIpfs } from "./ipfsPin.js";
 import { approveToken, createDistribution } from "./createDistributions.js";
 import { notifyDistributions } from "./castNotifier.js";
-import { writeDistributionLog, writeDistributionsJson } from "./distributionLog.js";
+import { writeDistributionLog, writeDistributionsJson, getNextWeekNumber } from "./distributionLog.js";
 import { STREAK_TIERS } from "../../src/config/constants.js";
 import { DOJO_TOKEN_ADDRESS, MINT_CLUB } from "../../src/config/contracts.js";
 
@@ -52,14 +52,17 @@ function getOption(name, fallback) {
   return args[idx + 1];
 }
 
-const WEEK_NUMBER = parseInt(
-  getOption("week", process.env.WEEK_NUMBER || "1"),
-  10,
-);
+const WEEK_OVERRIDE = getOption("week", process.env.WEEK_NUMBER || "");
 const PARTIAL_WEEK = getFlag("partial");
 const DRY_RUN = getFlag("dry-run");
 
 async function main() {
+  // Week number: explicit override wins, otherwise auto-increment from distributions.json.
+  // Minimum of 3 because weeks 1-2 were already distributed (with duplicate week numbers).
+  const WEEK_NUMBER = WEEK_OVERRIDE
+    ? parseInt(WEEK_OVERRIDE, 10)
+    : await getNextWeekNumber({ minimum: 3 });
+
   const mode = PARTIAL_WEEK ? "PARTIAL" : "FULL";
   const dryTag = DRY_RUN ? " [DRY RUN]" : "";
 
