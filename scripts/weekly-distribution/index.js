@@ -35,7 +35,9 @@ import { buildMerkleTree } from "./merkleBuilder.js";
 import { pinToIpfs } from "./ipfsPin.js";
 import { approveToken, createDistribution } from "./createDistributions.js";
 import { notifyDistributions } from "./castNotifier.js";
-import { writeDistributionLog, writeDistributionsJson, getNextWeekNumber } from "./distributionLog.js";
+import { writeDistributionLog, writeDistributionsJson, getNextWeekNumberOnchain } from "./distributionLog.js";
+import { attestDistributions } from "./attestDistribution.js";
+import { getPublicClient, getWalletClient } from "./createDistributions.js";
 import { STREAK_TIERS } from "../../src/config/constants.js";
 import { DOJO_TOKEN_ADDRESS, MINT_CLUB } from "../../src/config/contracts.js";
 
@@ -57,11 +59,11 @@ const PARTIAL_WEEK = getFlag("partial");
 const DRY_RUN = getFlag("dry-run");
 
 async function main() {
-  // Week number: explicit override wins, otherwise auto-increment from distributions.json.
+  // Week number: explicit override wins, otherwise auto-increment from onchain EAS attestations.
   // Minimum of 3 because weeks 1-2 were already distributed (with duplicate week numbers).
   const WEEK_NUMBER = WEEK_OVERRIDE
     ? parseInt(WEEK_OVERRIDE, 10)
-    : await getNextWeekNumber({ minimum: 3 });
+    : await getNextWeekNumberOnchain({ minimum: 3 });
 
   const mode = PARTIAL_WEEK ? "PARTIAL" : "FULL";
   const dryTag = DRY_RUN ? " [DRY RUN]" : "";
@@ -207,7 +209,18 @@ async function main() {
     td.txHash = txHash;
   }
 
-  // Step 6-7: Post Farcaster cast notifications (non-fatal)
+  // Step 6: Attest distribution metadata to EAS (non-fatal)
+  console.log("\n6. Attesting distribution metadata to EAS...");
+  try {
+    const walletClient = await getWalletClient();
+    const publicClient = getPublicClient();
+    await attestDistributions({ walletClient, publicClient, weekNumber: WEEK_NUMBER, tierData });
+    console.log("   EAS attestations complete.");
+  } catch (err) {
+    console.warn("   EAS attestation failed (non-fatal):", err.message);
+  }
+
+  // Step 7-8: Post Farcaster cast notifications (non-fatal)
   let fidMap = new Map();
   try {
     fidMap = await notifyDistributions({ tierResults: tierData, weekNumber: WEEK_NUMBER }) || new Map();
@@ -215,8 +228,8 @@ async function main() {
     console.warn("Cast notification failed (non-fatal):", err.message);
   }
 
-  // Step 8: Write distribution log + JSON
-  console.log("\n8. Writing distribution log...");
+  // Step 9: Write distribution log + JSON
+  console.log("\n9. Writing distribution log...");
   try {
     await writeDistributionLog({ weekNumber: WEEK_NUMBER, tierData, fidMap });
   } catch (err) {

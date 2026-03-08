@@ -9,6 +9,10 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createPublicClient, http, fallback, parseAbiItem, decodeAbiParameters, parseAbiParameters } from "viem";
+import { activeChain } from "../../src/config/chains.js";
+import { EAS_ADDRESS, DOJO_DISTRIBUTION_SCHEMA_UID } from "../../src/config/contracts.js";
+import { DEPLOY_BLOCK } from "../../src/config/constants.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, "../..");
@@ -89,6 +93,118 @@ export async function getNextWeekNumber({ minimum = 1 } = {}) {
     return Math.max(maxWeek + 1, minimum);
   } catch {
     return minimum;
+  }
+}
+
+// Paginated getLogs — same pattern as walletDiscovery.js
+const MAX_BLOCK_RANGE = 9_999n;
+
+const logClient = createPublicClient({
+  chain: activeChain,
+  transport: fallback([
+    http("https://mainnet.base.org"),
+    http("https://base-rpc.publicnode.com"),
+    http("https://base.drpc.org"),
+  ]),
+});
+
+/**
+ * Read the highest week number from onchain EAS distribution attestations.
+ * Falls back to getNextWeekNumber (JSON) if no attestations found or schema not configured.
+ *
+ * @param {{ minimum?: number }} options
+ * @returns {Promise<number>}
+ */
+export async function getNextWeekNumberOnchain({ minimum = 1 } = {}) {
+  if (!DOJO_DISTRIBUTION_SCHEMA_UID) {
+    console.warn("   Distribution schema UID not configured, falling back to JSON");
+    return getNextWeekNumber({ minimum });
+  }
+
+  try {
+    const latest = await logClient.getBlockNumber();
+    const allLogs = [];
+    let cursor = DEPLOY_BLOCK;
+
+    while (cursor <= latest) {
+      const end = cursor + MAX_BLOCK_RANGE - 1n > latest
+        ? latest
+        : cursor + MAX_BLOCK_RANGE - 1n;
+
+      const logs = await logClient.getLogs({
+        address: EAS_ADDRESS,
+        event: parseAbiItem(
+          "event Attested(address indexed recipient, address indexed attester, bytes32 uid, bytes32 indexed schemaUID)",
+        ),
+        args: { schemaUID: DOJO_DISTRIBUTION_SCHEMA_UID },
+        fromBlock: cursor,
+        toBlock: end,
+      });
+
+      allLogs.push(...logs);
+      cursor = end + 1n;
+    }
+
+    if (allLogs.length === 0) {
+      console.log("   No distribution attestations found onchain, falling back to JSON");
+      return getNextWeekNumber({ minimum });
+    }
+
+    // Decode week from each attestation's data field via getAttestation
+    // Instead, we fetch the attestation data from the EAS contract
+    // But simpler: fetch tx input data for each attestation log
+    // Simplest: read the attestation struct from EAS using the UID
+    const easGetAttestationAbi = [{
+      name: "getAttestation",
+      type: "function",
+      stateMutability: "view",
+      inputs: [{ name: "uid", type: "bytes32" }],
+      outputs: [{
+        name: "",
+        type: "tuple",
+        components: [
+          { name: "uid", type: "bytes32" },
+          { name: "schema", type: "bytes32" },
+          { name: "time", type: "uint64" },
+          { name: "expirationTime", type: "uint64" },
+          { name: "revocationTime", type: "uint64" },
+          { name: "refUID", type: "bytes32" },
+          { name: "recipient", type: "address" },
+          { name: "attester", type: "address" },
+          { name: "revocable", type: "bool" },
+          { name: "data", type: "bytes" },
+        ],
+      }],
+    }];
+
+    let maxWeek = 0;
+
+    for (const log of allLogs) {
+      // uid is the non-indexed data field in the Attested event
+      const uid = log.args.uid;
+
+      const attestation = await logClient.readContract({
+        address: EAS_ADDRESS,
+        abi: easGetAttestationAbi,
+        functionName: "getAttestation",
+        args: [uid],
+      });
+
+      const [, week] = decodeAbiParameters(
+        parseAbiParameters("string app, uint16 week, uint8 tier, uint256 distributionId, uint16 reward, string ipfsCID"),
+        attestation.data,
+      );
+
+      if (Number(week) > maxWeek) {
+        maxWeek = Number(week);
+      }
+    }
+
+    console.log(`   Onchain max week: ${maxWeek}`);
+    return Math.max(maxWeek + 1, minimum);
+  } catch (err) {
+    console.warn(`   Onchain week lookup failed, falling back to JSON: ${err.message}`);
+    return getNextWeekNumber({ minimum });
   }
 }
 

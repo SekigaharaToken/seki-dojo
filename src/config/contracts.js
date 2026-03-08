@@ -26,6 +26,10 @@ export const DOJO_RESOLVER_ADDRESS =
 const rawSchemaUid = getEnv("VITE_DOJO_SCHEMA_UID", "");
 export const DOJO_SCHEMA_UID = rawSchemaUid ? rawSchemaUid.toLowerCase() : "";
 
+// Distribution log schema UID (for onchain distribution metadata)
+const rawDistSchemaUid = getEnv("VITE_DOJO_DISTRIBUTION_SCHEMA_UID", "");
+export const DOJO_DISTRIBUTION_SCHEMA_UID = rawDistSchemaUid ? rawDistSchemaUid.toLowerCase() : "";
+
 // Project tokens (loaded from env — set after Mint Club creation)
 export const SEKI_TOKEN_ADDRESS =
   getEnv("VITE_SEKI_TOKEN_ADDRESS", "");
