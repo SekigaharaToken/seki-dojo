@@ -162,6 +162,24 @@ describe("castNotifier", () => {
       expect(casts[0].mentions).toEqual([]);
       expect(casts[0].text).toContain("1 warrior");
     });
+
+    it("reply text is non-empty even with a single mention", () => {
+      const fidMap = new Map([
+        ["0xaaa", { fid: 1, username: "alice" }],
+      ]);
+
+      const casts = composeCasts({
+        tier: makeTier(1),
+        reward: 100,
+        weekNumber: 1,
+        fidMap,
+        addresses: ["0xAAA"],
+      });
+
+      expect(casts).toHaveLength(2);
+      expect(casts[1].text.length).toBeGreaterThan(0);
+      expect(casts[1].mentions).toEqual([1]);
+    });
   });
 
   describe("postCast", () => {
@@ -388,6 +406,55 @@ describe("castNotifier", () => {
       });
 
       expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("non-fatal"));
+      logSpy.mockRestore();
+      warnSpy.mockRestore();
+    });
+
+    it("continues to next tier when a reply cast fails", async () => {
+      // FID lookup — two users across two tiers
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            "0xaaa": [{ fid: 1, username: "alice" }],
+            "0xbbb": [{ fid: 2, username: "bob" }],
+          }),
+      });
+      // Tier 1 parent cast succeeds
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ cast: { hash: "0xt1parent" } }),
+      });
+      // Tier 1 reply cast fails
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        text: () => Promise.resolve("cast is empty"),
+      });
+      // Tier 2 parent cast succeeds
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ cast: { hash: "0xt2parent" } }),
+      });
+      // Tier 2 reply cast succeeds
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ cast: { hash: "0xt2reply" } }),
+      });
+
+      const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+      await notifyDistributions({
+        tierResults: [
+          { tier: makeTier(1), addresses: ["0xAAA"] },
+          { tier: makeTier(2, 150), addresses: ["0xBBB"] },
+        ],
+        weekNumber: 1,
+      });
+
+      // Tier 2 should still have posted despite Tier 1 reply failure
+      expect(mockFetch).toHaveBeenCalledTimes(5);
       logSpy.mockRestore();
       warnSpy.mockRestore();
     });

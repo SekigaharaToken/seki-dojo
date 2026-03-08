@@ -91,8 +91,8 @@ export function composeCasts({ tier, reward, weekNumber, fidMap, addresses }) {
       const bytePos = Buffer.byteLength(text, "utf8");
       mentions.push(chunk[mi].fid);
       mentionsPositions.push(bytePos);
-      // Add space separator (Neynar replaces the position with @username)
-      text += mi < chunk.length - 1 ? " " : "";
+      // Space separator between mentions (Neynar replaces each position with @username)
+      text += " ";
     }
 
     casts.push({ text, mentions, mentionsPositions, isParent: false });
@@ -166,16 +166,23 @@ export async function postTierNotification({ tier, reward, weekNumber, fidMap, a
       if (SEKI_EMBED_URL) embeds.push({ url: SEKI_EMBED_URL });
     }
 
-    const hash = await postCast({
-      text: cast.text,
-      mentions: cast.mentions,
-      mentionsPositions: cast.mentionsPositions,
-      embeds: embeds.length > 0 ? embeds : undefined,
-      channelId: cast.isParent ? CHANNEL_ID : undefined,
-      parentHash: parentHash || undefined,
-    });
-    hashes.push(hash);
-    if (cast.isParent) parentHash = hash;
+    try {
+      const hash = await postCast({
+        text: cast.text,
+        mentions: cast.mentions,
+        mentionsPositions: cast.mentionsPositions,
+        embeds: embeds.length > 0 ? embeds : undefined,
+        channelId: cast.isParent ? CHANNEL_ID : undefined,
+        parentHash: parentHash || undefined,
+      });
+      hashes.push(hash);
+      if (cast.isParent) parentHash = hash;
+    } catch (err) {
+      const label = cast.isParent ? "parent" : "reply";
+      console.warn(`   ${label} cast failed (non-fatal): ${err.message}`);
+      // If parent failed, skip replies (no parent hash to thread under)
+      if (cast.isParent) break;
+    }
   }
 
   return hashes;
