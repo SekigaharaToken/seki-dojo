@@ -27,6 +27,7 @@
     "title": "週間報酬",
     "claimable": "{{amount}} $DOJO 獲得可能",
     "claim": "報酬を受取",
+    "claimPending": "受取中...",
     "claimed": "受取済み",
     "noClaim": "今週の報酬はありません",
     "tierEarned": "{{tier}}として獲得",

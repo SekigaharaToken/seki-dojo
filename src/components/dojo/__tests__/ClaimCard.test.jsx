@@ -8,7 +8,7 @@ const mockUseClaim = vi.fn(() => ({
   claim: mockClaim,
   isClaimed: false,
   isClaimedLoading: false,
-  isPending: false,
+  isClaiming: false,
 }));
 
 vi.mock("@/hooks/useClaim.js", () => ({
@@ -43,7 +43,7 @@ describe("ClaimCard", () => {
       claim: mockClaim,
       isClaimed: false,
       isClaimedLoading: false,
-      isPending: false,
+      isClaiming: false,
     });
     mockUseWalletAddress.mockReturnValue({
       address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
@@ -74,7 +74,7 @@ describe("ClaimCard", () => {
       claim: mockClaim,
       isClaimed: true,
       isClaimedLoading: false,
-      isPending: false,
+      isClaiming: false,
     });
     render(<ClaimCard {...defaultProps} />, { wrapper: TestWrapper });
     expect(screen.getByText("Claimed")).toBeInTheDocument();
@@ -82,15 +82,17 @@ describe("ClaimCard", () => {
     expect(screen.getByText(/Apprentice/)).toBeInTheDocument();
   });
 
-  it("shows pending state while claiming", () => {
+  it("shows spinner and claiming label while claiming", () => {
     mockUseClaim.mockReturnValue({
       claim: mockClaim,
       isClaimed: false,
       isClaimedLoading: false,
-      isPending: true,
+      isClaiming: true,
     });
     render(<ClaimCard {...defaultProps} />, { wrapper: TestWrapper });
-    expect(screen.getByRole("button")).toBeDisabled();
+    const btn = screen.getByRole("button");
+    expect(btn).toBeDisabled();
+    expect(btn.textContent).toMatch(/claiming/i);
   });
 
   it("shows no-claim message when no distributionId", () => {
@@ -98,7 +100,7 @@ describe("ClaimCard", () => {
       claim: null,
       isClaimed: false,
       isClaimedLoading: false,
-      isPending: false,
+      isClaiming: false,
     });
     render(
       <ClaimCard

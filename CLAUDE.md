@@ -221,3 +221,4 @@ NEYNAR_SIGNER_UUID=
 - Do NOT skip i18n. Every user-facing string goes through translations.
 - Do NOT deploy anything that fails the walkaway test. If we disappear, contracts and IPFS frontend must keep working.
 - Do NOT use hex values without lowercasing first. Normalize all addresses and bytes32 at the config boundary (`src/config/contracts.js`).
+- Do NOT implement UI/UX features without checking `FrontEndGuidelines.md` first. It contains hard rules for transaction feedback, toast patterns, loading states, and reactive updates.

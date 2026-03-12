@@ -27,6 +27,7 @@
     "title": "Weekly Rewards",
     "claimable": "{{amount}} $DOJO available",
     "claim": "Claim Rewards",
+    "claimPending": "Claiming...",
     "claimed": "Claimed",
     "noClaim": "No rewards this week",
     "tierEarned": "Earned as {{tier}}",
