@@ -27,6 +27,7 @@
     "title": "주간 보상",
     "claimable": "{{amount}} $DOJO 수령 가능",
     "claim": "보상 수령",
+    "claimPending": "수령 중...",
     "claimed": "수령 완료",
     "noClaim": "이번 주 보상 없음",
     "tierEarned": "{{tier}}로 획득",
