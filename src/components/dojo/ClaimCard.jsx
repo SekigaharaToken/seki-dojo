@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Loader2 } from "lucide-react";
 import { useWalletAddress, Card, CardContent, CardHeader, CardTitle, Button, MiniAppLink } from "@sekigahara/engine";
 import { useClaim } from "@/hooks/useClaim.js";
 
@@ -10,7 +11,7 @@ import { useClaim } from "@/hooks/useClaim.js";
 export function ClaimCard({ distributionId, proof, amount, tierName, airdropUrl }) {
   const { t } = useTranslation();
   const { address } = useWalletAddress();
-  const { claim, isClaimed, isPending } = useClaim({ distributionId, proof });
+  const { claim, isClaimed, isClaiming } = useClaim({ distributionId, proof });
 
   return (
     <Card className="w-full max-w-sm">
@@ -31,8 +32,11 @@ export function ClaimCard({ distributionId, proof, amount, tierName, airdropUrl 
             {isClaimed ? (
               <p className="font-semibold text-green-600" role="status">{t("rewards.claimed")}</p>
             ) : (
-              <Button onClick={claim} disabled={isPending}>
-                {t("rewards.claim")}
+              <Button onClick={claim} disabled={isClaiming}>
+                {isClaiming && (
+                  <Loader2 className="mr-2 size-5 animate-spin" aria-hidden="true" />
+                )}
+                {isClaiming ? t("rewards.claimPending") : t("rewards.claim")}
               </Button>
             )}
           </>
