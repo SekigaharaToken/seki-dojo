@@ -10,9 +10,14 @@ import { STREAK_TIERS, SECONDS_PER_DAY, DEPLOY_BLOCK } from "../../src/config/co
 
 const SEVEN_DAYS = 7 * SECONDS_PER_DAY;
 
-// drpc.org free tier limits getLogs to 10k blocks per request.
-// Use 9,999 to stay safely within all free-tier RPC limits.
-const MAX_BLOCK_RANGE = 9_999n;
+// Free-tier RPCs limit getLogs block range (dRPC: 500, others: ~10k).
+// Use 2,000 to stay safe across all providers (matches frontend constant).
+const MAX_BLOCK_RANGE = 2_000n;
+
+// Only scan the last ~14 days of blocks for attestation discovery.
+// Wallets must have checked in within 7 days to qualify, so 14 days
+// provides a safe buffer. Base produces ~1 block/2s = 43,200 blocks/day.
+const SCAN_WINDOW_BLOCKS = 14n * 43_200n; // ~604,800 blocks
 
 // Multiple free Base RPCs — fallback in order if one is down.
 const client = createPublicClient({
@@ -73,14 +78,27 @@ export async function discoverWallets({ skipCutoff = false, verbose = false } = 
     console.log(`   Config: DEPLOY_BLOCK=${DEPLOY_BLOCK}`);
   }
 
+  // Compute a recent scan start — no need to scan from DEPLOY_BLOCK every run.
+  // Any wallet qualifying for the 7-day filter must have an attestation within 14 days.
+  const latestBlock = await client.getBlockNumber();
+  const scanFrom = latestBlock > SCAN_WINDOW_BLOCKS
+    ? latestBlock - SCAN_WINDOW_BLOCKS
+    : DEPLOY_BLOCK;
+  // Never go below DEPLOY_BLOCK (shouldn't happen, but be safe)
+  const fromBlock = scanFrom > DEPLOY_BLOCK ? scanFrom : DEPLOY_BLOCK;
+
+  if (verbose) {
+    console.log(`   Scan window: block ${fromBlock} → ${latestBlock} (~${latestBlock - fromBlock} blocks)`);
+  }
+
   const logs = await getLogsPaginated({
     address: EAS_ADDRESS,
     event: parseAbiItem(
       "event Attested(address indexed recipient, address indexed attester, bytes32 uid, bytes32 indexed schemaUID)",
     ),
     args: { schemaUID: DOJO_SCHEMA_UID },
-    fromBlock: DEPLOY_BLOCK,
-    toBlock: "latest",
+    fromBlock,
+    toBlock: latestBlock,
   });
 
   console.log(`   Attestation logs found: ${logs.length}`);

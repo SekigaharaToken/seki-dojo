@@ -97,7 +97,11 @@ export async function getNextWeekNumber({ minimum = 1 } = {}) {
 }
 
 // Paginated getLogs — same pattern as walletDiscovery.js
-const MAX_BLOCK_RANGE = 9_999n;
+// Use 2,000 to stay safe across all free-tier RPCs.
+const MAX_BLOCK_RANGE = 2_000n;
+
+// Scan last ~30 days for distribution attestations (weekly events, so 30 days is plenty).
+const SCAN_WINDOW_BLOCKS = 30n * 43_200n; // ~1,296,000 blocks
 
 const logClient = createPublicClient({
   chain: activeChain,
@@ -123,8 +127,13 @@ export async function getNextWeekNumberOnchain({ minimum = 1 } = {}) {
 
   try {
     const latest = await logClient.getBlockNumber();
+    const scanFrom = latest > SCAN_WINDOW_BLOCKS
+      ? latest - SCAN_WINDOW_BLOCKS
+      : DEPLOY_BLOCK;
+    const startBlock = scanFrom > DEPLOY_BLOCK ? scanFrom : DEPLOY_BLOCK;
+
     const allLogs = [];
-    let cursor = DEPLOY_BLOCK;
+    let cursor = startBlock;
 
     while (cursor <= latest) {
       const end = cursor + MAX_BLOCK_RANGE - 1n > latest
