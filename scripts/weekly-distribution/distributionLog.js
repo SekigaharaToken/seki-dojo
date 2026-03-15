@@ -9,16 +9,19 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createPublicClient, http, fallback, parseAbiItem, decodeAbiParameters, parseAbiParameters } from "viem";
-import { activeChain } from "../../src/config/chains.js";
+import { parseAbiItem, decodeAbiParameters, parseAbiParameters } from "viem";
 import { EAS_ADDRESS, DOJO_DISTRIBUTION_SCHEMA_UID } from "../../src/config/contracts.js";
 import { DEPLOY_BLOCK } from "../../src/config/constants.js";
+import { client, getLogsPaginated } from "./rpcClient.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, "../..");
 const LOG_PATH = resolve(__dirname, "DISTRIBUTION_LOG.md");
 const JSON_PATH = resolve(REPO_ROOT, "public/data/distributions.json");
 const AIRDROP_BASE_URL = "https://mint.club/airdrops/base";
+
+// Scan last ~7 days for distribution attestations (weekly events).
+const SCAN_WINDOW_BLOCKS = 7n * 43_200n; // ~302,400 blocks
 
 /**
  * Format and append a distribution run to the log file.
@@ -96,22 +99,6 @@ export async function getNextWeekNumber({ minimum = 1 } = {}) {
   }
 }
 
-// Paginated getLogs — same pattern as walletDiscovery.js
-// Use 2,000 to stay safe across all free-tier RPCs.
-const MAX_BLOCK_RANGE = 2_000n;
-
-// Scan last ~30 days for distribution attestations (weekly events, so 30 days is plenty).
-const SCAN_WINDOW_BLOCKS = 30n * 43_200n; // ~1,296,000 blocks
-
-const logClient = createPublicClient({
-  chain: activeChain,
-  transport: fallback([
-    http("https://mainnet.base.org"),
-    http("https://base-rpc.publicnode.com"),
-    http("https://base.drpc.org"),
-  ]),
-});
-
 /**
  * Read the highest week number from onchain EAS distribution attestations.
  * Falls back to getNextWeekNumber (JSON) if no attestations found or schema not configured.
@@ -126,43 +113,27 @@ export async function getNextWeekNumberOnchain({ minimum = 1 } = {}) {
   }
 
   try {
-    const latest = await logClient.getBlockNumber();
+    const latest = await client.getBlockNumber();
     const scanFrom = latest > SCAN_WINDOW_BLOCKS
       ? latest - SCAN_WINDOW_BLOCKS
       : DEPLOY_BLOCK;
     const startBlock = scanFrom > DEPLOY_BLOCK ? scanFrom : DEPLOY_BLOCK;
 
-    const allLogs = [];
-    let cursor = startBlock;
-
-    while (cursor <= latest) {
-      const end = cursor + MAX_BLOCK_RANGE - 1n > latest
-        ? latest
-        : cursor + MAX_BLOCK_RANGE - 1n;
-
-      const logs = await logClient.getLogs({
-        address: EAS_ADDRESS,
-        event: parseAbiItem(
-          "event Attested(address indexed recipient, address indexed attester, bytes32 uid, bytes32 indexed schemaUID)",
-        ),
-        args: { schemaUID: DOJO_DISTRIBUTION_SCHEMA_UID },
-        fromBlock: cursor,
-        toBlock: end,
-      });
-
-      allLogs.push(...logs);
-      cursor = end + 1n;
-    }
+    const allLogs = await getLogsPaginated({
+      address: EAS_ADDRESS,
+      event: parseAbiItem(
+        "event Attested(address indexed recipient, address indexed attester, bytes32 uid, bytes32 indexed schemaUID)",
+      ),
+      args: { schemaUID: DOJO_DISTRIBUTION_SCHEMA_UID },
+      fromBlock: startBlock,
+      toBlock: latest,
+    });
 
     if (allLogs.length === 0) {
       console.log("   No distribution attestations found onchain, falling back to JSON");
       return getNextWeekNumber({ minimum });
     }
 
-    // Decode week from each attestation's data field via getAttestation
-    // Instead, we fetch the attestation data from the EAS contract
-    // But simpler: fetch tx input data for each attestation log
-    // Simplest: read the attestation struct from EAS using the UID
     const easGetAttestationAbi = [{
       name: "getAttestation",
       type: "function",
@@ -189,10 +160,9 @@ export async function getNextWeekNumberOnchain({ minimum = 1 } = {}) {
     let maxWeek = 0;
 
     for (const log of allLogs) {
-      // uid is the non-indexed data field in the Attested event
       const uid = log.args.uid;
 
-      const attestation = await logClient.readContract({
+      const attestation = await client.readContract({
         address: EAS_ADDRESS,
         abi: easGetAttestationAbi,
         functionName: "getAttestation",

@@ -1,4 +1,4 @@
-import { createPublicClient, http, fallback, parseAbiItem } from "viem";
+import { parseAbiItem } from "viem";
 import { activeChain } from "../../src/config/chains.js";
 import {
   EAS_ADDRESS,
@@ -7,58 +7,14 @@ import {
 } from "../../src/config/contracts.js";
 import { dojoResolverAbi } from "../../src/config/abis/dojoResolver.js";
 import { STREAK_TIERS, SECONDS_PER_DAY, DEPLOY_BLOCK } from "../../src/config/constants.js";
+import { client, getLogsPaginated } from "./rpcClient.js";
 
 const SEVEN_DAYS = 7 * SECONDS_PER_DAY;
-
-// Free-tier RPCs limit getLogs block range (dRPC: 500, others: ~10k).
-// Use 2,000 to stay safe across all providers (matches frontend constant).
-const MAX_BLOCK_RANGE = 2_000n;
 
 // Only scan the last ~14 days of blocks for attestation discovery.
 // Wallets must have checked in within 7 days to qualify, so 14 days
 // provides a safe buffer. Base produces ~1 block/2s = 43,200 blocks/day.
 const SCAN_WINDOW_BLOCKS = 14n * 43_200n; // ~604,800 blocks
-
-// Multiple free Base RPCs — fallback in order if one is down.
-const client = createPublicClient({
-  chain: activeChain,
-  transport: fallback([
-    http("https://mainnet.base.org"),
-    http("https://base-rpc.publicnode.com"),
-    http("https://base.drpc.org"),
-  ]),
-});
-
-/**
- * Fetch logs in paginated chunks to stay within RPC block range limits.
- */
-async function getLogsPaginated({ address, event, args, fromBlock, toBlock }) {
-  const latest =
-    toBlock === "latest" ? await client.getBlockNumber() : toBlock;
-
-  const allLogs = [];
-  let cursor = fromBlock;
-
-  while (cursor <= latest) {
-    const end =
-      cursor + MAX_BLOCK_RANGE - 1n > latest
-        ? latest
-        : cursor + MAX_BLOCK_RANGE - 1n;
-
-    const logs = await client.getLogs({
-      address,
-      event,
-      args,
-      fromBlock: cursor,
-      toBlock: end,
-    });
-
-    allLogs.push(...logs);
-    cursor = end + 1n;
-  }
-
-  return allLogs;
-}
 
 /**
  * Discover all active DOJO wallets from EAS attestation logs.
@@ -84,7 +40,6 @@ export async function discoverWallets({ skipCutoff = false, verbose = false } = 
   const scanFrom = latestBlock > SCAN_WINDOW_BLOCKS
     ? latestBlock - SCAN_WINDOW_BLOCKS
     : DEPLOY_BLOCK;
-  // Never go below DEPLOY_BLOCK (shouldn't happen, but be safe)
   const fromBlock = scanFrom > DEPLOY_BLOCK ? scanFrom : DEPLOY_BLOCK;
 
   if (verbose) {
