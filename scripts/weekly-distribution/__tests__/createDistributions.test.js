@@ -9,6 +9,7 @@ vi.mock("mint.club-v2-sdk", () => ({
 const mockWriteContract = vi.fn();
 const mockWaitForTransactionReceipt = vi.fn();
 const mockReadContract = vi.fn();
+const mockGetTransactionCount = vi.fn();
 
 vi.mock("viem", async (importOriginal) => {
   const actual = await importOriginal();
@@ -18,9 +19,11 @@ vi.mock("viem", async (importOriginal) => {
       readContract: mockReadContract,
       waitForTransactionReceipt: mockWaitForTransactionReceipt,
       getBlock: vi.fn().mockResolvedValue({ timestamp: 1700000000n }),
+      getTransactionCount: mockGetTransactionCount,
     })),
     createWalletClient: vi.fn(() => ({
       writeContract: mockWriteContract,
+      account: { address: "0xOperator" },
     })),
     http: vi.fn(() => "mockTransport"),
   };
@@ -30,7 +33,9 @@ vi.mock("viem/accounts", async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...actual,
-    toAccount: vi.fn((cdpAccount) => cdpAccount),
+    toAccount: vi.fn((source) => {
+      return { ...source, type: "local" };
+    }),
   };
 });
 
@@ -44,7 +49,7 @@ vi.mock("@coinbase/cdp-sdk", () => ({
   },
 }));
 
-const { createDistribution, approveToken } = await import(
+const { createDistribution, approveToken, syncNonce } = await import(
   "../createDistributions.js"
 );
 
@@ -154,5 +159,90 @@ describe("createDistributions", () => {
         ipfsCID: "QmTest",
       }),
     ).rejects.toThrow("insufficient funds");
+  });
+
+  it("passes explicit nonce to writeContract when provided", async () => {
+    await createDistribution({
+      tokenAddress: "0xDojoToken",
+      amountPerClaim: 100n * 10n ** 18n,
+      walletCount: 5,
+      merkleRoot: "0xrootabc",
+      title: "DOJO Week 1 - Tier 1",
+      ipfsCID: "QmTestCid",
+      nonce: 42,
+    });
+
+    const args = mockWriteContract.mock.calls[0][0];
+    expect(args.nonce).toBe(42);
+  });
+
+  it("approveToken passes explicit nonce to writeContract when provided", async () => {
+    await approveToken({
+      tokenAddress: "0xDojoToken",
+      spender: "0xMerkleDistributor",
+      amount: 500n * 10n ** 18n,
+      nonce: 7,
+    });
+
+    const args = mockWriteContract.mock.calls[0][0];
+    expect(args.nonce).toBe(7);
+  });
+});
+
+describe("syncNonce", () => {
+  beforeEach(() => {
+    mockGetTransactionCount.mockReset();
+  });
+
+  it("resolves immediately when no pending transactions", async () => {
+    mockGetTransactionCount.mockResolvedValue(5);
+
+    await syncNonce();
+
+    expect(mockGetTransactionCount).toHaveBeenCalledTimes(2);
+    expect(mockGetTransactionCount).toHaveBeenCalledWith(
+      expect.objectContaining({ blockTag: "latest" }),
+    );
+    expect(mockGetTransactionCount).toHaveBeenCalledWith(
+      expect.objectContaining({ blockTag: "pending" }),
+    );
+  });
+
+  it("waits for pending transactions to confirm", async () => {
+    mockGetTransactionCount
+      .mockResolvedValueOnce(3)  // latest
+      .mockResolvedValueOnce(5)  // pending
+      .mockResolvedValueOnce(5); // poll: latest catches up
+
+    await syncNonce({ timeoutMs: 10_000, pollMs: 50 });
+
+    // 2 initial + 1 poll
+    expect(mockGetTransactionCount).toHaveBeenCalledTimes(3);
+  });
+
+  it("throws on timeout when pending transactions are stuck", async () => {
+    mockGetTransactionCount.mockResolvedValue(3);
+    mockGetTransactionCount
+      .mockResolvedValueOnce(3)  // latest
+      .mockResolvedValueOnce(5); // pending
+    // All subsequent poll calls return 3 (stuck)
+
+    await expect(
+      syncNonce({ timeoutMs: 200, pollMs: 50 }),
+    ).rejects.toThrow("Nonce sync timeout");
+  });
+});
+
+describe("getCurrentNonce", () => {
+  it("returns the latest transaction count from publicClient", async () => {
+    mockGetTransactionCount.mockResolvedValueOnce(42);
+
+    const { getCurrentNonce } = await import("../createDistributions.js");
+    const nonce = await getCurrentNonce();
+
+    expect(nonce).toBe(42);
+    expect(mockGetTransactionCount).toHaveBeenCalledWith(
+      expect.objectContaining({ blockTag: "latest" }),
+    );
   });
 });

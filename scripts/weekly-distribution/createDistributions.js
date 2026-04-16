@@ -36,6 +36,53 @@ export async function getWalletClient() {
   return _walletClient;
 }
 
+/**
+ * Wait for any pending transactions to confirm before sending new ones.
+ * Prevents "nonce too low" errors caused by stale/stuck transactions
+ * from prior runs.
+ *
+ * @param {{ timeoutMs?: number, pollMs?: number }} options
+ */
+export async function syncNonce({ timeoutMs = 60_000, pollMs = 5_000 } = {}) {
+  const walletClient = await getWalletClient();
+  const address = walletClient.account.address;
+
+  const latest = await publicClient.getTransactionCount({ address, blockTag: "latest" });
+  const pending = await publicClient.getTransactionCount({ address, blockTag: "pending" });
+
+  if (pending <= latest) return;
+
+  const stuck = pending - latest;
+  console.log(`\u26A0 ${stuck} pending tx(s) detected for ${address}`);
+  console.log(`  Waiting up to ${timeoutMs / 1000}s for confirmation...`);
+
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    await new Promise((r) => setTimeout(r, pollMs));
+    const current = await publicClient.getTransactionCount({ address, blockTag: "latest" });
+    if (current >= pending) {
+      console.log(`  \u2713 Nonce synchronized at ${current}`);
+      return;
+    }
+  }
+
+  throw new Error(
+    `Nonce sync timeout: ${stuck} pending tx(s) did not confirm within ${timeoutMs / 1000}s. ` +
+      `Address: ${address}. Check for stuck transactions on Basescan.`,
+  );
+}
+
+/**
+ * Get the current confirmed nonce for the wallet.
+ * Call this once after syncNonce() and pass the result to each
+ * transaction function, incrementing after each confirmation.
+ */
+export async function getCurrentNonce() {
+  const walletClient = await getWalletClient();
+  const address = walletClient.account.address;
+  return await publicClient.getTransactionCount({ address, blockTag: "latest" });
+}
+
 const ERC20_APPROVE_ABI = [
   {
     name: "approve",
@@ -53,13 +100,14 @@ const ERC20_APPROVE_ABI = [
  * Approve ERC20 token spending. Waits for confirmation so nonce is
  * up-to-date for any subsequent writes.
  */
-export async function approveToken({ tokenAddress, spender, amount }) {
+export async function approveToken({ tokenAddress, spender, amount, nonce }) {
   const walletClient = await getWalletClient();
   const hash = await walletClient.writeContract({
     address: tokenAddress,
     abi: ERC20_APPROVE_ABI,
     functionName: "approve",
     args: [spender, amount],
+    ...(nonce != null && { nonce }),
   });
   await publicClient.waitForTransactionReceipt({ hash });
   return hash;
@@ -79,6 +127,7 @@ export async function createDistribution({
   merkleRoot,
   title,
   ipfsCID,
+  nonce,
 }) {
   const walletClient = await getWalletClient();
   // Use chain timestamp (not wall-clock) so times are valid on forks with evm_increaseTime
@@ -102,6 +151,7 @@ export async function createDistribution({
       title,
       ipfsCID,
     ],
+    ...(nonce != null && { nonce }),
   });
 
   const receipt = await publicClient.waitForTransactionReceipt({ hash });
