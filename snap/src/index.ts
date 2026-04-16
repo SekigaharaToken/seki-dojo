@@ -77,8 +77,8 @@ function rootPage(base: string) {
         logo: {
           type: "image" as const,
           props: {
-            url: `${CLAIM_BASE_URL}/og-image.png`,
-            aspectRatio: "1.91:1",
+            url: `${CLAIM_BASE_URL}/icon.png`,
+            aspectRatio: "1:1",
           },
         },
         title: {
