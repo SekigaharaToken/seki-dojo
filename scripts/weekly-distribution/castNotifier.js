@@ -9,7 +9,7 @@
 const NEYNAR_BASE = "https://api.neynar.com/v2/farcaster";
 const MENTION_LIMIT = 10; // Farcaster max mentions per cast
 const ADDRESS_BATCH_SIZE = 350; // Neynar bulk lookup limit
-const AIRDROP_BASE_URL = "https://mint.club/airdrops/base";
+const SNAP_URL = "https://dojo-claim-snap.host.neynar.app/";
 const SEKI_TOKEN = process.env.VITE_SEKI_TOKEN_ADDRESS?.toLowerCase() || "";
 const SEKI_EMBED_URL = SEKI_TOKEN
   ? `https://farcaster.xyz/~/c/base:${SEKI_TOKEN}`
@@ -155,14 +155,10 @@ export async function postTierNotification({ tier, reward, weekNumber, fidMap, a
   const hashes = [];
   let parentHash = null;
 
-  const claimUrl = distributionId
-    ? `${AIRDROP_BASE_URL}/${distributionId}`
-    : null;
-
   for (const cast of casts) {
     const embeds = [];
     if (cast.isParent) {
-      if (claimUrl) embeds.push({ url: claimUrl });
+      embeds.push({ url: SNAP_URL });
       if (SEKI_EMBED_URL) embeds.push({ url: SEKI_EMBED_URL });
     }
 
