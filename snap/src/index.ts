@@ -65,7 +65,7 @@ const snap: SnapFunction = async (ctx) => {
 function rootPage(base: string) {
   return {
     version: SPEC_VERSION,
-    theme: { accent: "green" as const },
+    theme: { accent: "red" as const },
     ui: {
       root: "root",
       elements: {
@@ -212,7 +212,7 @@ function notEligiblePage(base: string) {
 
   return {
     version: SPEC_VERSION,
-    theme: { accent: "green" as const },
+    theme: { accent: "red" as const },
     ui: {
       root: "root",
       elements: {
@@ -254,7 +254,7 @@ function notEligiblePage(base: string) {
 function errorPage(base: string, message: string) {
   return {
     version: SPEC_VERSION,
-    theme: { accent: "green" as const },
+    theme: { accent: "red" as const },
     ui: {
       root: "root",
       elements: {
