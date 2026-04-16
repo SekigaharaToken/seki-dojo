@@ -36,11 +36,8 @@ function snapBaseUrlFromRequest(request: Request): string {
 const snap: SnapFunction = async (ctx) => {
   const base = snapBaseUrlFromRequest(ctx.request);
 
-  // If this is a POST to /check, process the eligibility check
-  if (
-    ctx.action.type === ACTION_TYPE_POST &&
-    ctx.request.url.endsWith("/check")
-  ) {
+  // POST = user tapped "Check Eligibility" or "Try Again"
+  if (ctx.action.type === ACTION_TYPE_POST) {
     const fid = ctx.action.user.fid;
 
     try {
@@ -93,7 +90,7 @@ function rootPage(base: string) {
           on: {
             press: {
               action: "submit" as const,
-              params: { target: `${base}/check` },
+              params: { target: `${base}/` },
             },
           },
         },
@@ -280,7 +277,7 @@ function errorPage(base: string, message: string) {
           on: {
             press: {
               action: "submit" as const,
-              params: { target: `${base}/check` },
+              params: { target: `${base}/` },
             },
           },
         },
