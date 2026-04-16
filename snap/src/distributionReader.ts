@@ -10,8 +10,14 @@ import { base } from "viem/chains";
 import type { WeekDistribution, TierEntry } from "./types.js";
 
 const EAS_ADDRESS = "0x4200000000000000000000000000000000000021" as const;
-const DEPLOY_BLOCK = 42_263_066n;
-const MAX_BLOCK_RANGE = 2_000n;
+// Base: 2-second blocks. Scan last 10 days (~432,000 blocks) — distributions happen weekly.
+const LOOKBACK_BLOCKS = 432_000n;
+const MAX_BLOCK_RANGE = 10_000n; // Base public RPCs handle 10k range for filtered event queries
+
+// In-memory cache: distribution changes weekly, cache for 5 minutes
+let cachedDistribution: WeekDistribution | null = null;
+let cacheTimestamp = 0;
+const CACHE_TTL_MS = 5 * 60 * 1000;
 
 const DISTRIBUTION_SCHEMA_UID = (
   process.env.DISTRIBUTION_SCHEMA_UID ?? ""
@@ -108,12 +114,20 @@ async function getLogsPaginated(fromBlock: bigint): Promise<any[]> {
 
 /**
  * Read the latest week's distribution from EAS attestations on Base.
+ * Scans only the last ~10 days of blocks and caches the result for 5 minutes.
  * Returns null if no attestations are found.
  */
 export async function getLatestDistribution(): Promise<WeekDistribution | null> {
   if (!DISTRIBUTION_SCHEMA_UID) return null;
 
-  const logs = await getLogsPaginated(DEPLOY_BLOCK);
+  // Return cached result if fresh
+  if (cachedDistribution && Date.now() - cacheTimestamp < CACHE_TTL_MS) {
+    return cachedDistribution;
+  }
+
+  const latest = await client.getBlockNumber();
+  const fromBlock = latest > LOOKBACK_BLOCKS ? latest - LOOKBACK_BLOCKS : 0n;
+  const logs = await getLogsPaginated(fromBlock);
   if (logs.length === 0) return null;
 
   const entries: TierEntry[] = await Promise.all(
@@ -150,7 +164,10 @@ export async function getLatestDistribution(): Promise<WeekDistribution | null> 
   const latestWeek = Math.max(...byWeek.keys());
   const tiers = byWeek.get(latestWeek)!.sort((a, b) => a.tier - b.tier);
 
-  return { week: latestWeek, tiers };
+  const result = { week: latestWeek, tiers };
+  cachedDistribution = result;
+  cacheTimestamp = Date.now();
+  return result;
 }
 
 /**
