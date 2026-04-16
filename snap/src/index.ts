@@ -286,7 +286,7 @@ function errorPage(base: string, message: string) {
   };
 }
 
-registerSnapHandler(app, snap);
+registerSnapHandler(app, snap, { og: false });
 
 const port = parseInt(process.env.PORT ?? "3003", 10);
 serve({ fetch: app.fetch, port }, () => {
