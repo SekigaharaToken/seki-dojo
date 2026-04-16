@@ -59,7 +59,7 @@ export function encodeDistributionData({ app, week, tier, distributionId, reward
 /**
  * Create an EAS attestation for a single distribution tier.
  *
- * @param {{ walletClient: object, publicClient: object, week: number, tier: object, distributionId: number, ipfsCID: string }} params
+ * @param {{ walletClient: object, publicClient: object, week: number, tier: object, distributionId: number, ipfsCID: string, nonce?: number }} params
  * @returns {Promise<{ hash: string, uid: string }>}
  */
 export async function attestDistributionTier({
@@ -69,6 +69,7 @@ export async function attestDistributionTier({
   tier,
   distributionId,
   ipfsCID,
+  nonce,
 }) {
   if (!DOJO_DISTRIBUTION_SCHEMA_UID) {
     throw new Error("VITE_DOJO_DISTRIBUTION_SCHEMA_UID not configured");
@@ -102,6 +103,7 @@ export async function attestDistributionTier({
         },
       },
     ],
+    ...(nonce != null && { nonce }),
   });
 
   const receipt = await publicClient.waitForTransactionReceipt({ hash });
@@ -118,9 +120,11 @@ export async function attestDistributionTier({
 /**
  * Attest all distribution tiers for a given week.
  *
- * @param {{ walletClient: object, publicClient: object, weekNumber: number, tierData: object[] }} params
+ * @param {{ walletClient: object, publicClient: object, weekNumber: number, tierData: object[], startNonce?: number }} params
+ * @returns {Promise<number>} The next available nonce after all attestations
  */
-export async function attestDistributions({ walletClient, publicClient, weekNumber, tierData }) {
+export async function attestDistributions({ walletClient, publicClient, weekNumber, tierData, startNonce }) {
+  let nonce = startNonce;
   for (const td of tierData) {
     const { tier, distributionId, ipfsCID } = td;
 
@@ -136,9 +140,12 @@ export async function attestDistributions({ walletClient, publicClient, weekNumb
       tier,
       distributionId,
       ipfsCID,
+      nonce,
     });
+    if (nonce != null) nonce++;
 
     console.log(`   Tier ${tier.id} attested: TX ${hash}`);
     if (uid) console.log(`   Attestation UID: ${uid}`);
   }
+  return nonce;
 }
