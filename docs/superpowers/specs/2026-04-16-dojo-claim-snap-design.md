@@ -78,14 +78,17 @@ Eligible (unclaimed):
 - Text: "You qualify!" (bold)
 - Text: "{reward} $DOJO — Week {N}, Tier {id}"
 - Button: "Claim Now" (primary, action: `open_url`, url: claim page URL with query params)
+- Button: "Share" (secondary, action: `compose_cast`, params: text "I qualified for {reward} $DOJO this week! Check if you're eligible too", embeds: [snap URL], channelKey: "hunt")
 
 Already claimed:
 - Text: "Already Claimed" (bold)
 - Text: "You've already claimed your Week {N} reward"
+- Button: "Share" (secondary, action: `compose_cast`, params: text "I claimed my $DOJO reward! Check if you qualify too", embeds: [snap URL], channelKey: "hunt")
 
 Not eligible:
 - Text: "Not Eligible" (bold)
 - Text: "Your wallet isn't in this week's distribution. Keep checking in at the dojo!"
+- Button: "Share" (secondary, action: `compose_cast`, params: text "Check if you qualify for this week's $DOJO airdrop", embeds: [snap URL], channelKey: "hunt")
 
 ### Environment Variables
 
