@@ -16,6 +16,7 @@ import HowItWorks from "@/components/dojo/HowItWorks.jsx";
 
 const SwapPage = lazy(() => import("@/pages/SwapPage.jsx"));
 const AppsPage = lazy(() => import("@/pages/AppsPage.jsx"));
+const ClaimPage = lazy(() => import("@/pages/ClaimPage.jsx"));
 
 const NAV_ITEMS = [
   { to: "/", icon: Home, labelKey: "nav.home" },
@@ -35,6 +36,7 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/swap" element={<SwapPage />} />
               <Route path="/apps" element={<AppsPage />} />
+              <Route path="/claim" element={<ClaimPage />} />
             </Routes>
           </Suspense>
         </PageWrapper>

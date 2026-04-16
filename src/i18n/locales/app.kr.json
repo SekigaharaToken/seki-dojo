@@ -119,5 +119,18 @@
     "description": "DOJO가 수련을 보상한다면, KAMON은 그것을 팀 스포츠로 만듭니다. 다섯 가문 중 하나에 가입하고, $SEKI를 스테이킹하여 시즌 상금을 놓고 경쟁하세요.",
     "cta": "카몬 탐험하기",
     "dismiss": "다시 표시하지 않기"
+  },
+  "claim": {
+    "title": "$DOJO 받기",
+    "connectWallet": "지갑을 연결하여 받기",
+    "wrongWallet": "{{address}}로 전환해주세요",
+    "alreadyClaimed": "이미 수령함",
+    "alreadyClaimedDesc": "이 보상은 이미 수령했습니다",
+    "claimButton": "{{reward}} $DOJO 받기",
+    "claiming": "수령 중...",
+    "success": "$DOJO 보상을 성공적으로 받았습니다!",
+    "error": "수령 실패",
+    "invalidParams": "잘못된 링크입니다. 필수 매개변수가 없습니다.",
+    "backToDojo": "도장으로 돌아가기"
   }
 }

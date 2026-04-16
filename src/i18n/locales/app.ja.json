@@ -119,5 +119,18 @@
     "description": "道場が鍛錬を報いるなら、家紋はそれをチームスポーツにします。五つの家から一つを選び、$SEKIをステークして、シーズン賞を競いましょう。",
     "cta": "家紋を見る",
     "dismiss": "今後表示しない"
+  },
+  "claim": {
+    "title": "$DOJOを受け取る",
+    "connectWallet": "ウォレットを接続して受け取る",
+    "wrongWallet": "{{address}}に切り替えてください",
+    "alreadyClaimed": "受取済み",
+    "alreadyClaimedDesc": "この報酬はすでに受け取りました",
+    "claimButton": "{{reward}} $DOJOを受け取る",
+    "claiming": "受取中...",
+    "success": "$DOJOの報酬を受け取りました！",
+    "error": "受取に失敗しました",
+    "invalidParams": "無効なリンクです。必要なパラメータがありません。",
+    "backToDojo": "道場に戻る"
   }
 }

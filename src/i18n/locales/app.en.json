@@ -119,5 +119,18 @@
     "description": "If DOJO rewards discipline, KAMON makes it a team sport. Join one of five Houses, stake $SEKI, and compete for seasonal prizes.",
     "cta": "Explore KAMON",
     "dismiss": "Don't show this again"
+  },
+  "claim": {
+    "title": "Claim Your $DOJO",
+    "connectWallet": "Connect your wallet to claim",
+    "wrongWallet": "Please switch to {{address}} to claim this reward",
+    "alreadyClaimed": "Already Claimed",
+    "alreadyClaimedDesc": "This reward has already been collected",
+    "claimButton": "Claim {{reward}} $DOJO",
+    "claiming": "Claiming...",
+    "success": "Successfully claimed your $DOJO reward!",
+    "error": "Claim failed",
+    "invalidParams": "Invalid claim link. Missing required parameters.",
+    "backToDojo": "Back to Dojo"
   }
 }
