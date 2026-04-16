@@ -88,7 +88,7 @@ function rootPage(base: string) {
         },
         checkBtn: {
           type: "button" as const,
-          props: { content: "Check Eligibility", variant: "primary" as const },
+          props: { label: "Check Eligibility", variant: "primary" as const },
           on: {
             press: {
               action: "submit" as const,
@@ -138,7 +138,7 @@ function eligiblePage(
         },
         claimBtn: {
           type: "button" as const,
-          props: { content: "Claim Now", variant: "primary" as const },
+          props: { label: "Claim Now", variant: "primary" as const },
           on: {
             press: {
               action: "open_url" as const,
@@ -148,7 +148,7 @@ function eligiblePage(
         },
         shareBtn: {
           type: "button" as const,
-          props: { content: "Share", variant: "secondary" as const },
+          props: { label: "Share", variant: "secondary" as const },
           on: {
             press: {
               action: "compose_cast" as const,
@@ -190,7 +190,7 @@ function alreadyClaimedPage(base: string, week: number) {
         },
         shareBtn: {
           type: "button" as const,
-          props: { content: "Share", variant: "secondary" as const },
+          props: { label: "Share", variant: "secondary" as const },
           on: {
             press: {
               action: "compose_cast" as const,
@@ -233,7 +233,7 @@ function notEligiblePage(base: string) {
         },
         shareBtn: {
           type: "button" as const,
-          props: { content: "Share", variant: "secondary" as const },
+          props: { label: "Share", variant: "secondary" as const },
           on: {
             press: {
               action: "compose_cast" as const,
@@ -271,7 +271,7 @@ function errorPage(base: string, message: string) {
         },
         retryBtn: {
           type: "button" as const,
-          props: { content: "Try Again", variant: "primary" as const },
+          props: { label: "Try Again", variant: "primary" as const },
           on: {
             press: {
               action: "submit" as const,
