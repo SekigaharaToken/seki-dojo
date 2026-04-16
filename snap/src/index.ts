@@ -74,6 +74,7 @@ function rootPage(base: string) {
       elements: {
         root: {
           type: "stack" as const,
+          props: {},
           children: ["title", "desc", "checkBtn"],
         },
         title: {
@@ -124,6 +125,7 @@ function eligiblePage(
       elements: {
         root: {
           type: "stack" as const,
+          props: {},
           children: ["title", "detail", "claimBtn", "shareBtn"],
         },
         title: {
@@ -142,7 +144,7 @@ function eligiblePage(
           on: {
             press: {
               action: "open_url" as const,
-              params: { url: claimUrl },
+              params: { target: claimUrl },
             },
           },
         },
@@ -176,6 +178,7 @@ function alreadyClaimedPage(base: string, week: number) {
       elements: {
         root: {
           type: "stack" as const,
+          props: {},
           children: ["title", "detail", "shareBtn"],
         },
         title: {
@@ -218,6 +221,7 @@ function notEligiblePage(base: string) {
       elements: {
         root: {
           type: "stack" as const,
+          props: {},
           children: ["title", "detail", "shareBtn"],
         },
         title: {
@@ -259,6 +263,7 @@ function errorPage(base: string, message: string) {
       elements: {
         root: {
           type: "stack" as const,
+          props: {},
           children: ["title", "detail", "retryBtn"],
         },
         title: {
