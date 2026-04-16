@@ -9,7 +9,7 @@ import {
 import { checkEligibility } from "./eligibilityChecker.js";
 
 const CLAIM_BASE_URL =
-  process.env.CLAIM_BASE_URL ?? "https://dojo.sekigahara.app";
+  process.env.CLAIM_BASE_URL ?? "https://seki-dojo.vercel.app";
 
 const app = new Hono();
 
