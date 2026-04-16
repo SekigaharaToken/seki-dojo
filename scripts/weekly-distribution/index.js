@@ -33,7 +33,7 @@ import { parseUnits } from "viem";
 import { discoverWallets, bucketByTier } from "./walletDiscovery.js";
 import { buildMerkleTree } from "./merkleBuilder.js";
 import { pinToIpfs } from "./ipfsPin.js";
-import { approveToken, createDistribution } from "./createDistributions.js";
+import { approveToken, createDistribution, syncNonce, getCurrentNonce } from "./createDistributions.js";
 import { notifyDistributions } from "./castNotifier.js";
 import { writeDistributionLog, writeDistributionsJson, getNextWeekNumberOnchain } from "./distributionLog.js";
 import { attestDistributions } from "./attestDistribution.js";
@@ -170,6 +170,15 @@ async function main() {
     return;
   }
 
+  // Pre-flight: ensure no stale pending transactions from prior runs
+  console.log("\n   Syncing wallet nonce...");
+  await syncNonce();
+
+  // Fetch nonce once — all subsequent txs use explicit nonce to avoid
+  // stale values from fallback RPC nodes.
+  let nonce = await getCurrentNonce();
+  console.log(`   Starting nonce: ${nonce}`);
+
   // Step 3: Approve token spending
   console.log(
     `\n3. Approving ${totalApprovalNeeded / 10n ** 18n} $DOJO for MerkleDistributor...`,
@@ -178,7 +187,9 @@ async function main() {
     tokenAddress: DOJO_TOKEN_ADDRESS,
     spender: MINT_CLUB.MERKLE,
     amount: totalApprovalNeeded,
+    nonce,
   });
+  nonce++;
   console.log("   Approved.");
 
   // Steps 4-5: Pin + create distribution per tier
@@ -200,7 +211,9 @@ async function main() {
       merkleRoot: root,
       title: `DOJO Week ${WEEK_NUMBER} - Tier ${tier.id}${suffix}`,
       ipfsCID: cid,
+      nonce,
     });
+    nonce++;
     console.log(`   TX: ${txHash}`);
     console.log(`   Distribution ID: ${distributionId}`);
 
@@ -214,7 +227,7 @@ async function main() {
   try {
     const walletClient = await getWalletClient();
     const publicClient = getPublicClient();
-    await attestDistributions({ walletClient, publicClient, weekNumber: WEEK_NUMBER, tierData });
+    nonce = await attestDistributions({ walletClient, publicClient, weekNumber: WEEK_NUMBER, tierData, startNonce: nonce });
     console.log("   EAS attestations complete.");
   } catch (err) {
     console.warn("   EAS attestation failed (non-fatal):", err.message);
