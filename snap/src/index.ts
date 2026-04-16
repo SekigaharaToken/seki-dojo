@@ -72,14 +72,7 @@ function rootPage(base: string) {
         root: {
           type: "stack" as const,
           props: {},
-          children: ["logo", "title", "desc", "checkBtn"],
-        },
-        logo: {
-          type: "image" as const,
-          props: {
-            url: `${CLAIM_BASE_URL}/icon.png`,
-            aspectRatio: "1:1",
-          },
+          children: ["title", "desc", "checkBtn"],
         },
         title: {
           type: "text" as const,
